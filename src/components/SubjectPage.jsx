@@ -9,7 +9,7 @@ import QnaPage from './QnaPage';
 function SubjectPage({ 
   subject, onCardClick, searchTerm, 
   folders, prints, homeworks, qnaItems, liveSessions, notices,
-  activeTab, onTabClick, onAddQuestion
+  activeTab, onTabClick, onAddQuestion, currentUser
 }) {
   
   const renderTabContent = () => {
@@ -31,6 +31,7 @@ function SubjectPage({
                   searchTerm={searchTerm} 
                   liveSessions={liveSessions}
                   onCardClick={onCardClick}
+                  currentUser={currentUser}
                 />;
                 
       case 'qbox':

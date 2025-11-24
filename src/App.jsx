@@ -169,7 +169,7 @@ function App() {
     type: 'home', 
     subject: null,
     detailId: null, 
-    groupId: null, // グループID追加
+    groupId: null,
     previousType: 'home',
     activeTab: 'notice'
   });
@@ -332,7 +332,6 @@ function App() {
     }));
   };
 
-  // グループ詳細ページへの遷移ハンドラ
   const handleGroupClick = (groupId) => {
     setActiveView(prevView => ({
       ...prevView,
@@ -417,11 +416,9 @@ function App() {
     if (activeView.type === 'calendar') {
       return <CalendarPage homeworks={homeworks} tests={tests} onCardClick={handleCardClick} />;
     }
-    // グループ一覧ページ
     if (activeView.type === 'groups') {
       return <GroupPage currentUser={currentUser} onGroupClick={handleGroupClick} />;
     }
-    // グループ詳細ページ
     if (activeView.type === 'groupDetail') {
       return <GroupDetailPage 
         currentUser={currentUser} 
@@ -462,6 +459,7 @@ function App() {
                   activeTab={activeView.activeTab} 
                   onTabClick={handleTabClick}
                   onAddQuestion={handleAddQuestion}
+                  currentUser={currentUser}
                 />;
       default:
         return <h2>ようこそ</h2>;

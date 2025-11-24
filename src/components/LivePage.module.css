@@ -25,10 +25,9 @@
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  
-  cursor: pointer; /* クリックカーソル */
   transition: background-color 0.2s ease; 
 }
+
 .liveItem:hover {
   background-color: #f9f9f9;
 }
@@ -37,6 +36,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  flex: 1;
 }
 
 .itemTitle {
@@ -52,13 +52,15 @@
 
 /* 配信ステータスごとの色分け */
 .statusLive {
-  color: #ef4444; /* 赤 (配信中) */
+  color: #ef4444;
 }
+
 .statusUpcoming {
-  color: #2563eb; /* 青 (予定) */
+  color: #2563eb;
 }
+
 .statusFinished {
-  color: #777; /* グレー (終了) */
+  color: #777;
 }
 
 .noDataMessage {
@@ -66,4 +68,306 @@
   color: #555;
   text-align: center;
   margin-top: 20px;
+}
+
+/* ========================================
+   アクションボタン
+======================================== */
+.itemActions {
+  display: flex;
+  gap: 10px;
+}
+
+.startButton,
+.viewButton,
+.detailButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.startButton {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.startButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.viewButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.viewButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.detailButton {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.detailButton:hover {
+  background: #f0f4ff;
+}
+
+/* ========================================
+   配信・視聴画面
+======================================== */
+.streamContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.streamHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.streamHeader h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.closeButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.streamContent {
+  display: flex;
+  flex: 1;
+  gap: 1rem;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+/* ========================================
+   ビデオエリア
+======================================== */
+.videoArea {
+  flex: 1;
+  position: relative;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.videoPlayer {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.streamControls {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.75rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.controlButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.controlButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.controlButton.active {
+  background: #ef4444;
+}
+
+.stopButton {
+  background: #ef4444;
+}
+
+.stopButton:hover {
+  background: #dc2626;
+}
+
+/* ========================================
+   チャットエリア
+======================================== */
+.chatArea {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.chatHeader {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #333;
+}
+
+.chatMessages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chatMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatUser {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #667eea;
+}
+
+.chatText {
+  font-size: 0.95rem;
+  color: #333;
+  word-wrap: break-word;
+}
+
+.chatInput {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+}
+
+.chatInput input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px 0 0 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chatInput input:focus {
+  border-color: #667eea;
+}
+
+.chatInput button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.chatInput button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* ========================================
+   レスポンシブ対応
+======================================== */
+@media (max-width: 768px) {
+  .streamContent {
+    flex-direction: column;
+  }
+
+  .chatArea {
+    width: 100%;
+    height: 250px;
+  }
+
+  .streamControls {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .controlButton {
+    padding: 0.5rem;
+    font-size: 12px;
+  }
+
+  .itemActions {
+    flex-direction: column;
+  }
 }
