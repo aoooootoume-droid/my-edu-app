@@ -14,11 +14,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden; /* 追加 */
 }
 
 #root {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden; /* 追加 */
 }
 
 /* ======================================
@@ -26,24 +28,31 @@ body {
 ====================================== */
 .appLayout {
   display: flex;
-  min-height: calc(100vh - 70px); /* ヘッダーの高さを引く */
+  height: calc(100vh - 70px); /* ヘッダーの高さを引く */
+  margin-top: 70px; /* ヘッダー分のマージン */
+  overflow: hidden; /* 追加 */
 }
 
 .sidebar {
+  position: fixed; /* 追加 */
+  left: 0;
+  top: 70px; /* ヘッダーの下に配置 */
   width: 240px;
+  height: calc(100vh - 70px); /* ヘッダー分を引いた高さ */
   flex-shrink: 0;
   background: white;
   box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
   z-index: 10;
+  overflow-y: auto; /* サイドバー内でスクロール */
 }
 
 .mainContent {
+  margin-left: 240px; /* サイドバーの幅分 */
   flex: 1;
+  height: calc(100vh - 70px);
   padding: 2rem;
-  overflow-y: auto;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
+  overflow-y: auto; /* メインコンテンツだけスクロール */
+  width: calc(100% - 240px);
 }
 
 /* ======================================
@@ -167,17 +176,34 @@ button:disabled {
    レスポンシブ対応
 ====================================== */
 @media (max-width: 768px) {
+  body {
+    overflow: auto; /* モバイルでは通常スクロール */
+  }
+
+  #root {
+    overflow: auto;
+  }
+
   .appLayout {
     flex-direction: column;
+    height: auto;
+    margin-top: 70px;
+    overflow: visible;
   }
   
   .sidebar {
+    position: relative; /* モバイルでは固定しない */
+    top: 0;
     width: 100%;
-    position: sticky;
-    top: 70px;
+    height: auto;
+    max-height: 200px;
   }
   
   .mainContent {
+    margin-left: 0;
+    width: 100%;
+    height: auto;
+    overflow-y: visible;
     padding: 1rem;
   }
 }
