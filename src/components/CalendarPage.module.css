@@ -1,0 +1,425 @@
+/* ======================================
+   カレンダーコンテナ
+====================================== */
+.calendarContainer {
+  padding: 1rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================================
+   ヘッダー
+====================================== */
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.todayButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.todayButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.monthNavigation {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navButton {
+  background: white;
+  border: 2px solid #e5e7eb;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navButton:hover {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  transform: scale(1.1);
+}
+
+.currentMonth {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  min-width: 180px;
+  text-align: center;
+}
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.legendDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legendDot.homework {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.legendDot.test {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* ======================================
+   カレンダー本体
+====================================== */
+.calendar {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.weekHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.weekDay {
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.weekDay.sunday {
+  color: #ef4444;
+}
+
+.weekDay.saturday {
+  color: #3b82f6;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.dayCell {
+  min-height: 120px;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.dayCell:not(.emptyCell):hover {
+  background: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  transform: translateY(-2px);
+}
+
+.dayCell.emptyCell {
+  background: transparent;
+  cursor: default;
+}
+
+.dayCell.today {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.dayNumber {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.today .dayNumber {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.25rem;
+}
+
+.eventsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.event {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event.homework {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+}
+
+.event.test {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+}
+
+.event:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.eventDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.eventTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moreEvents {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+}
+
+/* ======================================
+   今月の予定リスト
+====================================== */
+.upcomingEvents {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.upcomingEvents h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem 0;
+  color: #1f2937;
+}
+
+.eventsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.upcomingDate {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.dateLabel {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #667eea;
+  min-width: 80px;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.dateEvents {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.upcomingEvent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.upcomingEvent.homework {
+  background: linear-gradient(to right, #fef3c7 0%, white 50%);
+  border-left: 4px solid #f59e0b;
+}
+
+.upcomingEvent.test {
+  background: linear-gradient(to right, #fee2e2 0%, white 50%);
+  border-left: 4px solid #ef4444;
+}
+
+.upcomingEvent:hover {
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.eventIcon {
+  font-size: 1.5rem;
+}
+
+.upcomingEventInfo {
+  flex: 1;
+}
+
+.upcomingEventTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.upcomingEventSubject {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.noEvents {
+  text-align: center;
+  padding: 3rem;
+  color: #9ca3af;
+}
+
+.noEventsIcon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.noEvents p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ======================================
+   レスポンシブ対応
+====================================== */
+@media (max-width: 1024px) {
+  .daysGrid {
+    gap: 0.35rem;
+  }
+  
+  .dayCell {
+    min-height: 100px;
+    padding: 0.5rem;
+  }
+  
+  .dayNumber {
+    font-size: 0.95rem;
+  }
+  
+  .event {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendarHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .monthNavigation {
+    justify-content: center;
+  }
+  
+  .legend {
+    justify-content: center;
+  }
+  
+  .calendar {
+    padding: 1rem;
+  }
+  
+  .dayCell {
+    min-height: 80px;
+  }
+  
+  .upcomingDate {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

@@ -1,0 +1,97 @@
+.homeworkContainer {
+  padding: 1rem;
+}
+
+.searchResult {
+  margin-bottom: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.homeworkItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.homeworkItem:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+/* 提出済みのスタイル */
+.homeworkItem.submitted {
+  background-color: #f5f5f5;
+  border-color: #4caf50;
+  opacity: 0.8;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.itemTitle {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.itemDeadline {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.submitButton {
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 提出済みボタンのスタイル */
+.submitButtonDisabled {
+  background: #4caf50;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.submitButtonDisabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.noDataMessage {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+  font-size: 0.95rem;
+}

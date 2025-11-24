@@ -1,0 +1,144 @@
+/* 基本のカードスタイル */
+.cardBase {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0; /* スクロールコンテナ内で縮まないように */
+}
+
+.cardBase:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* フォルダカード (横長) */
+.folderCard {
+  width: 240px;
+}
+
+/* プリントカード (縦長) */
+.printCard {
+  width: 140px;
+}
+
+.thumbnail {
+  width: 100%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.folderCard .thumbnail {
+  aspect-ratio: 16 / 9;
+}
+.printCard .thumbnail {
+  aspect-ratio: 100 / 141; /* A4比率に近い */
+}
+.thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info {
+  padding: 12px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+  /* 2行まで表示して、...で省略 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.5em; /* 2行分の高さを確保 (14px * 1.8) */
+}
+
+.subject,
+.date {
+  font-size: 12px;
+  color: #6b7280;
+  display: block;
+}
+
+.subject {
+  margin-bottom: 2px;
+}
+
+
+/* --- サムネイルなしカード (Homework, Q&A, Live) --- */
+
+.infoCard {
+  width: 260px;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  position: relative;
+}
+
+.infoIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+/* 色分け (仮) */
+.infoCard[data-type="homework"] .infoIcon { background-color: #fee2e2; color: #b91c1c; }
+.infoCard[data-type="qna"] .infoIcon { background-color: #dbeafe; color: #1d4ed8; }
+.infoCard[data-type="live"] .infoIcon { background-color: #fef3c7; color: #b45309; }
+
+
+.infoContent {
+  flex-grow: 1;
+  overflow: hidden; /* タイトル省略のため */
+}
+
+.infoCard .title {
+  min-height: 0; /* 高さをリセット */
+  white-space: nowrap; /* 1行で省略 */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block; /* -webkit-box をリセット */
+  margin-bottom: 4px;
+}
+
+/* ステータスバッジ */
+.status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusPending,
+.statusUnanswered {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.statusSubmitted,
+.statusAnswered {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}

@@ -1,0 +1,522 @@
+/* ======================================
+   ホームコンテナ
+====================================== */
+.homeContainer { 
+  padding: 0;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.homeContainer h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 2rem 0;
+  background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ======================================
+   Live配信中セクション
+====================================== */
+.liveSection {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.3);
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.liveSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.liveSectionTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.liveIndicator {
+  font-size: 1.3rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.95); }
+}
+
+.liveCount {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.liveGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  width: 100%; /* 追加 */
+}
+
+.liveCard {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  min-width: 0; /* 追加: グリッドアイテムが縮めるようにする */
+}
+
+.liveCard:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  border-color: white;
+}
+
+.liveCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.subjectBadge {
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tagMath { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+.tagEnglish { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+.tagJapanese { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+.tagScience { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.tagSocial { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+.tagDefault { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+
+.liveBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ef4444;
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.livePulse {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.liveCardTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1.25rem 0;
+  line-height: 1.5;
+}
+
+.liveCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 2px solid #f3f4f6;
+}
+
+.viewersCount {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.joinButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.joinButton:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.noLiveCard {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+}
+
+.noLiveIcon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.noLiveText {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.noLiveSubtext {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ======================================
+   お知らせセクション
+====================================== */
+.noticeSection {
+  margin: 3rem 0;
+  animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+.noticeSectionTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.noticeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  width: 100%; /* 追加 */
+}
+
+.noticeCard {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 4px solid;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  min-width: 0; /* 追加: グリッドアイテムが縮めるようにする */
+}
+
+.noticeCard:hover {
+  transform: translateY(-6px) translateX(4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.noticeCard.noticeImportant {
+  border-left-color: #ef4444;
+  background: linear-gradient(to right, #fef2f2 0%, white 20%);
+}
+
+.noticeCard.noticeNormal {
+  border-left-color: #3b82f6;
+  background: linear-gradient(to right, #eff6ff 0%, white 20%);
+}
+
+.noticeCard.noticeInfo {
+  border-left-color: #10b981;
+  background: linear-gradient(to right, #f0fdf4 0%, white 20%);
+}
+
+.noticeCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.noticeBadge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.noticeBadge.noticeImportant {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.noticeBadge.noticeNormal {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.noticeBadge.noticeInfo {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.noticeSubject {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 700;
+  background: #f3f4f6;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+}
+
+.noticeCardTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+}
+
+.noticeDate {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.noticeDate::before {
+  content: '📅';
+}
+
+/* ======================================
+   アーカイブセクション
+====================================== */
+.archiveTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 3rem 0 1.5rem 0;
+  color: #1f2937;
+}
+
+.subjectRow {
+  margin-bottom: 3rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.subjectTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  color: #374151;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.subjectTitle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.archiveSubTitle, .printSubTitle, .qnaSubTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem 0;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ======================================
+   質問箱リスト
+====================================== */
+.qnaList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.qnaItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: white;
+  border: 2px solid #f3f4f6;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qnaItem:hover {
+  border-color: #667eea;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
+  transform: translateY(-2px);
+}
+
+.qnaStatus {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusAnswered {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.statusUnanswered {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.qnaTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  flex: 1;
+}
+
+.noDataMessage {
+  text-align: center;
+  padding: 3rem;
+  color: #9ca3af;
+  font-size: 1rem;
+  background: #f9fafb;
+  border-radius: 12px;
+}
+
+/* ======================================
+   横スクロール
+====================================== */
+.cardScroller {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 1.5rem;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+  flex-wrap: nowrap; /* 追加: 折り返しを防ぐ */
+}
+
+.cardScroller > * {
+  flex-shrink: 0; /* 追加: 各カードが縮まないようにする */
+}
+
+.cardScroller::-webkit-scrollbar { 
+  height: 10px; 
+}
+
+.cardScroller::-webkit-scrollbar-track { 
+  background: #f3f4f6; 
+  border-radius: 10px; 
+}
+
+.cardScroller::-webkit-scrollbar-thumb { 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px; 
+}
+
+.cardScroller::-webkit-scrollbar-thumb:hover { 
+  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+}
+
+/* ======================================
+   レスポンシブ対応
+====================================== */
+@media (max-width: 768px) {
+  .homeContainer h2 {
+    font-size: 1.5rem;
+  }
+  
+  .liveSection {
+    padding: 1.5rem;
+  }
+  
+  .liveGrid, .noticeGrid {
+    grid-template-columns: 1fr;
+  }
+}

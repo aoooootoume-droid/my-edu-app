@@ -1,0 +1,184 @@
+/* ======================================
+   サイドバーコンテナ
+====================================== */
+.sidebarContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+  gap: 2rem;
+}
+
+/* ======================================
+   メインナビゲーション
+====================================== */
+.navSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6b7280;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.navItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.navItem:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  color: #667eea;
+  transform: translateX(4px);
+}
+
+.navItem:hover::before {
+  transform: scaleY(1);
+}
+
+.navItem.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transform: translateX(4px);
+}
+
+.navItem.active::before {
+  transform: scaleY(0);
+}
+
+/* ======================================
+   教科セクション
+====================================== */
+.subjectSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid #f3f4f6;
+}
+
+.subjectSection::before {
+  content: '教科';
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  padding: 0 1rem;
+}
+
+.subjectItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.subjectItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 0 3px 3px 0;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.subjectItem:hover {
+  background: #f9fafb;
+  color: #667eea;
+  transform: translateX(4px);
+}
+
+.subjectItem:hover::before {
+  transform: scaleY(1);
+}
+
+.subjectItem.active {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  color: #667eea;
+  font-weight: 700;
+  transform: translateX(4px);
+}
+
+.subjectItem.active::before {
+  transform: scaleY(1);
+}
+
+/* ======================================
+   スクロールバーのカスタマイズ
+====================================== */
+.sidebarContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebarContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebarContainer::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.sidebarContainer::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+
+/* ======================================
+   アニメーション
+====================================== */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.navItem, .subjectItem {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.navItem:nth-child(1) { animation-delay: 0.05s; }
+.navItem:nth-child(2) { animation-delay: 0.1s; }
+
+.subjectItem:nth-child(1) { animation-delay: 0.15s; }
+.subjectItem:nth-child(2) { animation-delay: 0.2s; }
+.subjectItem:nth-child(3) { animation-delay: 0.25s; }
+.subjectItem:nth-child(4) { animation-delay: 0.3s; }
+.subjectItem:nth-child(5) { animation-delay: 0.35s; }

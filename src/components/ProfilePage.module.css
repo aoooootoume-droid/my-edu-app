@@ -1,0 +1,79 @@
+.profileContainer {
+  padding: 10px;
+}
+
+/* ★ 1. 戻るボタンのスタイルを DetailPage と同じものに差し替え */
+.backButton {
+  display: inline-flex; 
+  align-items: center;
+  gap: 5px; 
+  background-color: #f0f0f0; 
+  border: 1px solid #ddd;
+  color: #333; 
+  font-size: 14px; 
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px; 
+  padding: 8px 12px; 
+  border-radius: 8px; 
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.backButton:hover {
+  background-color: #e5e5e5;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  text-decoration: none; 
+}
+
+/* (以降のスタイルは変更なし) */
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.profileCard {
+  max-width: 500px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+.avatar {
+  font-size: 60px;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  color: #777;
+  margin: 0 auto 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.userName {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+.userInfo {
+  font-size: 16px;
+  color: #555;
+  margin: 0 0 25px 0;
+}
+.editButton {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  background-color: #e9e9e9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.editButton:hover {
+  background-color: #dcdcdc;
+}

@@ -1,0 +1,507 @@
+import { 
+  collection, 
+  doc, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  getDocs, 
+  getDoc,
+  query, 
+  where, 
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+  arrayUnion,
+  arrayRemove
+} from 'firebase/firestore';
+import { db } from './config';
+
+// ========================================
+// 📁 フォルダ (授業) 関連
+// ========================================
+
+/**
+ * フォルダを追加
+ */
+export const addFolder = async (folderData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'folders'), {
+      ...folderData,
+      type: 'folder',
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('フォルダ追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 全フォルダを取得
+ */
+export const getFolders = async () => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'folders'), orderBy('date', 'desc'))
+    );
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('フォルダ取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * フォルダをリアルタイムで監視
+ */
+export const onFoldersChange = (callback) => {
+  const q = query(collection(db, 'folders'), orderBy('date', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const folders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(folders);
+  });
+};
+
+// ========================================
+// 📄 プリント関連
+// ========================================
+
+export const addPrint = async (printData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'prints'), {
+      ...printData,
+      type: 'print',
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('プリント追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getPrints = async () => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'prints'), orderBy('date', 'desc'))
+    );
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('プリント取得エラー:', error);
+    return [];
+  }
+};
+
+export const onPrintsChange = (callback) => {
+  const q = query(collection(db, 'prints'), orderBy('date', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const prints = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(prints);
+  });
+};
+
+// ========================================
+// 📝 宿題関連
+// ========================================
+
+export const addHomework = async (homeworkData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'homeworks'), {
+      ...homeworkData,
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('宿題追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getHomeworks = async () => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'homeworks'), orderBy('deadline', 'asc'))
+    );
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('宿題取得エラー:', error);
+    return [];
+  }
+};
+
+export const onHomeworksChange = (callback) => {
+  const q = query(collection(db, 'homeworks'), orderBy('deadline', 'asc'));
+  return onSnapshot(q, (snapshot) => {
+    const homeworks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(homeworks);
+  });
+};
+
+// ========================================
+// ❓ 質問箱関連
+// ========================================
+
+export const addQuestion = async (questionData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'qna'), {
+      ...questionData,
+      type: 'qna',
+      status: 'unanswered',
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('質問追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateQuestionStatus = async (questionId, status) => {
+  try {
+    await updateDoc(doc(db, 'qna', questionId), { status });
+    return { success: true };
+  } catch (error) {
+    console.error('質問ステータス更新エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getQuestions = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'qna'));
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('質問取得エラー:', error);
+    return [];
+  }
+};
+
+export const onQuestionsChange = (callback) => {
+  return onSnapshot(collection(db, 'qna'), (snapshot) => {
+    const questions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(questions);
+  });
+};
+
+// ========================================
+// 🎥 Live配信関連
+// ========================================
+
+export const addLiveSession = async (liveData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'liveSessions'), {
+      ...liveData,
+      type: 'live',
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('Live配信追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateLiveStatus = async (liveId, status) => {
+  try {
+    await updateDoc(doc(db, 'liveSessions', liveId), { 
+      status,
+      updatedAt: serverTimestamp()
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Liveステータス更新エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getLiveSessions = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'liveSessions'));
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('Live配信取得エラー:', error);
+    return [];
+  }
+};
+
+export const onLiveSessionsChange = (callback) => {
+  return onSnapshot(collection(db, 'liveSessions'), (snapshot) => {
+    const sessions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(sessions);
+  });
+};
+
+// ========================================
+// 🗑️ 削除機能
+// ========================================
+
+export const deleteItem = async (collectionName, itemId) => {
+  try {
+    await deleteDoc(doc(db, collectionName, itemId));
+    return { success: true };
+  } catch (error) {
+    console.error('削除エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// ========================================
+// 👥 グループ関連
+// ========================================
+
+/**
+ * ランダムな招待コードを生成
+ */
+const generateInviteCode = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
+
+/**
+ * グループを作成
+ */
+export const createGroup = async (groupData, userId) => {
+  try {
+    const inviteCode = generateInviteCode();
+    const docRef = await addDoc(collection(db, 'groups'), {
+      name: groupData.name,
+      description: groupData.description || '',
+      inviteCode,
+      createdBy: userId,
+      members: [userId],
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id, inviteCode };
+  } catch (error) {
+    console.error('グループ作成エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 招待コードでグループに参加
+ */
+export const joinGroupByCode = async (inviteCode, userId) => {
+  try {
+    const q = query(collection(db, 'groups'), where('inviteCode', '==', inviteCode));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      return { success: false, error: '招待コードが無効です' };
+    }
+    
+    const groupDoc = querySnapshot.docs[0];
+    const groupData = groupDoc.data();
+    
+    if (groupData.members.includes(userId)) {
+      return { success: false, error: '既にこのグループに参加しています' };
+    }
+    
+    await updateDoc(doc(db, 'groups', groupDoc.id), {
+      members: arrayUnion(userId)
+    });
+    
+    return { success: true, groupId: groupDoc.id, groupName: groupData.name };
+  } catch (error) {
+    console.error('グループ参加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * ユーザーが参加しているグループ一覧を取得
+ */
+export const getUserGroups = async (userId) => {
+  try {
+    const q = query(
+      collection(db, 'groups'), 
+      where('members', 'array-contains', userId)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('グループ取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * グループ情報を取得
+ */
+export const getGroup = async (groupId) => {
+  try {
+    const docSnap = await getDoc(doc(db, 'groups', groupId));
+    if (docSnap.exists()) {
+      return { success: true, data: { id: docSnap.id, ...docSnap.data() } };
+    }
+    return { success: false, error: 'グループが見つかりません' };
+  } catch (error) {
+    console.error('グループ情報取得エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * グループからメンバーを削除（退出）
+ */
+export const leaveGroup = async (groupId, userId) => {
+  try {
+    await updateDoc(doc(db, 'groups', groupId), {
+      members: arrayRemove(userId)
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('グループ退出エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// ========================================
+// 📋 グループカード関連
+// ========================================
+
+/**
+ * グループにカードを追加
+ */
+export const addGroupCard = async (groupId, userId, cardData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'groupCards'), {
+      groupId,
+      userId,
+      userName: cardData.userName || '匿名',
+      type: cardData.type,
+      title: cardData.title,
+      subject: cardData.subject,
+      date: cardData.date,
+      thumbnail: cardData.thumbnail || null,
+      content: cardData.content || '',
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('グループカード追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * グループのカード一覧を取得
+ */
+export const getGroupCards = async (groupId) => {
+  try {
+    const q = query(
+      collection(db, 'groupCards'),
+      where('groupId', '==', groupId),
+      orderBy('createdAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('グループカード取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * グループカードをリアルタイムで監視
+ */
+export const onGroupCardsChange = (groupId, callback) => {
+  const q = query(
+    collection(db, 'groupCards'),
+    where('groupId', '==', groupId),
+    orderBy('createdAt', 'desc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const cards = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(cards);
+  });
+};
+
+/**
+ * グループカードを削除
+ */
+export const deleteGroupCard = async (cardId) => {
+  try {
+    await deleteDoc(doc(db, 'groupCards', cardId));
+    return { success: true };
+  } catch (error) {
+    console.error('グループカード削除エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// ========================================
+// 📁 グループファイル関連
+// ========================================
+
+/**
+ * グループにファイルを追加
+ */
+export const addGroupFile = async (groupId, userId, fileData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'groupFiles'), {
+      groupId,
+      userId,
+      userName: fileData.userName || '匿名',
+      fileName: fileData.fileName,
+      fileUrl: fileData.fileUrl,
+      fileType: fileData.fileType,
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('グループファイル追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * グループのファイル一覧を取得
+ */
+export const getGroupFiles = async (groupId) => {
+  try {
+    const q = query(
+      collection(db, 'groupFiles'),
+      where('groupId', '==', groupId),
+      orderBy('createdAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('グループファイル取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * グループファイルをリアルタイムで監視
+ */
+export const onGroupFilesChange = (groupId, callback) => {
+  const q = query(
+    collection(db, 'groupFiles'),
+    where('groupId', '==', groupId),
+    orderBy('createdAt', 'desc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const files = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(files);
+  });
+};
+
+/**
+ * グループファイルを削除
+ */
+export const deleteGroupFile = async (fileId) => {
+  try {
+    await deleteDoc(doc(db, 'groupFiles', fileId));
+    return { success: true };
+  } catch (error) {
+    console.error('グループファイル削除エラー:', error);
+    return { success: false, error: error.message };
+  }
+};

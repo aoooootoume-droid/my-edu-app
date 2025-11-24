@@ -1,0 +1,106 @@
+.qnaContainer {
+  /* (空) */
+}
+
+/* --- 質問投稿フォーム --- */
+.postForm {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+.formTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+.formTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box; /* padding が幅に影響しないように */
+  margin-bottom: 10px;
+  resize: vertical;
+  min-height: 60px;
+}
+.formButton {
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #10b981; /* 緑色 */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.formButton:hover {
+  background-color: #059669;
+}
+.formButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* --- 検索結果 --- */
+.searchResult {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-left: 5px;
+  color: #333;
+}
+
+/* --- 質問リスト --- */
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qnaItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 15px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.qnaItem:hover {
+  background-color: #fcfcfc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+.itemStatus {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  margin-top: 2px; /* タイトルとの位置調整 */
+}
+.statusAnswered { color: #15803d; background-color: #dcfce7; }
+.statusUnanswered { color: #b91c1c; background-color: #fee2e2; }
+
+.itemTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.5;
+}
+
+.noDataMessage {
+  font-size: 16px;
+  color: #555;
+  text-align: center;
+  margin-top: 20px;
+}
