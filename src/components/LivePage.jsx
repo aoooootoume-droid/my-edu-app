@@ -3,14 +3,17 @@ import styles from './LivePage.module.css';
 import { 
   Play, 
   Stop, 
-  Monitor, 
-  Video, 
+  Monitor,
+  MonitorPlay,
   VideoCamera,
   VideoCameraSlash,
   Microphone,
   MicrophoneSlash,
   PaperPlaneRight,
-  X
+  X,
+  Users,
+  Clock,
+  Gear
 } from '@phosphor-icons/react';
 import {
   startLiveStream,
@@ -25,19 +28,22 @@ import {
 function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, currentUser }) {
   const [selectedLive, setSelectedLive] = useState(null);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isViewing, setIsViewing] = useState(false);
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
+  const [viewerCount, setViewerCount] = useState(0);
+  const [streamDuration, setStreamDuration] = useState(0);
+  const [error, setError] = useState(null);
   
   const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
   const peerConnectionRef = useRef(null);
   const cleanupRef = useRef(null);
+  const streamStartTimeRef = useRef(null);
+  const durationIntervalRef = useRef(null);
 
   const term = searchTerm.toLowerCase();
 
@@ -63,6 +69,27 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     return () => unsubscribe();
   }, [selectedLive]);
 
+  // 配信時間をカウント
+  useEffect(() => {
+    if (isStreaming && streamStartTimeRef.current) {
+      durationIntervalRef.current = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - streamStartTimeRef.current) / 1000);
+        setStreamDuration(elapsed);
+      }, 1000);
+    } else {
+      if (durationIntervalRef.current) {
+        clearInterval(durationIntervalRef.current);
+      }
+      setStreamDuration(0);
+    }
+
+    return () => {
+      if (durationIntervalRef.current) {
+        clearInterval(durationIntervalRef.current);
+      }
+    };
+  }, [isStreaming]);
+
   // ビデオ要素にストリームを設定
   useEffect(() => {
     if (localVideoRef.current && localStream) {
@@ -70,31 +97,64 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     }
   }, [localStream]);
 
-  useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
-      remoteVideoRef.current.srcObject = remoteStream;
+  // プレビューを開始（配信前の確認）
+  const handleStartPreview = async (liveItem) => {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      });
+
+      setLocalStream(stream);
+      setIsPreviewing(true);
+      setSelectedLive(liveItem);
+    } catch (err) {
+      console.error('カメラ・マイクのアクセスエラー:', err);
+      if (err.name === 'NotAllowedError') {
+        setError('カメラとマイクへのアクセスが拒否されました。ブラウザの設定を確認してください。');
+      } else if (err.name === 'NotFoundError') {
+        setError('カメラまたはマイクが見つかりません。デバイスを接続してください。');
+      } else {
+        setError('カメラ・マイクの起動に失敗しました: ' + err.message);
+      }
     }
-  }, [remoteStream]);
+  };
+
+  // プレビューをキャンセル
+  const handleCancelPreview = () => {
+    if (localStream) {
+      localStream.getTracks().forEach(track => track.stop());
+    }
+    setLocalStream(null);
+    setIsPreviewing(false);
+    setSelectedLive(null);
+    setError(null);
+  };
 
   // 配信を開始
-  const handleStartStreaming = async (liveItem) => {
+  const handleStartStreaming = async () => {
+    if (!localStream || !selectedLive) return;
+
     const result = await startLiveStream(
-      liveItem.id,
+      selectedLive.id,
       currentUser.uid,
       currentUser.displayName || currentUser.email
     );
 
     if (result.success) {
-      setLocalStream(result.stream);
       setIsStreaming(true);
-      setSelectedLive(liveItem);
+      setIsPreviewing(false);
+      streamStartTimeRef.current = Date.now();
     } else {
-      alert('配信の開始に失敗しました: ' + result.error);
+      setError('配信の開始に失敗しました: ' + result.error);
     }
   };
 
   // 配信を停止
   const handleStopStreaming = async () => {
+    if (!confirm('配信を終了しますか？')) return;
+
     if (localStream) {
       localStream.getTracks().forEach(track => track.stop());
     }
@@ -106,38 +166,10 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     }
     setLocalStream(null);
     setIsStreaming(false);
+    setIsPreviewing(false);
     setSelectedLive(null);
     setIsSharingScreen(false);
-  };
-
-  // 視聴を開始
-  const handleStartViewing = async (liveItem) => {
-    const viewerId = `viewer_${currentUser.uid}_${Date.now()}`;
-    
-    const result = await joinLiveStream(liveItem.id, viewerId);
-
-    if (result.success) {
-      setRemoteStream(result.remoteStream);
-      peerConnectionRef.current = result.peerConnection;
-      cleanupRef.current = result.cleanup;
-      setIsViewing(true);
-      setSelectedLive(liveItem);
-    } else {
-      alert('視聴の開始に失敗しました: ' + result.error);
-    }
-  };
-
-  // 視聴を停止
-  const handleStopViewing = () => {
-    if (peerConnectionRef.current) {
-      peerConnectionRef.current.close();
-    }
-    if (cleanupRef.current) {
-      cleanupRef.current();
-    }
-    setRemoteStream(null);
-    setIsViewing(false);
-    setSelectedLive(null);
+    streamStartTimeRef.current = null;
   };
 
   // 画面共有を開始
@@ -147,7 +179,6 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     if (result.success) {
       const videoTrack = result.stream.getVideoTracks()[0];
       
-      // 現在のビデオトラックを置き換え
       if (localStream) {
         const sender = peerConnectionRef.current
           ?.getSenders()
@@ -157,7 +188,6 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
           sender.replaceTrack(videoTrack);
         }
 
-        // ローカルストリームを更新
         const oldVideoTrack = localStream.getVideoTracks()[0];
         oldVideoTrack.stop();
         localStream.removeTrack(oldVideoTrack);
@@ -166,12 +196,11 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
 
       setIsSharingScreen(true);
 
-      // 画面共有が終了したら元に戻す
       videoTrack.onended = () => {
         handleStopScreenShare();
       };
     } else {
-      alert('画面共有の開始に失敗しました: ' + result.error);
+      setError('画面共有の開始に失敗しました: ' + result.error);
     }
   };
 
@@ -179,24 +208,27 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
   const handleStopScreenShare = async () => {
     if (!localStream) return;
 
-    // カメラに戻す
-    const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
-    const videoTrack = newStream.getVideoTracks()[0];
+    try {
+      const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const videoTrack = newStream.getVideoTracks()[0];
 
-    const sender = peerConnectionRef.current
-      ?.getSenders()
-      .find(s => s.track?.kind === 'video');
-    
-    if (sender) {
-      sender.replaceTrack(videoTrack);
+      const sender = peerConnectionRef.current
+        ?.getSenders()
+        .find(s => s.track?.kind === 'video');
+      
+      if (sender) {
+        sender.replaceTrack(videoTrack);
+      }
+
+      const oldVideoTrack = localStream.getVideoTracks()[0];
+      oldVideoTrack.stop();
+      localStream.removeTrack(oldVideoTrack);
+      localStream.addTrack(videoTrack);
+
+      setIsSharingScreen(false);
+    } catch (err) {
+      setError('カメラへの切り替えに失敗しました: ' + err.message);
     }
-
-    const oldVideoTrack = localStream.getVideoTracks()[0];
-    oldVideoTrack.stop();
-    localStream.removeTrack(oldVideoTrack);
-    localStream.addTrack(videoTrack);
-
-    setIsSharingScreen(false);
   };
 
   // マイクのミュート切り替え
@@ -226,11 +258,19 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     await sendChatMessage(
       selectedLive.id,
       currentUser.uid,
-      currentUser.displayName || currentUser.email || '匿名',
+      currentUser.displayName || currentUser.email || '先生',
       chatInput
     );
 
     setChatInput('');
+  };
+
+  // 配信時間をフォーマット
+  const formatDuration = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const getStatusText = (item) => {
@@ -247,79 +287,172 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     return '';
   };
 
-  // 配信・視聴中の画面
-  if (selectedLive && (isStreaming || isViewing)) {
+  // プレビュー画面（配信開始前）
+  if (isPreviewing) {
+    return (
+      <div className={styles.previewContainer}>
+        <div className={styles.previewHeader}>
+          <h3>配信プレビュー</h3>
+          <p>カメラとマイクの確認をしてください</p>
+        </div>
+
+        <div className={styles.previewContent}>
+          <div className={styles.previewVideo}>
+            <video
+              ref={localVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className={styles.videoPlayer}
+            />
+            <div className={styles.previewControls}>
+              <button
+                className={`${styles.previewControlButton} ${isMuted ? styles.active : ''}`}
+                onClick={toggleMute}
+              >
+                {isMuted ? <MicrophoneSlash size={24} /> : <Microphone size={24} />}
+                <span>{isMuted ? 'ミュート中' : 'マイクON'}</span>
+              </button>
+              <button
+                className={`${styles.previewControlButton} ${isVideoOff ? styles.active : ''}`}
+                onClick={toggleVideo}
+              >
+                {isVideoOff ? <VideoCameraSlash size={24} /> : <VideoCamera size={24} />}
+                <span>{isVideoOff ? 'カメラOFF' : 'カメラON'}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.previewInfo}>
+            <h4>{selectedLive?.title}</h4>
+            <p className={styles.previewSubject}>{selectedLive?.subject}</p>
+            
+            {error && (
+              <div className={styles.errorMessage}>
+                <strong>エラー:</strong> {error}
+              </div>
+            )}
+
+            <div className={styles.previewActions}>
+              <button
+                className={styles.cancelButton}
+                onClick={handleCancelPreview}
+              >
+                キャンセル
+              </button>
+              <button
+                className={styles.startStreamButton}
+                onClick={handleStartStreaming}
+                disabled={!!error}
+              >
+                <Play size={20} weight="fill" />
+                配信を開始
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 配信中の画面
+  if (selectedLive && isStreaming) {
     return (
       <div className={styles.streamContainer}>
         <div className={styles.streamHeader}>
-          <h3>{selectedLive.title}</h3>
-          <button 
-            className={styles.closeButton}
-            onClick={isStreaming ? handleStopStreaming : handleStopViewing}
-          >
-            <X size={24} />
-          </button>
+          <div className={styles.headerLeft}>
+            <div className={styles.liveIndicator}>
+              <span className={styles.liveDot}></span>
+              配信中
+            </div>
+            <h3>{selectedLive.title}</h3>
+          </div>
+          <div className={styles.headerRight}>
+            <div className={styles.statsItem}>
+              <Clock size={20} weight="fill" />
+              <span>{formatDuration(streamDuration)}</span>
+            </div>
+            <div className={styles.statsItem}>
+              <Users size={20} weight="fill" />
+              <span>{viewerCount}人</span>
+            </div>
+          </div>
         </div>
 
         <div className={styles.streamContent}>
           <div className={styles.videoArea}>
-            {isStreaming ? (
-              <video
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                muted
-                className={styles.videoPlayer}
-              />
-            ) : (
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                playsInline
-                className={styles.videoPlayer}
-              />
-            )}
+            <video
+              ref={localVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className={styles.videoPlayer}
+            />
 
-            {isStreaming && (
-              <div className={styles.streamControls}>
-                <button
-                  className={`${styles.controlButton} ${isMuted ? styles.active : ''}`}
-                  onClick={toggleMute}
-                >
-                  {isMuted ? <MicrophoneSlash size={24} /> : <Microphone size={24} />}
-                </button>
-                <button
-                  className={`${styles.controlButton} ${isVideoOff ? styles.active : ''}`}
-                  onClick={toggleVideo}
-                >
-                  {isVideoOff ? <VideoCameraSlash size={24} /> : <VideoCamera size={24} />}
-                </button>
-                <button
-                  className={`${styles.controlButton} ${isSharingScreen ? styles.active : ''}`}
-                  onClick={isSharingScreen ? handleStopScreenShare : handleStartScreenShare}
-                >
-                  <Monitor size={24} />
-                </button>
-                <button
-                  className={`${styles.controlButton} ${styles.stopButton}`}
-                  onClick={handleStopStreaming}
-                >
-                  <Stop size={24} />
-                  配信終了
-                </button>
+            <div className={styles.streamControls}>
+              <button
+                className={`${styles.controlButton} ${isMuted ? styles.active : ''}`}
+                onClick={toggleMute}
+                title={isMuted ? 'ミュート解除' : 'ミュート'}
+              >
+                {isMuted ? <MicrophoneSlash size={24} /> : <Microphone size={24} />}
+              </button>
+              <button
+                className={`${styles.controlButton} ${isVideoOff ? styles.active : ''}`}
+                onClick={toggleVideo}
+                title={isVideoOff ? 'カメラON' : 'カメラOFF'}
+              >
+                {isVideoOff ? <VideoCameraSlash size={24} /> : <VideoCamera size={24} />}
+              </button>
+              <button
+                className={`${styles.controlButton} ${isSharingScreen ? styles.active : ''}`}
+                onClick={isSharingScreen ? handleStopScreenShare : handleStartScreenShare}
+                title={isSharingScreen ? '画面共有を停止' : '画面を共有'}
+              >
+                {isSharingScreen ? <MonitorPlay size={24} /> : <Monitor size={24} />}
+              </button>
+              <button
+                className={`${styles.controlButton} ${styles.stopButton}`}
+                onClick={handleStopStreaming}
+              >
+                <Stop size={24} weight="fill" />
+                <span>配信終了</span>
+              </button>
+            </div>
+
+            {error && (
+              <div className={styles.streamError}>
+                {error}
               </div>
             )}
           </div>
 
           <div className={styles.chatArea}>
-            <div className={styles.chatHeader}>チャット</div>
+            <div className={styles.chatHeader}>
+              <span>チャット</span>
+              <span className={styles.chatCount}>{chatMessages.length}件</span>
+            </div>
             <div className={styles.chatMessages}>
-              {chatMessages.map(msg => (
-                <div key={msg.id} className={styles.chatMessage}>
-                  <span className={styles.chatUser}>{msg.userName}:</span>
-                  <span className={styles.chatText}>{msg.message}</span>
+              {chatMessages.length === 0 ? (
+                <div className={styles.chatEmpty}>
+                  まだメッセージがありません
                 </div>
-              ))}
+              ) : (
+                chatMessages.map(msg => (
+                  <div key={msg.id} className={styles.chatMessage}>
+                    <div className={styles.messageHeader}>
+                      <span className={styles.chatUser}>{msg.userName}</span>
+                      <span className={styles.messageTime}>
+                        {msg.timestamp?.toDate().toLocaleTimeString('ja-JP', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </span>
+                    </div>
+                    <span className={styles.chatText}>{msg.message}</span>
+                  </div>
+                ))
+              )}
             </div>
             <div className={styles.chatInput}>
               <input
@@ -330,7 +463,7 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
                 placeholder="メッセージを入力..."
               />
               <button onClick={handleSendMessage}>
-                <PaperPlaneRight size={20} />
+                <PaperPlaneRight size={20} weight="bold" />
               </button>
             </div>
           </div>
@@ -364,22 +497,13 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
               
               <div className={styles.itemActions}>
                 {item.status === 'live' && (
-                  <>
-                    <button
-                      className={styles.startButton}
-                      onClick={() => handleStartStreaming(item)}
-                    >
-                      <Play size={20} weight="fill" />
-                      配信開始
-                    </button>
-                    <button
-                      className={styles.viewButton}
-                      onClick={() => handleStartViewing(item)}
-                    >
-                      <Video size={20} weight="fill" />
-                      視聴
-                    </button>
-                  </>
+                  <button
+                    className={styles.startButton}
+                    onClick={() => handleStartPreview(item)}
+                  >
+                    <Play size={20} weight="fill" />
+                    配信開始
+                  </button>
                 )}
                 {item.status !== 'live' && (
                   <button
