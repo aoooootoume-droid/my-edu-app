@@ -28,10 +28,12 @@ import {
 function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, currentUser }) {
   const [selectedLive, setSelectedLive] = useState(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [liveName, setLiveName] = useState('');
   const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
@@ -42,6 +44,7 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
   const [error, setError] = useState(null);
   
   const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
   const peerConnectionRef = useRef(null);
   const cleanupRef = useRef(null);
   const streamStartTimeRef = useRef(null);
@@ -99,6 +102,32 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     }
   }, [localStream]);
 
+  useEffect(() => {
+    if (remoteVideoRef.current && remoteStream) {
+      remoteVideoRef.current.srcObject = remoteStream;
+    }
+  }, [remoteStream]);
+
+  // 視聴を開始
+  const handleJoinLive = async (liveItem) => {
+    setSelectedLive(liveItem);
+    setIsViewing(true);
+    // 実際のWebRTC接続は省略（簡易版として配信中の表示のみ）
+  };
+
+  // 視聴を終了
+  const handleLeaveViewing = () => {
+    if (peerConnectionRef.current) {
+      peerConnectionRef.current.close();
+    }
+    if (cleanupRef.current) {
+      cleanupRef.current();
+    }
+    setRemoteStream(null);
+    setIsViewing(false);
+    setSelectedLive(null);
+  };
+
   // 配信作成モーダルを開く
   const handleOpenCreateModal = () => {
     setShowCreateModal(true);
@@ -120,17 +149,36 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
       return;
     }
 
-    // 一時的なLiveオブジェクトを作成
-    const newLive = {
-      id: `temp_${Date.now()}`,
-      title: liveName,
-      subject: filterSubject || '全般',
-      status: 'live',
-      date: new Date().toLocaleDateString('ja-JP')
-    };
+    // Firestoreに配信情報を保存
+    try {
+      const { addLiveSession } = await import('../firebase/database');
+      const result = await addLiveSession({
+        title: liveName,
+        subject: filterSubject || '全般',
+        status: 'live',
+        date: new Date().toLocaleDateString('ja-JP'),
+        hostId: currentUser.uid,
+        hostName: currentUser.displayName || currentUser.email || '先生'
+      });
 
-    setShowCreateModal(false);
-    handleStartPreview(newLive);
+      if (result.success) {
+        const newLive = {
+          id: result.id,
+          title: liveName,
+          subject: filterSubject || '全般',
+          status: 'live',
+          date: new Date().toLocaleDateString('ja-JP')
+        };
+
+        setShowCreateModal(false);
+        handleStartPreview(newLive);
+      } else {
+        setError('配信の作成に失敗しました: ' + result.error);
+      }
+    } catch (err) {
+      console.error('配信作成エラー:', err);
+      setError('配信の作成に失敗しました: ' + err.message);
+    }
   };
 
   // プレビューを開始（配信前の確認）
@@ -197,7 +245,9 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
       localStream.getTracks().forEach(track => track.stop());
     }
     if (selectedLive) {
-      await endLiveStream(selectedLive.id);
+      // Firestoreの配信ステータスを更新
+      const { updateLiveStatus } = await import('../firebase/database');
+      await updateLiveStatus(selectedLive.id, 'finished');
     }
     if (cleanupRef.current) {
       cleanupRef.current();
@@ -324,6 +374,84 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     if (status === 'finished') return styles.statusFinished;
     return '';
   };
+
+  // 視聴中の画面
+  if (isViewing && selectedLive) {
+    return (
+      <div className={styles.streamContainer}>
+        <div className={styles.streamHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.liveIndicator}>
+              <span className={styles.liveDot}></span>
+              視聴中
+            </div>
+            <h3>{selectedLive.title}</h3>
+          </div>
+          <button 
+            className={styles.leaveButton}
+            onClick={handleLeaveViewing}
+          >
+            退出
+          </button>
+        </div>
+
+        <div className={styles.streamContent}>
+          <div className={styles.videoArea}>
+            <video
+              ref={remoteVideoRef}
+              autoPlay
+              playsInline
+              className={styles.videoPlayer}
+            />
+            <div className={styles.viewerBadge}>
+              視聴モード
+            </div>
+          </div>
+
+          <div className={styles.chatArea}>
+            <div className={styles.chatHeader}>
+              <span>チャット</span>
+              <span className={styles.chatCount}>{chatMessages.length}件</span>
+            </div>
+            <div className={styles.chatMessages}>
+              {chatMessages.length === 0 ? (
+                <div className={styles.chatEmpty}>
+                  まだメッセージがありません
+                </div>
+              ) : (
+                chatMessages.map(msg => (
+                  <div key={msg.id} className={styles.chatMessage}>
+                    <div className={styles.messageHeader}>
+                      <span className={styles.chatUser}>{msg.userName}</span>
+                      <span className={styles.messageTime}>
+                        {msg.timestamp?.toDate().toLocaleTimeString('ja-JP', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </span>
+                    </div>
+                    <span className={styles.chatText}>{msg.message}</span>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className={styles.chatInput}>
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder="メッセージを入力..."
+              />
+              <button onClick={handleSendMessage}>
+                <PaperPlaneRight size={20} weight="bold" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // プレビュー画面（配信開始前）
   if (isPreviewing) {
@@ -550,7 +678,16 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
               </div>
               
               <div className={styles.itemActions}>
-                {item.status === 'live' && (
+                {item.status === 'live' && item.hostId !== currentUser.uid && (
+                  <button
+                    className={styles.joinButton}
+                    onClick={() => handleJoinLive(item)}
+                  >
+                    <Play size={16} weight="fill" />
+                    視聴する
+                  </button>
+                )}
+                {item.status === 'live' && item.hostId === currentUser.uid && (
                   <button
                     className={styles.joinButton}
                     onClick={() => handleStartPreview(item)}
