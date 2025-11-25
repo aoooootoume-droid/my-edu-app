@@ -29,6 +29,8 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
   const [selectedLive, setSelectedLive] = useState(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [liveName, setLiveName] = useState('');
   const [localStream, setLocalStream] = useState(null);
   const [isSharingScreen, setIsSharingScreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -47,7 +49,7 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
 
   const term = searchTerm.toLowerCase();
 
-  const filteredItems = liveSessions
+  const displayItems = liveSessions
     .filter(item => {
       const subjectMatch = filterSubject ? item.subject === filterSubject : true;
       const titleMatch = item.title.toLowerCase().includes(term);
@@ -97,10 +99,46 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
     }
   }, [localStream]);
 
+  // 配信作成モーダルを開く
+  const handleOpenCreateModal = () => {
+    setShowCreateModal(true);
+    setLiveName('');
+    setError(null);
+  };
+
+  // 配信作成モーダルを閉じる
+  const handleCloseCreateModal = () => {
+    setShowCreateModal(false);
+    setLiveName('');
+    setError(null);
+  };
+
+  // 配信を作成してプレビュー開始
+  const handleCreateAndPreview = async () => {
+    if (!liveName.trim()) {
+      setError('配信名を入力してください');
+      return;
+    }
+
+    // 一時的なLiveオブジェクトを作成
+    const newLive = {
+      id: `temp_${Date.now()}`,
+      title: liveName,
+      subject: filterSubject || '全般',
+      status: 'live',
+      date: new Date().toLocaleDateString('ja-JP')
+    };
+
+    setShowCreateModal(false);
+    handleStartPreview(newLive);
+  };
+
   // プレビューを開始（配信前の確認）
   const handleStartPreview = async (liveItem) => {
     setError(null);
+    
     try {
+      // カメラと音声を取得
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true
@@ -110,13 +148,13 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
       setIsPreviewing(true);
       setSelectedLive(liveItem);
     } catch (err) {
-      console.error('カメラ・マイクのアクセスエラー:', err);
+      console.error('メディアアクセスエラー:', err);
       if (err.name === 'NotAllowedError') {
         setError('カメラとマイクへのアクセスが拒否されました。ブラウザの設定を確認してください。');
       } else if (err.name === 'NotFoundError') {
         setError('カメラまたはマイクが見つかりません。デバイスを接続してください。');
       } else {
-        setError('カメラ・マイクの起動に失敗しました: ' + err.message);
+        setError('起動に失敗しました: ' + err.message);
       }
     }
   };
@@ -405,12 +443,16 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
                 {isVideoOff ? <VideoCameraSlash size={24} /> : <VideoCamera size={24} />}
               </button>
               <button
-                className={`${styles.controlButton} ${isSharingScreen ? styles.active : ''}`}
+                className={`${styles.controlButton} ${styles.shareButton} ${isSharingScreen ? styles.active : ''}`}
                 onClick={isSharingScreen ? handleStopScreenShare : handleStartScreenShare}
                 title={isSharingScreen ? '画面共有を停止' : '画面を共有'}
               >
-                {isSharingScreen ? <MonitorPlay size={24} /> : <Monitor size={24} />}
+                {isSharingScreen ? <MonitorPlay size={24} weight="fill" /> : <Monitor size={24} />}
+                <span className={styles.shareText}>
+                  {isSharingScreen ? '画面共有中' : '画面を共有'}
+                </span>
               </button>
+              <div className={styles.controlDivider}></div>
               <button
                 className={`${styles.controlButton} ${styles.stopButton}`}
                 onClick={handleStopStreaming}
@@ -481,15 +523,27 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
         </p>
       )}
 
+      {/* 配信開始ボタン */}
+      <div className={styles.createButtonWrapper}>
+        <button 
+          className={styles.createLiveButton}
+          onClick={handleOpenCreateModal}
+        >
+          <Play size={20} weight="fill" />
+          新しい配信を開始
+        </button>
+      </div>
+
       <div className={styles.listContainer}>
-        {filteredItems.length > 0 ? (
-          filteredItems.map(item => (
+        {displayItems.length > 0 ? (
+          displayItems.map(item => (
             <div 
               key={item.id} 
               className={styles.liveItem}
             >
               <div className={styles.itemInfo}>
                 <span className={styles.itemTitle}>{item.title}</span>
+                <span className={styles.itemSubject}>{item.subject}</span>
                 <span className={`${styles.itemStatus} ${getStatusClass(item.status)}`}>
                   {getStatusText(item)}
                 </span>
@@ -498,11 +552,11 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
               <div className={styles.itemActions}>
                 {item.status === 'live' && (
                   <button
-                    className={styles.startButton}
+                    className={styles.joinButton}
                     onClick={() => handleStartPreview(item)}
                   >
-                    <Play size={20} weight="fill" />
-                    配信開始
+                    <Play size={16} weight="fill" />
+                    配信に参加
                   </button>
                 )}
                 {item.status !== 'live' && (
@@ -520,11 +574,76 @@ function LivePage({ filterSubject, searchTerm = '', liveSessions, onCardClick, c
           <p className={styles.noDataMessage}>
             {searchTerm 
               ? `「${searchTerm}」に一致するLive配信はありません。` 
-              : 'この教科のLive配信はありません。'
+              : filterSubject 
+                ? `${filterSubject}のLive配信はありません。`
+                : 'Live配信はありません。'
             }
           </p>
         )}
       </div>
+
+      {/* 配信作成モーダル */}
+      {showCreateModal && (
+        <>
+          <div 
+            className={styles.modalOverlay} 
+            onClick={handleCloseCreateModal}
+          />
+          <div className={styles.createModal}>
+            <div className={styles.modalHeader}>
+              <h3>新しい配信を開始</h3>
+              <button 
+                className={styles.modalCloseButton}
+                onClick={handleCloseCreateModal}
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.formGroup}>
+                <label>配信名 *</label>
+                <input
+                  type="text"
+                  value={liveName}
+                  onChange={(e) => setLiveName(e.target.value)}
+                  placeholder={`${filterSubject || '教科名'}の授業`}
+                  maxLength={50}
+                  autoFocus
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>教科</label>
+                <input
+                  type="text"
+                  value={filterSubject || ''}
+                  disabled
+                  className={styles.disabledInput}
+                />
+              </div>
+              {error && (
+                <div className={styles.modalError}>
+                  {error}
+                </div>
+              )}
+            </div>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelButton}
+                onClick={handleCloseCreateModal}
+              >
+                キャンセル
+              </button>
+              <button
+                className={styles.modalStartButton}
+                onClick={handleCreateAndPreview}
+              >
+                <Play size={20} weight="fill" />
+                配信を開始
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
