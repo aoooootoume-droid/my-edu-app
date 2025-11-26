@@ -4,97 +4,332 @@
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem;
 }
 
 .loginCard {
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ロゴセクション */
+.logoSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logoIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .title {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #333;
-  font-size: 1.8rem;
+  margin: 0 0 0.5rem 0;
+  color: #1a202c;
+  font-size: 1.75rem;
+  font-weight: 700;
 }
 
-.form {
+.subtitle {
+  margin: 0;
+  color: #718096;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* フォーム */
+.formContainer {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
 .inputGroup label {
-  margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #555;
-  font-size: 0.9rem;
+  color: #2d3748;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
 }
 
-.inputGroup input,
-.select {
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 2.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: all 0.2s ease;
+  background-color: #f7fafc;
 }
 
-.inputGroup input:focus,
-.select:focus {
+.inputWrapper input:focus {
   outline: none;
   border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.select {
+.inputWrapper input::placeholder {
+  color: #a0aec0;
+}
+
+.inputError {
+  border-color: #fc8181 !important;
+  background-color: #fff5f5 !important;
+}
+
+.inputError:focus {
+  border-color: #f56565 !important;
+  box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1) !important;
+}
+
+.fieldError {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e53e3e;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fieldError svg {
+  flex-shrink: 0;
+}
+
+/* パスワード強度インジケーター */
+.passwordStrength {
+  margin-top: 0.75rem;
+  animation: slideDown 0.3s ease;
+}
+
+.strengthBar {
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.strengthProgress {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 3px;
+}
+
+.strengthLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.strengthSuggestions {
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.suggestion {
+  font-size: 0.8rem;
+  color: #4a5568;
+  margin: 0.25rem 0;
+  line-height: 1.4;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
   cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.togglePassword:hover {
+  background-color: #f7fafc;
+}
+
+/* 役割選択 */
+.roleSelector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.roleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #f7fafc;
+  color: #4a5568;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.roleButton:hover {
+  border-color: #cbd5e0;
   background-color: white;
 }
 
-.error {
-  background-color: #fee;
-  color: #c33;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-align: center;
+.roleButton.roleActive {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+/* エラー表示 */
+.errorAlert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+  color: #c33;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  border: 1px solid #fcc;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* 送信ボタン */
 .submitButton {
-  padding: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
   margin-top: 0.5rem;
 }
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .submitButton:disabled {
-  opacity: 0.6;
+  opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
 }
 
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 区切り線 */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0 1rem 0;
+  color: #a0aec0;
+  font-size: 0.875rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.divider span {
+  padding: 0 1rem;
+  font-weight: 500;
+}
+
+/* モード切替 */
 .toggleMode {
   text-align: center;
-  margin-top: 1rem;
 }
 
 .toggleButton {
@@ -103,16 +338,54 @@
   color: #667eea;
   cursor: pointer;
   font-size: 0.9rem;
-  text-decoration: underline;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .toggleButton:hover {
   color: #764ba2;
+  background-color: rgba(102, 126, 234, 0.05);
 }
 
-.demoInfo {
+/* フッター */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   margin-top: 1.5rem;
-  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  color: #718096;
   font-size: 0.85rem;
-  color: #888;
+}
+
+.footer svg {
+  flex-shrink: 0;
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+  .loginCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .logoIcon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .roleSelector {
+    grid-template-columns: 1fr;
+  }
 }

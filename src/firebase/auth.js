@@ -7,6 +7,57 @@ import {
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from './config';
 
+// ============================================
+// メールドメイン制限設定
+// ============================================
+
+// 許可するドメインのリスト（必要に応じて追加・削除してください）
+const ALLOWED_DOMAINS = [
+  'school.jp',
+  'school.ed.jp',
+  'edu.jp',
+  // 他に許可したいドメインを追加
+];
+
+// すべてのドメインを許可する場合は true に設定
+const ALLOW_ALL_DOMAINS = false;
+
+/**
+ * メールアドレスのドメインが許可されているかチェック
+ * @param {string} email - チェックするメールアドレス
+ * @returns {object} - { valid: boolean, error: string }
+ */
+const validateEmailDomain = (email) => {
+  // すべてのドメインを許可する設定の場合はスキップ
+  if (ALLOW_ALL_DOMAINS) {
+    return { valid: true, error: null };
+  }
+
+  if (!email || !email.includes('@')) {
+    return { valid: false, error: '有効なメールアドレスを入力してください' };
+  }
+
+  const domain = email.split('@')[1].toLowerCase();
+
+  // 許可されたドメインかチェック
+  const isAllowed = ALLOWED_DOMAINS.some(allowedDomain => {
+    const lowerDomain = allowedDomain.toLowerCase();
+    // 完全一致 or サブドメインを含む
+    return domain === lowerDomain || domain.endsWith('.' + lowerDomain);
+  });
+
+  if (!isAllowed) {
+    return { 
+      valid: false, 
+      error: `許可されたドメインのメールアドレスを使用してください（例: ${ALLOWED_DOMAINS[0]}）` 
+    };
+  }
+
+  return { valid: true, error: null };
+};
+
+// ============================================
+
 /**
  * 新規ユーザー登録
  * @param {string} email - メールアドレス
@@ -16,6 +67,12 @@ import { auth, db } from './config';
  */
 export const registerUser = async (email, password, username, role = 'student') => {
   try {
+    // メールドメインのバリデーション
+    const domainCheck = validateEmailDomain(email);
+    if (!domainCheck.valid) {
+      return { success: false, error: domainCheck.error };
+    }
+
     // Firebase Authenticationにユーザー作成
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -32,7 +89,18 @@ export const registerUser = async (email, password, username, role = 'student') 
     return { success: true, user };
   } catch (error) {
     console.error('登録エラー:', error.message);
-    return { success: false, error: error.message };
+    
+    // Firebaseのエラーメッセージを日本語化
+    let errorMessage = error.message;
+    if (error.code === 'auth/email-already-in-use') {
+      errorMessage = 'このメールアドレスは既に使用されています';
+    } else if (error.code === 'auth/invalid-email') {
+      errorMessage = '無効なメールアドレスです';
+    } else if (error.code === 'auth/weak-password') {
+      errorMessage = 'パスワードは6文字以上で設定してください';
+    }
+    
+    return { success: false, error: errorMessage };
   }
 };
 
@@ -60,7 +128,20 @@ export const loginUser = async (email, password) => {
     };
   } catch (error) {
     console.error('ログインエラー:', error.message);
-    return { success: false, error: error.message };
+    
+    // Firebaseのエラーメッセージを日本語化
+    let errorMessage = error.message;
+    if (error.code === 'auth/user-not-found') {
+      errorMessage = 'ユーザーが見つかりません';
+    } else if (error.code === 'auth/wrong-password') {
+      errorMessage = 'パスワードが間違っています';
+    } else if (error.code === 'auth/invalid-email') {
+      errorMessage = '無効なメールアドレスです';
+    } else if (error.code === 'auth/user-disabled') {
+      errorMessage = 'このアカウントは無効化されています';
+    }
+    
+    return { success: false, error: errorMessage };
   }
 };
 
@@ -113,4 +194,20 @@ export const getCurrentUser = async () => {
     };
   }
   return null;
+};
+
+/**
+ * 許可されているドメインのリストを取得（フロントエンドで表示用）
+ * @returns {array} - 許可されたドメインの配列
+ */
+export const getAllowedDomains = () => {
+  return ALLOWED_DOMAINS;
+};
+
+/**
+ * すべてのドメインが許可されているかチェック
+ * @returns {boolean}
+ */
+export const isAllDomainsAllowed = () => {
+  return ALLOW_ALL_DOMAINS;
 };
