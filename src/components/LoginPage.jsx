@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './LoginPage.module.css';
-import { loginUser, registerUser } from '../firebase';
+import { loginUser, registerUser, loginWithGoogle, loginWithApple } from '../firebase';
 
 function LoginPage({ onLogin }) {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
@@ -237,6 +237,48 @@ function LoginPage({ onLogin }) {
     setPasswordStrength({ score: 0, label: '', color: '', suggestions: [] });
   };
 
+  // Googleログイン処理
+  const handleGoogleLogin = async () => {
+    setError('');
+    setLoading(true);
+    
+    try {
+      const result = await loginWithGoogle(role);
+      
+      if (result.success) {
+        onLogin(result.user);
+      } else {
+        setError(result.error || 'Googleログインに失敗しました');
+      }
+    } catch (err) {
+      setError('エラーが発生しました');
+      console.error(err);
+    }
+    
+    setLoading(false);
+  };
+
+  // Appleログイン処理
+  const handleAppleLogin = async () => {
+    setError('');
+    setLoading(true);
+    
+    try {
+      const result = await loginWithApple(role);
+      
+      if (result.success) {
+        onLogin(result.user);
+      } else {
+        setError(result.error || 'Appleログインに失敗しました');
+      }
+    } catch (err) {
+      setError('エラーが発生しました');
+      console.error(err);
+    }
+    
+    setLoading(false);
+  };
+
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginCard}>
@@ -455,6 +497,40 @@ function LoginPage({ onLogin }) {
 
         <div className={styles.divider}>
           <span>または</span>
+        </div>
+
+        {/* ソーシャルログインボタン */}
+        <div className={styles.socialLogin}>
+          <button 
+            type="button"
+            className={styles.socialButton}
+            onClick={handleGoogleLogin}
+            disabled={loading}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M18.1713 8.36791H17.5001V8.33333H10.0001V11.6667H14.7096C14.0225 13.607 12.1763 15 10.0001 15C7.23882 15 5.00007 12.7613 5.00007 10C5.00007 7.23875 7.23882 5 10.0001 5C11.2747 5 12.4342 5.48084 13.3171 6.26625L15.6742 3.90917C14.1859 2.52209 12.1951 1.66667 10.0001 1.66667C5.39799 1.66667 1.66675 5.39792 1.66675 10C1.66675 14.6021 5.39799 18.3333 10.0001 18.3333C14.6022 18.3333 18.3334 14.6021 18.3334 10C18.3334 9.44125 18.2767 8.89583 18.1713 8.36791Z" fill="#FFC107"/>
+              <path d="M2.6275 6.12125L5.36542 8.12917C6.10625 6.29501 7.90042 5 10.0004 5C11.275 5 12.4346 5.48084 13.3175 6.26625L15.6746 3.90917C14.1863 2.52209 12.1954 1.66667 10.0004 1.66667C6.79917 1.66667 4.02334 3.47376 2.6275 6.12125Z" fill="#FF3D00"/>
+              <path d="M10.0004 18.3333C12.1529 18.3333 14.1092 17.5096 15.5871 16.17L13.0079 13.9875C12.1431 14.6452 11.0864 15.0009 10.0004 15C7.83253 15 5.99211 13.6179 5.29878 11.6892L2.58211 13.7829C3.96044 16.4817 6.76128 18.3333 10.0004 18.3333Z" fill="#4CAF50"/>
+              <path d="M18.1713 8.36791H17.5001V8.33333H10.0001V11.6667H14.7096C14.3809 12.5902 13.7889 13.3972 13.0067 13.9879L13.0079 13.9871L15.5871 16.1696C15.4046 16.3354 18.3334 14.1667 18.3334 10C18.3334 9.44125 18.2767 8.89583 18.1713 8.36791Z" fill="#1976D2"/>
+            </svg>
+            Googleで続ける
+          </button>
+
+          <button 
+            type="button"
+            className={styles.socialButton}
+            onClick={handleAppleLogin}
+            disabled={loading}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M15.5 10.5c0-2.5 2-3.5 2.1-3.6-1.1-1.6-2.9-1.8-3.5-1.9-1.5-.1-2.9.9-3.6.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.2 9 .8 1.1 1.7 2.3 2.9 2.3 1.1 0 1.6-.7 3-.7 1.4 0 1.8.7 3 .7 1.2 0 2-1.1 2.8-2.2.9-1.3 1.3-2.5 1.3-2.6-.1 0-2.5-1-2.5-3.4zM13 3.5c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/>
+            </svg>
+            Appleで続ける
+          </button>
+        </div>
+
+        <div className={styles.divider}>
+          <span>またはメールアドレスで</span>
         </div>
 
         <div className={styles.toggleMode}>

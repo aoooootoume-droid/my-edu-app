@@ -4,7 +4,8 @@
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1rem;
+  padding: 2rem 1rem;
+  overflow-y: auto;
 }
 
 .loginCard {
@@ -15,6 +16,9 @@
   width: 100%;
   max-width: 440px;
   animation: slideUp 0.5s ease-out;
+  margin: auto;
+  max-height: 95vh;
+  overflow-y: auto;
 }
 
 @keyframes slideUp {
@@ -332,6 +336,49 @@
   text-align: center;
 }
 
+/* ソーシャルログインボタン */
+.socialLogin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.socialButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: white;
+  color: #2d3748;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.socialButton:hover:not(:disabled) {
+  border-color: #cbd5e0;
+  background-color: #f7fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.socialButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.socialButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.socialButton svg {
+  flex-shrink: 0;
+}
+
 .toggleButton {
   background: none;
   border: none;
@@ -372,8 +419,13 @@
 
 /* レスポンシブ対応 */
 @media (max-width: 480px) {
+  .loginContainer {
+    padding: 1rem 0.5rem;
+  }
+
   .loginCard {
     padding: 2rem 1.5rem;
+    max-height: 90vh;
   }
 
   .title {
@@ -387,5 +439,39 @@
 
   .roleSelector {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 700px) {
+  .loginCard {
+    padding: 1.5rem;
+    max-height: 90vh;
+  }
+  
+  .logoSection {
+    margin-bottom: 1.5rem;
+  }
+  
+  .logoIcon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.75rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .formContainer {
+    gap: 1rem;
+  }
+  
+  .divider {
+    margin: 1rem 0 0.75rem 0;
   }
 }

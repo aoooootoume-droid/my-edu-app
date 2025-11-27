@@ -505,3 +505,144 @@ export const deleteGroupFile = async (fileId) => {
     return { success: false, error: error.message };
   }
 };
+
+// ========================================
+// 📤 提出物関連
+// ========================================
+
+/**
+ * 宿題を提出
+ */
+export const submitHomework = async (submissionData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'submissions'), {
+      homeworkId: submissionData.homeworkId,
+      studentId: submissionData.studentId,
+      studentName: submissionData.studentName,
+      subject: submissionData.subject,
+      homeworkTitle: submissionData.homeworkTitle,
+      submittedAt: serverTimestamp(),
+      status: 'submitted',
+      fileUrl: submissionData.fileUrl || null,
+      comment: submissionData.comment || '',
+      grade: null,
+      feedback: null,
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('提出エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 特定の宿題の全提出物を取得
+ */
+export const getHomeworkSubmissions = async (homeworkId) => {
+  try {
+    const q = query(
+      collection(db, 'submissions'),
+      where('homeworkId', '==', homeworkId),
+      orderBy('submittedAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('提出物取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * 全提出物を取得（教員用）
+ */
+export const getAllSubmissions = async () => {
+  try {
+    const q = query(
+      collection(db, 'submissions'),
+      orderBy('submittedAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('全提出物取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * 提出物をリアルタイムで監視
+ */
+export const onSubmissionsChange = (callback) => {
+  const q = query(
+    collection(db, 'submissions'),
+    orderBy('submittedAt', 'desc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const submissions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(submissions);
+  });
+};
+
+/**
+ * 生徒の提出物を取得
+ */
+export const getStudentSubmissions = async (studentId) => {
+  try {
+    const q = query(
+      collection(db, 'submissions'),
+      where('studentId', '==', studentId),
+      orderBy('submittedAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('生徒の提出物取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * 提出物に評価とフィードバックを追加
+ */
+export const gradeSubmission = async (submissionId, grade, feedback) => {
+  try {
+    await updateDoc(doc(db, 'submissions', submissionId), {
+      grade,
+      feedback,
+      gradedAt: serverTimestamp()
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('評価エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 教科別の提出物統計を取得
+ */
+export const getSubmissionStats = async (subject) => {
+  try {
+    const q = query(
+      collection(db, 'submissions'),
+      where('subject', '==', subject)
+    );
+    const querySnapshot = await getDocs(q);
+    const submissions = querySnapshot.docs.map(doc => doc.data());
+    
+    const stats = {
+      total: submissions.length,
+      submitted: submissions.filter(s => s.status === 'submitted').length,
+      late: submissions.filter(s => s.status === 'late').length,
+      graded: submissions.filter(s => s.grade !== null).length,
+      ungraded: submissions.filter(s => s.grade === null).length
+    };
+    
+    return stats;
+  } catch (error) {
+    console.error('統計取得エラー:', error);
+    return null;
+  }
+};

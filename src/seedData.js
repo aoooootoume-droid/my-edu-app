@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase/config';
 import { 
   dummyFolders, 
@@ -7,6 +7,82 @@ import {
   dummyQna, 
   dummyLiveSessions 
 } from './data';
+
+// 提出物のダミーデータ
+const dummySubmissions = [
+  {
+    homeworkId: 'test-hw-1',
+    studentId: 'test-student-1',
+    studentName: '山田太郎',
+    subject: '数学',
+    homeworkTitle: '三角関数 練習問題',
+    status: 'submitted',
+    comment: '難しかったですが、頑張りました',
+    fileUrl: null,
+    grade: null,
+    feedback: null
+  },
+  {
+    homeworkId: 'test-hw-2',
+    studentId: 'test-student-2',
+    studentName: '佐藤花子',
+    subject: '英語',
+    homeworkTitle: '不定詞 ワークブック P10-12',
+    status: 'submitted',
+    comment: '復習もしっかりやりました！',
+    fileUrl: null,
+    grade: 'A',
+    feedback: 'よくできています。次も頑張りましょう。'
+  },
+  {
+    homeworkId: 'test-hw-3',
+    studentId: 'test-student-3',
+    studentName: '鈴木一郎',
+    subject: '数学',
+    homeworkTitle: 'ベクトル 練習問題',
+    status: 'submitted',
+    comment: 'わからない問題がありました',
+    fileUrl: null,
+    grade: null,
+    feedback: null
+  },
+  {
+    homeworkId: 'test-hw-4',
+    studentId: 'test-student-4',
+    studentName: '田中美咲',
+    subject: '国語',
+    homeworkTitle: '走れメロス 読解',
+    status: 'submitted',
+    comment: '感想文を書きました',
+    fileUrl: null,
+    grade: 'B',
+    feedback: '良い視点で書けています。もう少し深く考察できると更に良いです。'
+  },
+  {
+    homeworkId: 'test-hw-5',
+    studentId: 'test-student-5',
+    studentName: '高橋健',
+    subject: '数学',
+    homeworkTitle: '三角関数 練習問題',
+    status: 'submitted',
+    comment: '時間がかかりました',
+    fileUrl: null,
+    grade: null,
+    feedback: null
+  },
+  {
+    homeworkId: 'test-hw-6',
+    studentId: 'test-student-6',
+    studentName: '伊藤さくら',
+    subject: '英語',
+    homeworkTitle: '不定詞 ワークブック P10-12',
+    status: 'submitted',
+    comment: '楽しく学習できました',
+    fileUrl: null,
+    grade: 'A',
+    feedback: '素晴らしい出来です！'
+  }
+];
 
 /**
  * Firestoreにダミーデータを投入する関数
@@ -105,6 +181,22 @@ export const seedDatabase = async () => {
       console.log(`✅ ${dummyLiveSessions.length}件のLive配信を投入しました`);
     } else {
       console.log('⚠️ Live配信は既に存在します。スキップします。');
+    }
+
+    // 6. 提出物を投入
+    console.log('📤 提出物を投入中...');
+    const submissionsSnapshot = await getDocs(collection(db, 'submissions'));
+    if (submissionsSnapshot.empty) {
+      for (const submission of dummySubmissions) {
+        await addDoc(collection(db, 'submissions'), {
+          ...submission,
+          submittedAt: serverTimestamp(),
+          createdAt: serverTimestamp()
+        });
+      }
+      console.log(`✅ ${dummySubmissions.length}件の提出物を投入しました`);
+    } else {
+      console.log('⚠️ 提出物は既に存在します。スキップします。');
     }
 
     console.log('🎉 ダミーデータの投入が完了しました!');

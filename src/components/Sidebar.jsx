@@ -1,5 +1,5 @@
 import styles from './Sidebar.module.css';
-import { House, Camera, CalendarBlank, Users } from "@phosphor-icons/react"; 
+import { House, Camera, CalendarBlank, Users, ClipboardText } from "@phosphor-icons/react"; 
 import { mainSubjects, subSubjects } from '../data.js';
 
 // 全教科を一つの配列に結合
@@ -10,7 +10,7 @@ const subjectList = allSubjectNames.map(name => ({
   name: name
 }));
 
-function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick }) {
+function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, currentUser }) {
   
   const getNavClass = (viewType) => {
     return `${styles.navItem} ${activeViewType === viewType ? styles.active : ''}`;
@@ -22,6 +22,9 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick }) 
 
   // グループページもアクティブに
   const isGroupActive = activeViewType === 'groups' || activeViewType === 'groupDetail';
+
+  // 教員かどうかをチェック
+  const isTeacher = currentUser?.role === 'teacher';
 
   return (
     <aside className={styles.sidebarContainer}>
@@ -44,6 +47,14 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick }) 
           <Users size={22} weight="fill" />
           <span>グループ</span>
         </div>
+        
+        {/* 教員専用：提出物管理 */}
+        {isTeacher && (
+          <div className={getNavClass('submissions')} onClick={() => onNavClick('submissions')}>
+            <ClipboardText size={22} weight="fill" />
+            <span>提出物管理</span>
+          </div>
+        )}
       </nav>
       
       {/* 教科 */}

@@ -2,10 +2,19 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithPopup
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from './config';
+
+// Google認証プロバイダー
+const googleProvider = new GoogleAuthProvider();
+
+// Apple認証プロバイダー
+const appleProvider = new OAuthProvider('apple.com');
 
 // ============================================
 // メールドメイン制限設定
@@ -210,4 +219,102 @@ export const getAllowedDomains = () => {
  */
 export const isAllDomainsAllowed = () => {
   return ALLOW_ALL_DOMAINS;
+};
+
+/**
+ * Googleでログイン
+ * @param {string} role - 役割 ('teacher' or 'student') - 新規ユーザーの場合のみ使用
+ */
+export const loginWithGoogle = async (role = 'student') => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+
+    // Firestoreでユーザー情報を確認
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (!userDoc.exists()) {
+      // 新規ユーザーの場合、Firestoreに保存
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        email: user.email,
+        username: user.displayName || 'ユーザー',
+        role: role,
+        provider: 'google',
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    // ユーザー情報を取得
+    const updatedUserDoc = await getDoc(userDocRef);
+    return {
+      success: true,
+      user: {
+        uid: user.uid,
+        email: user.email,
+        ...updatedUserDoc.data()
+      }
+    };
+  } catch (error) {
+    console.error('Googleログインエラー:', error.message);
+    
+    let errorMessage = error.message;
+    if (error.code === 'auth/popup-closed-by-user') {
+      errorMessage = 'ログインがキャンセルされました';
+    } else if (error.code === 'auth/account-exists-with-different-credential') {
+      errorMessage = 'このメールアドレスは既に別の方法で登録されています';
+    }
+    
+    return { success: false, error: errorMessage };
+  }
+};
+
+/**
+ * Apple IDでログイン
+ * @param {string} role - 役割 ('teacher' or 'student') - 新規ユーザーの場合のみ使用
+ */
+export const loginWithApple = async (role = 'student') => {
+  try {
+    const result = await signInWithPopup(auth, appleProvider);
+    const user = result.user;
+
+    // Firestoreでユーザー情報を確認
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (!userDoc.exists()) {
+      // 新規ユーザーの場合、Firestoreに保存
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        email: user.email,
+        username: user.displayName || 'ユーザー',
+        role: role,
+        provider: 'apple',
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    // ユーザー情報を取得
+    const updatedUserDoc = await getDoc(userDocRef);
+    return {
+      success: true,
+      user: {
+        uid: user.uid,
+        email: user.email,
+        ...updatedUserDoc.data()
+      }
+    };
+  } catch (error) {
+    console.error('Appleログインエラー:', error.message);
+    
+    let errorMessage = error.message;
+    if (error.code === 'auth/popup-closed-by-user') {
+      errorMessage = 'ログインがキャンセルされました';
+    } else if (error.code === 'auth/account-exists-with-different-credential') {
+      errorMessage = 'このメールアドレスは既に別の方法で登録されています';
+    }
+    
+    return { success: false, error: errorMessage };
+  }
 };

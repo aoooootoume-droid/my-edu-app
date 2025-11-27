@@ -10,6 +10,7 @@ import ProfilePage from './components/ProfilePage';
 import CameraPage from './components/CameraPage'; 
 import LoginPage from './components/LoginPage';
 import CalendarPage from './components/CalendarPage';
+import SubmissionsPage from './components/SubmissionsPage';
 
 // 新規追加：グループ関連
 import GroupPage from './components/GroupPage';
@@ -426,6 +427,9 @@ function App() {
         onBackClick={handleBackClick}
       />;
     }
+    if (activeView.type === 'submissions') {
+      return <SubmissionsPage currentUser={currentUser} />;
+    }
     
     switch (activeView.type) {
       case 'home':
@@ -525,6 +529,7 @@ function App() {
             activeSubject={sidebarActiveSubject} 
             onNavClick={handleNavClick}
             onSubjectClick={handleSubjectClick}
+            currentUser={currentUser}
           />
         </div>
         
