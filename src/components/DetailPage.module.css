@@ -349,3 +349,248 @@
     padding: 1.5rem;
   }
 }
+/* 既存のCSSの最後に以下を追加 */
+
+/* 宿題提出セクション */
+.homeworkContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.homeworkInfo {
+  background: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.deadline {
+  color: #e53e3e;
+  font-weight: 600;
+  margin: 0.5rem 0;
+}
+
+.submissionSection {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+}
+
+.submissionSection h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2d3748;
+}
+
+/* カメラボタン */
+.cameraButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.cameraButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* カメラコンテナ */
+.cameraContainer {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.videoPreview {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+}
+
+.cameraControls {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #1a202c;
+}
+
+.captureButton {
+  flex: 1;
+  padding: 0.875rem;
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.captureButton:hover {
+  background: #38a169;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 0.875rem;
+  background: #718096;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancelButton:hover {
+  background: #4a5568;
+}
+
+/* 画像プレビュー */
+.imagePreview {
+  position: relative;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+}
+
+.imagePreview img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+
+.retakeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.retakeButton:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* コメントセクション */
+.commentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.commentSection label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.commentInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.commentInput:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* メッセージ */
+.successMessage {
+  padding: 1rem;
+  background: #c6f6d5;
+  color: #22543d;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  animation: slideDown 0.3s ease;
+}
+
+.errorMessage {
+  padding: 1rem;
+  background: #fed7d7;
+  color: #c53030;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 提出ボタン */
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .submissionSection {
+    padding: 1.5rem;
+  }
+
+  .videoPreview,
+  .imagePreview img {
+    max-height: 300px;
+  }
+}

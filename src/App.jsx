@@ -406,7 +406,7 @@ function App() {
       console.log('🔍 探しているID:', activeView.detailId);
       const card = allClickableItems.find(f => f.id === activeView.detailId);
       console.log('🔍 見つかったカード:', card);
-      return <DetailPage card={card} onBackClick={handleBackClick} />;
+      return <DetailPage card={card} onBackClick={handleBackClick} currentUser={currentUser} />;
     }
     if (activeView.type === 'profile') {
       return <ProfilePage onBackClick={handleBackClick} currentUser={currentUser} />;

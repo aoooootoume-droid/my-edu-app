@@ -1,63 +1,210 @@
-// 1. 授業のダミーデータ
-export const dummyFolders = [
-  { id: 1, type: 'folder', title: '三角関数 導入', date: '2025/04/10', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=1' },
-  { id: 2, type: 'folder', title: '走れメロス 読解', date: '2025/04/09', subject: '国語', imageUrl: 'https://picsum.photos/240/135?random=2' },
-  { id: 3, type: 'folder', title: '不定詞の基本', date: '2025/04/08', subject: '英語', imageUrl: 'https://picsum.photos/240/135?random=3' },
-  { id: 4, type: 'folder', title: 'イオンと化学式', date: '2025/04/08', subject: '理科', imageUrl: 'https://picsum.photos/240/135?random=4' },
-  { id: 5, type: 'folder', title: 'ベクトルの内積', date: '2025/04/07', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=5' },
-  { id: 6, type: 'folder', title: '枕草子 暗唱', date: '2025/04/07', subject: '国語', imageUrl: 'https://picsum.photos/240/135?random=6' },
-  { id: 7, type: 'folder', title: '関係代名詞', date: '2025/04/06', subject: '英語', imageUrl: 'https://picsum.photos/240/135?random=7' },
-  { id: 8, type: 'folder', title: '明治維新', date: '2025/04/05', subject: '社会', imageUrl: 'https://picsum.photos/240/135?random=8' },
-  { id: 9, type: 'folder', title: '三角関数 演習', date: '2025/04/11', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=9' },
-  { id: 10, type: 'folder', title: '動詞の活用', date: '2025/04/10', subject: '国語', imageUrl: 'https://picsum.photos/240/135?random=10' },
-  { id: 11, type: 'folder', title: '現在完了形', date: '2025/04/10', subject: '英語', imageUrl: 'https://picsum.photos/240/135?random=11' },
-  { id: 12, type: 'folder', title: '化学反応式', date: '2025/04/12', subject: '理科', imageUrl: 'https://picsum.photos/240/135?random=12' },
-  { id: 13, type: 'folder', title: '鎌倉時代', date: '2025/04/11', subject: '社会', imageUrl: 'https://picsum.photos/240/135?random=13' },
-  // ★ テスト用データ追加 (アーカイブ)
-  { id: 14, type: 'folder', title: '三角関数 応用編', date: '2025/04/12', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=14' },
-  { id: 15, type: 'folder', title: '三角関数 まとめ', date: '2025/04/13', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=15' },
-  { id: 16, type: 'folder', title: '三角関数 テスト', date: '2025/04/14', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=16' },
+import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
+import { db } from './firebase/config';
+import { 
+  dummyFolders, 
+  dummyPrints, 
+  dummyHomeworks, 
+  dummyQna, 
+  dummyLiveSessions 
+} from './data';
+
+// 提出物のダミーデータ
+const dummySubmissions = [
+  {
+    homeworkId: 'test-hw-1',
+    studentId: 'test-student-1',
+    studentName: '山田太郎',
+    subject: '数学',
+    homeworkTitle: '三角関数 練習問題',
+    status: 'submitted',
+    comment: '難しかったですが、頑張りました',
+    fileUrl: null,
+    grade: null,
+    feedback: null
+  },
+  {
+    homeworkId: 'test-hw-2',
+    studentId: 'test-student-2',
+    studentName: '佐藤花子',
+    subject: '英語',
+    homeworkTitle: '不定詞 ワークブック P10-12',
+    status: 'submitted',
+    comment: '復習もしっかりやりました！',
+    fileUrl: null,
+    grade: 'A',
+    feedback: 'よくできています。次も頑張りましょう。'
+  },
+  {
+    homeworkId: 'test-hw-3',
+    studentId: 'test-student-3',
+    studentName: '鈴木一郎',
+    subject: '数学',
+    homeworkTitle: 'ベクトル 練習問題',
+    status: 'submitted',
+    comment: 'わからない問題がありました',
+    fileUrl: null,
+    grade: null,
+    feedback: null
+  },
+  {
+    homeworkId: 'test-hw-4',
+    studentId: 'test-student-4',
+    studentName: '田中美咲',
+    subject: '国語',
+    homeworkTitle: '走れメロス 読解',
+    status: 'submitted',
+    comment: '感想文を書きました',
+    fileUrl: null,
+    grade: 'B',
+    feedback: '良い視点で書けています。もう少し深く考察できると更に良いです。'
+  },
+  {
+    homeworkId: 'test-hw-5',
+    studentId: 'test-student-5',
+    studentName: '高橋健',
+    subject: '数学',
+    homeworkTitle: '三角関数 練習問題',
+    status: 'submitted',
+    comment: '時間がかかりました',
+    fileUrl: null,
+    grade: null,
+    feedback: null
+  },
+  {
+    homeworkId: 'test-hw-6',
+    studentId: 'test-student-6',
+    studentName: '伊藤さくら',
+    subject: '英語',
+    homeworkTitle: '不定詞 ワークブック P10-12',
+    status: 'submitted',
+    comment: '楽しく学習できました',
+    fileUrl: null,
+    grade: 'A',
+    feedback: '素晴らしい出来です！'
+  }
 ];
 
-// 2. 教科リスト (★ Sidebar.jsx / HomePage.jsx がインポートします)
-export const mainSubjects = ['国語', '数学', '英語', '理科', '社会'];
-export const subSubjects = ['音楽', '美術', '保健体育', '技術・家庭'];
+/**
+ * Firestoreにダミーデータを投入する関数
+ */
+export const seedDatabase = async () => {
+  try {
+    console.log('ダミーデータの投入を開始します...');
 
-// 3. 宿題のダミーデータ
-export const dummyHomeworks = [
-  { id: 101, title: '三角関数 練習問題', deadline: '2025/04/15', subject: '数学' },
-  { id: 102, title: '走れメロス 読解', deadline: '2025/04/16', subject: '国語' },
-  { id: 103, title: '不定詞 ワークブック P10-12', deadline: '2025/04/18', subject: '英語' },
-  { id: 104, title: 'ベクトル 練習問題', deadline: '2025/04/20', subject: '数学' },
-];
+    // 1. フォルダ (授業) を投入
+    console.log('フォルダを投入中...');
+    const foldersSnapshot = await getDocs(collection(db, 'folders'));
+    if (foldersSnapshot.empty) {
+      for (const folder of dummyFolders) {
+        await addDoc(collection(db, 'folders'), {
+          type: 'folder',
+          title: folder.title,
+          date: folder.date,
+          subject: folder.subject,
+          imageUrl: folder.imageUrl,
+          createdAt: new Date().toISOString()
+        });
+      }
+      console.log(`${dummyFolders.length}件のフォルダを投入しました`);
+    } else {
+      console.log('フォルダは既に存在します。スキップします。');
+    }
 
-// 4. プリントのダミーデータ
-export const dummyPrints = [
-  { id: 201, type: 'print', title: '三角関数 練習プリント', date: '2025/04/11', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=201' },
-  { id: 202, type: 'print', title: '走れメロス 漢字テスト', date: '2025/04/09', subject: '国語', imageUrl: 'https://picsum.photos/240/135?random=202' },
-  { id: 203, type: 'print', title: '不定詞 穴埋め問題', date: '2025/04/08', subject: '英語', imageUrl: 'https://picsum.photos/240/135?random=203' },
-  { id: 204, type: 'print', title: 'ベクトルの内積 演習', date: '2025/04/07', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=204' },
-  // ★ テスト用データ追加 (プリント)
-  { id: 205, type: 'print', title: '三角関数 応用プリント', date: '2025/04/12', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=205' },
-  { id: 206, type: 'print', title: '三角関数 穴埋め', date: '2025/04/13', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=206' },
-  { id: 207, type: 'print', title: '三角関数 小テスト', date: '2025/04/14', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=207' },
-];
+    // 2. プリントを投入
+    console.log('プリントを投入中...');
+    const printsSnapshot = await getDocs(collection(db, 'prints'));
+    if (printsSnapshot.empty) {
+      for (const print of dummyPrints) {
+        await addDoc(collection(db, 'prints'), {
+          type: 'print',
+          title: print.title,
+          date: print.date,
+          subject: print.subject,
+          imageUrl: print.imageUrl,
+          createdAt: new Date().toISOString()
+        });
+      }
+      console.log(`${dummyPrints.length}件のプリントを投入しました`);
+    } else {
+      console.log('プリントは既に存在します。スキップします。');
+    }
 
-// 5. Live機能のダミーデータ
-export const dummyLiveSessions = [
-  { id: 301, type: 'live', title: '三角関数 復習ライブ', status: 'live', subject: '数学' },
-  { id: 302, type: 'live', title: '英文法(SVOC) 演習', status: 'upcoming', date: '2025/11/22 18:00', subject: '英語' },
-  { id: 303, type: 'live', title: '漢文(レ点) 解説', status: 'upcoming', date: '2025/11/23 19:00', subject: '国語' },
-  { id: 304, type: 'live', title: 'ベクトル 質疑応答', status: 'finished', date: '2025/11/20 17:00', subject: '数学' },
-];
+    // 3. 宿題を投入
+    console.log('宿題を投入中...');
+    const homeworksSnapshot = await getDocs(collection(db, 'homeworks'));
+    if (homeworksSnapshot.empty) {
+      for (const homework of dummyHomeworks) {
+        await addDoc(collection(db, 'homeworks'), {
+          type: 'homework',
+          title: homework.title,
+          deadline: homework.deadline,
+          subject: homework.subject,
+          createdAt: new Date().toISOString()
+        });
+      }
+      console.log(`${dummyHomeworks.length}件の宿題を投入しました`);
+    } else {
+      console.log('宿題は既に存在します。スキップします。');
+    }
 
-// 6. 質問箱のダミーデータ
-export const dummyQna = [
-  { id: 401, type: 'qna', subject: '数学', title: 'ベクトルの内積がよく分かりません。', status: 'answered' },
-  { id: 402, type: 'qna', subject: '数学', title: '三角関数の合成の使い所は？', status: 'unanswered' },
-  { id: 403, type: 'qna', subject: '英語', title: '関係代名詞の "what" と "which" の違い', status: 'answered' },
-  { id: 404, type: 'qna', subject: '国語', title: '走れメロスの主題を教えてください。', status: 'answered' },
-  { id: 405, type: 'qna', subject: '数学', title: '微分と積分の関係性', status: 'unanswered' },
-  // ★ テスト用データ追加 (質問箱)
-  { id: 406, type: 'qna', subject: '数学', title: '三角関数の公式が覚えられません。', status: 'unanswered' },
-];
+    // 4. 質問箱を投入
+    console.log('質問箱を投入中...');
+    const qnaSnapshot = await getDocs(collection(db, 'qna'));
+    if (qnaSnapshot.empty) {
+      for (const qna of dummyQna) {
+        await addDoc(collection(db, 'qna'), {
+          type: 'qna',
+          subject: qna.subject,
+          title: qna.title,
+          status: qna.status,
+          createdAt: new Date().toISOString()
+        });
+      }
+      console.log(`${dummyQna.length}件の質問を投入しました`);
+    } else {
+      console.log('質問箱は既に存在します。スキップします。');
+    }
+
+    // 5. Live配信を投入
+    console.log('Live配信を投入中...');
+    const liveSnapshot = await getDocs(collection(db, 'liveSessions'));
+    if (liveSnapshot.empty) {
+      for (const live of dummyLiveSessions) {
+        await addDoc(collection(db, 'liveSessions'), {
+          type: 'live',
+          title: live.title,
+          status: live.status,
+          subject: live.subject,
+          date: live.date || null,
+          createdAt: new Date().toISOString()
+        });
+      }
+      console.log(`${dummyLiveSessions.length}件のLive配信を投入しました`);
+    } else {
+      console.log('Live配信は既に存在します。スキップします。');
+    }
+
+    // 6. 提出物を投入
+    console.log('提出物を投入中...');
+    const submissionsSnapshot = await getDocs(collection(db, 'submissions'));
+    if (submissionsSnapshot.empty) {
+      for (const submission of dummySubmissions) {
+        await addDoc(collection(db, 'submissions'), {
+          ...submission,
+          submittedAt: serverTimestamp(),
+          createdAt: serverTimestamp()
+        });
+      }
+      console.log(`${dummySubmissions.length}件の提出物を投入しました`);
+    } else {
+      console.log('提出物は既に存在します。スキップします。');
+    }
+
+    console.log('ダミーデータの投入が完了しました!');
+    return { success: true, message: 'データ投入完了' };
+
+  } catch (error) {
+    console.error('データ投入中にエラーが発生しました:', error);
+    return { success: false, error: error.message };
+  }
+};

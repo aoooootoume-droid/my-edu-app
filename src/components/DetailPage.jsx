@@ -1,7 +1,216 @@
+import { useState, useRef } from 'react';
 import styles from './DetailPage.module.css';
-import { ArrowLeft } from "@phosphor-icons/react";
+import { ArrowLeft, Camera } from "@phosphor-icons/react";
+import { submitHomework } from '../firebase';
 
-const renderCardContent = (card) => {
+const renderCardContent = (card, currentUser, onSubmitSuccess) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [comment, setComment] = useState('');
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+
+  // カメラを起動
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        streamRef.current = stream;
+      }
+      setShowCamera(true);
+    } catch (error) {
+      console.error('カメラ起動エラー:', error);
+      setSubmitError('カメラへのアクセスに失敗しました');
+    }
+  };
+
+  // カメラを停止
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setShowCamera(false);
+  };
+
+  // 写真を撮影
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const context = canvasRef.current.getContext('2d');
+      canvasRef.current.width = videoRef.current.videoWidth;
+      canvasRef.current.height = videoRef.current.videoHeight;
+      context.drawImage(videoRef.current, 0, 0);
+      
+      const imageData = canvasRef.current.toDataURL('image/jpeg');
+      setCapturedImage(imageData);
+      stopCamera();
+    }
+  };
+
+  // 提出処理
+  const handleSubmit = async () => {
+    if (!currentUser) {
+      setSubmitError('ログインしてください');
+      return;
+    }
+
+    if (!capturedImage && !comment.trim()) {
+      setSubmitError('画像またはコメントを入力してください');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      const result = await submitHomework({
+        homeworkId: card.id,
+        studentId: currentUser.uid,
+        studentName: currentUser.username || currentUser.email,
+        subject: card.subject,
+        homeworkTitle: card.title,
+        comment: comment,
+        fileUrl: capturedImage // Base64画像を保存（本番環境ではStorageにアップロード推奨）
+      });
+
+      if (result.success) {
+        setSubmitSuccess(true);
+        setCapturedImage(null);
+        setComment('');
+        if (onSubmitSuccess) {
+          onSubmitSuccess();
+        }
+        setTimeout(() => {
+          setSubmitSuccess(false);
+        }, 3000);
+      } else {
+        setSubmitError(result.error || '提出に失敗しました');
+      }
+    } catch (error) {
+      console.error('提出エラー:', error);
+      setSubmitError('エラーが発生しました');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // 宿題の場合の表示
+  if (card.type === 'homework') {
+    return (
+      <div className={styles.homeworkContent}>
+        <div className={styles.homeworkInfo}>
+          <h3>📝 宿題内容</h3>
+          <p className={styles.deadline}>締切: {card.deadline}</p>
+          <p>{card.description || 'この宿題の詳細情報はありません。'}</p>
+        </div>
+
+        {/* 提出成功メッセージ */}
+        {submitSuccess && (
+          <div className={styles.successMessage}>
+            ✅ 提出が完了しました！
+          </div>
+        )}
+
+        {/* 提出フォーム */}
+        <div className={styles.submissionSection}>
+          <h3>📤 宿題を提出</h3>
+
+          {/* カメラボタン */}
+          {!showCamera && !capturedImage && (
+            <button 
+              className={styles.cameraButton}
+              onClick={startCamera}
+            >
+              <Camera size={24} weight="fill" />
+              カメラで撮影
+            </button>
+          )}
+
+          {/* カメラプレビュー */}
+          {showCamera && (
+            <div className={styles.cameraContainer}>
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline
+                className={styles.videoPreview}
+              />
+              <div className={styles.cameraControls}>
+                <button 
+                  className={styles.captureButton}
+                  onClick={capturePhoto}
+                >
+                  📷 撮影
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={stopCamera}
+                >
+                  キャンセル
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 撮影した画像のプレビュー */}
+          {capturedImage && (
+            <div className={styles.imagePreview}>
+              <img src={capturedImage} alt="撮影した画像" />
+              <button 
+                className={styles.retakeButton}
+                onClick={() => {
+                  setCapturedImage(null);
+                  startCamera();
+                }}
+              >
+                撮り直し
+              </button>
+            </div>
+          )}
+
+          {/* コメント入力 */}
+          <div className={styles.commentSection}>
+            <label htmlFor="comment">コメント（任意）</label>
+            <textarea
+              id="comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="取り組んだ感想や質問があれば記入してください..."
+              rows={4}
+              className={styles.commentInput}
+            />
+          </div>
+
+          {/* エラーメッセージ */}
+          {submitError && (
+            <div className={styles.errorMessage}>
+              ⚠️ {submitError}
+            </div>
+          )}
+
+          {/* 提出ボタン */}
+          <button
+            className={styles.submitButton}
+            onClick={handleSubmit}
+            disabled={isSubmitting || (!capturedImage && !comment.trim())}
+          >
+            {isSubmitting ? '提出中...' : '提出する'}
+          </button>
+        </div>
+
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
+      </div>
+    );
+  }
+
   if (card.type === 'folder' || card.type === 'print') {
     return (
       <>
@@ -104,7 +313,7 @@ const renderCardContent = (card) => {
   return <p>このコンテンツタイプの詳細は表示できません。</p>;
 };
 
-function DetailPage({ card, onBackClick }) {
+function DetailPage({ card, onBackClick, currentUser }) {
   
   if (!card) {
     return (
@@ -144,7 +353,7 @@ function DetailPage({ card, onBackClick }) {
         {renderMetaInfo()}
       </div>
       
-      {renderCardContent(card)}
+      {renderCardContent(card, currentUser)}
       
     </div>
   );

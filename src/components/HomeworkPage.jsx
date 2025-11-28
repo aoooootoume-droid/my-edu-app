@@ -15,8 +15,19 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick }
     })
     .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
-  // 提出ボタンのハンドラ
-  const handleSubmit = (homeworkId, homeworkTitle) => {
+  // 宿題カードをクリックして詳細ページへ
+  const handleCardClick = (homework) => {
+    // homeworkにtypeを追加して詳細ページで識別できるようにする
+    const homeworkWithType = {
+      ...homework,
+      type: 'homework'
+    };
+    onCardClick(homework.id);
+  };
+
+  // 提出ボタンのハンドラ（後で削除してもOK）
+  const handleSubmit = (e, homeworkId, homeworkTitle) => {
+    e.stopPropagation(); // カードクリックイベントを止める
     if (window.confirm(`「${homeworkTitle}」を提出しますか?`)) {
       setSubmittedHomeworks(prev => new Set([...prev, homeworkId]));
       alert('✅ 提出完了しました!');
@@ -46,6 +57,7 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick }
               <div 
                 key={hw.id} 
                 className={`${styles.homeworkItem} ${submitted ? styles.submitted : ''}`}
+                onClick={() => handleCardClick(hw)}
               >
                 <div className={styles.itemInfo}>
                   <span className={styles.itemTitle}>
@@ -55,14 +67,15 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick }
                   <span className={styles.itemDeadline}>
                     締切: {hw.deadline}
                   </span>
+                  <span className={styles.itemSubject}>
+                    {hw.subject}
+                  </span>
                 </div>
-                <button 
-                  className={`${styles.submitButton} ${submitted ? styles.submitButtonDisabled : ''}`}
-                  onClick={() => handleSubmit(hw.id, hw.title)}
-                  disabled={submitted}
-                >
-                  {submitted ? '提出済み' : '提出'}
-                </button>
+                <div className={styles.itemActions}>
+                  <span className={styles.viewDetail}>
+                    詳細を見る →
+                  </span>
+                </div>
               </div>
             );
           })

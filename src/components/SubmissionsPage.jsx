@@ -44,8 +44,8 @@ function SubmissionsPage({ currentUser }) {
   // 統計情報
   const stats = {
     total: submissions.length,
-    graded: submissions.filter(s => s.grade !== null).length,
-    ungraded: submissions.filter(s => s.grade === null).length,
+    graded: submissions.filter(s => s && s.grade !== null && s.grade !== undefined).length,
+    ungraded: submissions.filter(s => s && (s.grade === null || s.grade === undefined)).length,
   };
 
   // 評価を送信
@@ -155,16 +155,16 @@ function SubmissionsPage({ currentUser }) {
                 <tr key={submission.id}>
                   <td className={styles.studentName}>
                     <div className={styles.avatar}>
-                      {submission.studentName.charAt(0)}
+                      {submission.studentName ? submission.studentName.charAt(0) : '?'}
                     </div>
-                    {submission.studentName}
+                    {submission.studentName || '名前なし'}
                   </td>
                   <td>
                     <span className={styles.subjectBadge}>
-                      {submission.subject}
+                      {submission.subject || '教科なし'}
                     </span>
                   </td>
-                  <td>{submission.homeworkTitle}</td>
+                  <td>{submission.homeworkTitle || 'タイトルなし'}</td>
                   <td className={styles.date}>
                     {formatDate(submission.submittedAt)}
                   </td>
