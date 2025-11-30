@@ -12,7 +12,7 @@ import LoginPage from './components/LoginPage';
 import CalendarPage from './components/CalendarPage';
 import SubmissionsPage from './components/SubmissionsPage';
 
-// 新規追加：グループ関連
+// グループ関連
 import GroupPage from './components/GroupPage';
 import GroupDetailPage from './components/GroupDetailPage';
 
@@ -24,7 +24,6 @@ import {
   onPrintsChange,
   onHomeworksChange,
   onQuestionsChange,
-  onLiveSessionsChange,
   addPrint,
   addQuestion
 } from './firebase';
@@ -40,7 +39,6 @@ function App() {
   const [prints, setPrints] = useState([]); 
   const [homeworks, setHomeworks] = useState([]);
   const [qnaItems, setQnaItems] = useState([]);
-  const [liveSessions, setLiveSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // お知らせのダミーデータ
@@ -103,16 +101,6 @@ function App() {
       isRead: false,
       linkType: 'folder',
       linkId: folders[0]?.id || null
-    },
-    { 
-      id: 2, 
-      type: 'live', 
-      title: 'Live配信開始', 
-      message: '「英語」のLive機能が 5分後に開始します。', 
-      time: '10分前',
-      isRead: false,
-      linkType: 'live',
-      linkId: liveSessions[0]?.id || null
     },
     { 
       id: 3, 
@@ -203,30 +191,27 @@ function App() {
     const unsubscribePrints = onPrintsChange((data) => setPrints(data));
     const unsubscribeHomeworks = onHomeworksChange((data) => setHomeworks(data));
     const unsubscribeQna = onQuestionsChange((data) => setQnaItems(data));
-    const unsubscribeLive = onLiveSessionsChange((data) => setLiveSessions(data));
 
     return () => {
       unsubscribeFolders();
       unsubscribePrints();
       unsubscribeHomeworks();
       unsubscribeQna();
-      unsubscribeLive();
     };
   }, [isLoggedIn]);
   
   useEffect(() => {
-    if (folders.length > 0 && liveSessions.length > 0 && qnaItems.length > 0 && homeworks.length > 0) {
+    if (folders.length > 0 && qnaItems.length > 0 && homeworks.length > 0) {
       setNotifications(prev => prev.map(notif => {
         if (notif.id === 1 && folders[0]) return { ...notif, linkId: folders[0].id };
-        if (notif.id === 2 && liveSessions[0]) return { ...notif, linkId: liveSessions[0].id };
         if (notif.id === 3 && qnaItems[0]) return { ...notif, linkId: qnaItems[0].id };
         if (notif.id === 4 && homeworks[0]) return { ...notif, linkId: homeworks[0].id };
         return notif;
       }));
     }
-  }, [folders, liveSessions, qnaItems, homeworks]);
+  }, [folders, qnaItems, homeworks]);
   
-  const allClickableItems = [...folders, ...prints, ...qnaItems, ...liveSessions, ...homeworks, ...notices, ...tests];
+  const allClickableItems = [...folders, ...prints, ...qnaItems, ...homeworks, ...notices, ...tests];
   
   console.log('🔍 allClickableItems:', allClickableItems.map(item => ({ id: item.id, type: item.type, title: item.title })));
   
@@ -438,8 +423,7 @@ function App() {
                   searchTerm={searchTerm} 
                   folders={folders} 
                   prints={prints} 
-                  qnaItems={qnaItems} 
-                  liveSessions={liveSessions}
+                  qnaItems={qnaItems}
                   notices={notices}
                 />;
       case 'archive':
@@ -457,8 +441,7 @@ function App() {
                   folders={folders} 
                   prints={prints}
                   homeworks={homeworks} 
-                  qnaItems={qnaItems} 
-                  liveSessions={liveSessions}
+                  qnaItems={qnaItems}
                   notices={notices}
                   activeTab={activeView.activeTab} 
                   onTabClick={handleTabClick}

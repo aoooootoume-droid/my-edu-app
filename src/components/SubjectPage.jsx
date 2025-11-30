@@ -3,12 +3,11 @@ import NoticePage from './NoticePage';
 import ArchivePage from './ArchivePage'; 
 import HomeworkPage from './HomeworkPage'; 
 import PrintPage from './PrintPage'; 
-import LivePage from './LivePage'; 
 import QnaPage from './QnaPage'; 
 
 function SubjectPage({ 
   subject, onCardClick, searchTerm, 
-  folders, prints, homeworks, qnaItems, liveSessions, notices,
+  folders, prints, homeworks, qnaItems, notices,
   activeTab, onTabClick, onAddQuestion, currentUser
 }) {
   
@@ -23,15 +22,6 @@ function SubjectPage({
                   onCardClick={onCardClick} 
                   searchTerm={searchTerm} 
                   folders={folders}
-                />;
-      
-      case 'live':
-        return <LivePage 
-                  filterSubject={subject} 
-                  searchTerm={searchTerm} 
-                  liveSessions={liveSessions}
-                  onCardClick={onCardClick}
-                  currentUser={currentUser}
                 />;
                 
       case 'qbox':
@@ -77,9 +67,6 @@ function SubjectPage({
         </div>
         <div className={getTabClass('archive')} onClick={() => onTabClick('archive')}>
           アーカイブ
-        </div>
-        <div className={getTabClass('live')} onClick={() => onTabClick('live')}>
-          Live機能
         </div>
         <div className={getTabClass('qbox')} onClick={() => onTabClick('qbox')}>
           質問箱

@@ -2,7 +2,7 @@ import FolderCard from './FolderCard';
 import styles from './HomePage.module.css';
 import { mainSubjects } from '../data.js';
 
-function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, liveSessions, notices }) {
+function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices }) {
   
   const subjects = mainSubjects;
   const term = searchTerm.toLowerCase();
@@ -31,8 +31,6 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, liveSess
       .slice(0, 5); 
   };
   
-  const liveNowSessions = liveSessions.filter(session => session.status === 'live');
-  
   const getSubjectTagClass = (subject) => {
     switch(subject) {
       case '数学': return styles.tagMath;
@@ -49,52 +47,6 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, liveSess
       <h2>
         {searchTerm ? `「${searchTerm}」の検索結果 (ホーム)` : 'ホーム'}
       </h2>
-      
-      {/* Live配信中セクション (改善版) */}
-      <section className={styles.liveSection}>
-        <div className={styles.liveSectionHeader}>
-          <h3 className={styles.liveSectionTitle}>
-            <span className={styles.liveIndicator}>🔴</span>
-            Live配信中
-          </h3>
-          {liveNowSessions.length > 0 && (
-            <span className={styles.liveCount}>{liveNowSessions.length}件配信中</span>
-          )}
-        </div>
-        
-        {liveNowSessions.length > 0 ? (
-          <div className={styles.liveGrid}>
-            {liveNowSessions.map(item => (
-              <div 
-                key={item.id} 
-                className={styles.liveCard}
-                onClick={() => onCardClick(item.id)}
-              >
-                <div className={styles.liveCardHeader}>
-                  <span className={`${styles.subjectBadge} ${getSubjectTagClass(item.subject)}`}>
-                    {item.subject}
-                  </span>
-                  <span className={styles.liveBadge}>
-                    <span className={styles.livePulse}></span>
-                    LIVE
-                  </span>
-                </div>
-                <h4 className={styles.liveCardTitle}>{item.title}</h4>
-                <div className={styles.liveCardFooter}>
-                  <span className={styles.viewersCount}>👥 配信中</span>
-                  <button className={styles.joinButton}>参加する →</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.noLiveCard}>
-            <span className={styles.noLiveIcon}>📺</span>
-            <p className={styles.noLiveText}>現在、配信中のLiveはありません</p>
-            <p className={styles.noLiveSubtext}>配信が開始されると、ここに表示されます</p>
-          </div>
-        )}
-      </section>
       
       {!searchTerm && (
         <h3 className={styles.archiveTitle}>最近のアーカイブ</h3>

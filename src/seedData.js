@@ -4,8 +4,7 @@ import {
   dummyFolders, 
   dummyPrints, 
   dummyHomeworks, 
-  dummyQna, 
-  dummyLiveSessions 
+  dummyQna
 } from './data';
 
 // 提出物のダミーデータ
@@ -89,10 +88,10 @@ const dummySubmissions = [
  */
 export const seedDatabase = async () => {
   try {
-    console.log('🌱 ダミーデータの投入を開始します...');
+    console.log('ダミーデータの投入を開始します...');
 
     // 1. フォルダ (授業) を投入
-    console.log('📁 フォルダを投入中...');
+    console.log('フォルダを投入中...');
     const foldersSnapshot = await getDocs(collection(db, 'folders'));
     if (foldersSnapshot.empty) {
       for (const folder of dummyFolders) {
@@ -105,13 +104,13 @@ export const seedDatabase = async () => {
           createdAt: new Date().toISOString()
         });
       }
-      console.log(`✅ ${dummyFolders.length}件のフォルダを投入しました`);
+      console.log(`${dummyFolders.length}件のフォルダを投入しました`);
     } else {
-      console.log('⚠️ フォルダは既に存在します。スキップします。');
+      console.log('フォルダは既に存在します。スキップします。');
     }
 
     // 2. プリントを投入
-    console.log('📄 プリントを投入中...');
+    console.log('プリントを投入中...');
     const printsSnapshot = await getDocs(collection(db, 'prints'));
     if (printsSnapshot.empty) {
       for (const print of dummyPrints) {
@@ -124,30 +123,31 @@ export const seedDatabase = async () => {
           createdAt: new Date().toISOString()
         });
       }
-      console.log(`✅ ${dummyPrints.length}件のプリントを投入しました`);
+      console.log(`${dummyPrints.length}件のプリントを投入しました`);
     } else {
-      console.log('⚠️ プリントは既に存在します。スキップします。');
+      console.log('プリントは既に存在します。スキップします。');
     }
 
     // 3. 宿題を投入
-    console.log('📝 宿題を投入中...');
+    console.log('宿題を投入中...');
     const homeworksSnapshot = await getDocs(collection(db, 'homeworks'));
     if (homeworksSnapshot.empty) {
       for (const homework of dummyHomeworks) {
         await addDoc(collection(db, 'homeworks'), {
+          type: 'homework',
           title: homework.title,
           deadline: homework.deadline,
           subject: homework.subject,
           createdAt: new Date().toISOString()
         });
       }
-      console.log(`✅ ${dummyHomeworks.length}件の宿題を投入しました`);
+      console.log(`${dummyHomeworks.length}件の宿題を投入しました`);
     } else {
-      console.log('⚠️ 宿題は既に存在します。スキップします。');
+      console.log('宿題は既に存在します。スキップします。');
     }
 
     // 4. 質問箱を投入
-    console.log('❓ 質問箱を投入中...');
+    console.log('質問箱を投入中...');
     const qnaSnapshot = await getDocs(collection(db, 'qna'));
     if (qnaSnapshot.empty) {
       for (const qna of dummyQna) {
@@ -159,32 +159,13 @@ export const seedDatabase = async () => {
           createdAt: new Date().toISOString()
         });
       }
-      console.log(`✅ ${dummyQna.length}件の質問を投入しました`);
+      console.log(`${dummyQna.length}件の質問を投入しました`);
     } else {
-      console.log('⚠️ 質問箱は既に存在します。スキップします。');
+      console.log('質問箱は既に存在します。スキップします。');
     }
 
-    // 5. Live配信を投入
-    console.log('🎥 Live配信を投入中...');
-    const liveSnapshot = await getDocs(collection(db, 'liveSessions'));
-    if (liveSnapshot.empty) {
-      for (const live of dummyLiveSessions) {
-        await addDoc(collection(db, 'liveSessions'), {
-          type: 'live',
-          title: live.title,
-          status: live.status,
-          subject: live.subject,
-          date: live.date || null,
-          createdAt: new Date().toISOString()
-        });
-      }
-      console.log(`✅ ${dummyLiveSessions.length}件のLive配信を投入しました`);
-    } else {
-      console.log('⚠️ Live配信は既に存在します。スキップします。');
-    }
-
-    // 6. 提出物を投入
-    console.log('📤 提出物を投入中...');
+    // 5. 提出物を投入
+    console.log('提出物を投入中...');
     const submissionsSnapshot = await getDocs(collection(db, 'submissions'));
     if (submissionsSnapshot.empty) {
       for (const submission of dummySubmissions) {
@@ -194,16 +175,16 @@ export const seedDatabase = async () => {
           createdAt: serverTimestamp()
         });
       }
-      console.log(`✅ ${dummySubmissions.length}件の提出物を投入しました`);
+      console.log(`${dummySubmissions.length}件の提出物を投入しました`);
     } else {
-      console.log('⚠️ 提出物は既に存在します。スキップします。');
+      console.log('提出物は既に存在します。スキップします。');
     }
 
-    console.log('🎉 ダミーデータの投入が完了しました!');
+    console.log('ダミーデータの投入が完了しました!');
     return { success: true, message: 'データ投入完了' };
 
   } catch (error) {
-    console.error('❌ データ投入中にエラーが発生しました:', error);
+    console.error('データ投入中にエラーが発生しました:', error);
     return { success: false, error: error.message };
   }
 };

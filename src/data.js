@@ -13,22 +13,21 @@ export const dummyFolders = [
   { id: 11, type: 'folder', title: '現在完了形', date: '2025/04/10', subject: '英語', imageUrl: 'https://picsum.photos/240/135?random=11' },
   { id: 12, type: 'folder', title: '化学反応式', date: '2025/04/12', subject: '理科', imageUrl: 'https://picsum.photos/240/135?random=12' },
   { id: 13, type: 'folder', title: '鎌倉時代', date: '2025/04/11', subject: '社会', imageUrl: 'https://picsum.photos/240/135?random=13' },
-  // ★ テスト用データ追加 (アーカイブ)
   { id: 14, type: 'folder', title: '三角関数 応用編', date: '2025/04/12', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=14' },
   { id: 15, type: 'folder', title: '三角関数 まとめ', date: '2025/04/13', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=15' },
   { id: 16, type: 'folder', title: '三角関数 テスト', date: '2025/04/14', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=16' },
 ];
 
-// 2. 教科リスト (★ Sidebar.jsx / HomePage.jsx がインポートします)
+// 2. 教科リスト
 export const mainSubjects = ['国語', '数学', '英語', '理科', '社会'];
 export const subSubjects = ['音楽', '美術', '保健体育', '技術・家庭'];
 
 // 3. 宿題のダミーデータ
 export const dummyHomeworks = [
-  { id: 101, title: '三角関数 練習問題', deadline: '2025/04/15', subject: '数学' },
-  { id: 102, title: '走れメロス 読解', deadline: '2025/04/16', subject: '国語' },
-  { id: 103, title: '不定詞 ワークブック P10-12', deadline: '2025/04/18', subject: '英語' },
-  { id: 104, title: 'ベクトル 練習問題', deadline: '2025/04/20', subject: '数学' },
+  { id: 101, type: 'homework', title: '三角関数 練習問題', deadline: '2025/04/15', subject: '数学' },
+  { id: 102, type: 'homework', title: '走れメロス 読解', deadline: '2025/04/16', subject: '国語' },
+  { id: 103, type: 'homework', title: '不定詞 ワークブック P10-12', deadline: '2025/04/18', subject: '英語' },
+  { id: 104, type: 'homework', title: 'ベクトル 練習問題', deadline: '2025/04/20', subject: '数学' },
 ];
 
 // 4. プリントのダミーデータ
@@ -37,27 +36,17 @@ export const dummyPrints = [
   { id: 202, type: 'print', title: '走れメロス 漢字テスト', date: '2025/04/09', subject: '国語', imageUrl: 'https://picsum.photos/240/135?random=202' },
   { id: 203, type: 'print', title: '不定詞 穴埋め問題', date: '2025/04/08', subject: '英語', imageUrl: 'https://picsum.photos/240/135?random=203' },
   { id: 204, type: 'print', title: 'ベクトルの内積 演習', date: '2025/04/07', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=204' },
-  // ★ テスト用データ追加 (プリント)
   { id: 205, type: 'print', title: '三角関数 応用プリント', date: '2025/04/12', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=205' },
   { id: 206, type: 'print', title: '三角関数 穴埋め', date: '2025/04/13', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=206' },
   { id: 207, type: 'print', title: '三角関数 小テスト', date: '2025/04/14', subject: '数学', imageUrl: 'https://picsum.photos/240/135?random=207' },
 ];
 
-// 5. Live機能のダミーデータ
-export const dummyLiveSessions = [
-  { id: 301, type: 'live', title: '三角関数 復習ライブ', status: 'live', subject: '数学' },
-  { id: 302, type: 'live', title: '英文法(SVOC) 演習', status: 'upcoming', date: '2025/11/22 18:00', subject: '英語' },
-  { id: 303, type: 'live', title: '漢文(レ点) 解説', status: 'upcoming', date: '2025/11/23 19:00', subject: '国語' },
-  { id: 304, type: 'live', title: 'ベクトル 質疑応答', status: 'finished', date: '2025/11/20 17:00', subject: '数学' },
-];
-
-// 6. 質問箱のダミーデータ
+// 5. 質問箱のダミーデータ
 export const dummyQna = [
   { id: 401, type: 'qna', subject: '数学', title: 'ベクトルの内積がよく分かりません。', status: 'answered' },
   { id: 402, type: 'qna', subject: '数学', title: '三角関数の合成の使い所は？', status: 'unanswered' },
   { id: 403, type: 'qna', subject: '英語', title: '関係代名詞の "what" と "which" の違い', status: 'answered' },
   { id: 404, type: 'qna', subject: '国語', title: '走れメロスの主題を教えてください。', status: 'answered' },
   { id: 405, type: 'qna', subject: '数学', title: '微分と積分の関係性', status: 'unanswered' },
-  // ★ テスト用データ追加 (質問箱)
   { id: 406, type: 'qna', subject: '数学', title: '三角関数の公式が覚えられません。', status: 'unanswered' },
 ];
