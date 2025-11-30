@@ -14,7 +14,12 @@ function SubjectPage({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'notice':
-        return <NoticePage filterSubject={subject} notices={notices} onCardClick={onCardClick} />;
+        return <NoticePage 
+                  filterSubject={subject} 
+                  notices={notices} 
+                  onCardClick={onCardClick} 
+                  currentUser={currentUser}
+                />;
         
       case 'archive':
         return <ArchivePage 

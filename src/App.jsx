@@ -24,6 +24,7 @@ import {
   onPrintsChange,
   onHomeworksChange,
   onQuestionsChange,
+  onNoticesChange,
   addPrint,
   addQuestion
 } from './firebase';
@@ -39,56 +40,8 @@ function App() {
   const [prints, setPrints] = useState([]); 
   const [homeworks, setHomeworks] = useState([]);
   const [qnaItems, setQnaItems] = useState([]);
+  const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // お知らせのダミーデータ
-  const [notices] = useState([
-    { 
-      id: 'notice1', 
-      type: 'notice',
-      title: '次回テストは来週月曜日です', 
-      date: '2025/11/20', 
-      noticeType: 'important', 
-      subject: '数学',
-      content: '次回のテストは11月25日(月)に実施します。範囲は教科書P50-80です。計算問題を中心に復習しておいてください。'
-    },
-    { 
-      id: 'notice2', 
-      type: 'notice',
-      title: '提出物の締切に注意してください', 
-      date: '2025/11/18', 
-      noticeType: 'normal', 
-      subject: '数学',
-      content: '宿題の提出締切が今週金曜日です。忘れずに提出してください。遅れた場合は減点となります。'
-    },
-    { 
-      id: 'notice3', 
-      type: 'notice',
-      title: '補習授業のお知らせ', 
-      date: '2025/11/15', 
-      noticeType: 'info', 
-      subject: '数学',
-      content: '来週木曜日の放課後、補習授業を行います。参加希望者は事前に連絡してください。教室は3-2です。'
-    },
-    { 
-      id: 'notice4', 
-      type: 'notice',
-      title: '期末試験の範囲について', 
-      date: '2025/11/22', 
-      noticeType: 'important', 
-      subject: '英語',
-      content: '期末試験の範囲を更新しました。詳細は配布プリントを確認してください。リスニング問題も出題されます。'
-    },
-    { 
-      id: 'notice5', 
-      type: 'notice',
-      title: '授業プリントの配布', 
-      date: '2025/11/19', 
-      noticeType: 'normal', 
-      subject: '国語',
-      content: '次回の授業で使用するプリントを配布します。忘れずに持参してください。'
-    },
-  ]);
   
   // 通知のダミーデータ
   const [notifications, setNotifications] = useState([
@@ -191,12 +144,14 @@ function App() {
     const unsubscribePrints = onPrintsChange((data) => setPrints(data));
     const unsubscribeHomeworks = onHomeworksChange((data) => setHomeworks(data));
     const unsubscribeQna = onQuestionsChange((data) => setQnaItems(data));
+    const unsubscribeNotices = onNoticesChange((data) => setNotices(data));
 
     return () => {
       unsubscribeFolders();
       unsubscribePrints();
       unsubscribeHomeworks();
       unsubscribeQna();
+      unsubscribeNotices();
     };
   }, [isLoggedIn]);
   
@@ -400,7 +355,7 @@ function App() {
       return <CameraPage onSaveItem={handleAddItem} />;
     }
     if (activeView.type === 'calendar') {
-      return <CalendarPage homeworks={homeworks} tests={tests} onCardClick={handleCardClick} />;
+      return <CalendarPage homeworks={homeworks} tests={tests} notices={notices} onCardClick={handleCardClick} />;
     }
     if (activeView.type === 'groups') {
       return <GroupPage currentUser={currentUser} onGroupClick={handleGroupClick} />;

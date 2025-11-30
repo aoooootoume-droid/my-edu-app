@@ -185,54 +185,6 @@ export const onQuestionsChange = (callback) => {
 };
 
 // ========================================
-// 🎥 Live配信関連
-// ========================================
-
-export const addLiveSession = async (liveData) => {
-  try {
-    const docRef = await addDoc(collection(db, 'liveSessions'), {
-      ...liveData,
-      type: 'live',
-      createdAt: serverTimestamp()
-    });
-    return { success: true, id: docRef.id };
-  } catch (error) {
-    console.error('Live配信追加エラー:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-export const updateLiveStatus = async (liveId, status) => {
-  try {
-    await updateDoc(doc(db, 'liveSessions', liveId), { 
-      status,
-      updatedAt: serverTimestamp()
-    });
-    return { success: true };
-  } catch (error) {
-    console.error('Liveステータス更新エラー:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-export const getLiveSessions = async () => {
-  try {
-    const querySnapshot = await getDocs(collection(db, 'liveSessions'));
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error('Live配信取得エラー:', error);
-    return [];
-  }
-};
-
-export const onLiveSessionsChange = (callback) => {
-  return onSnapshot(collection(db, 'liveSessions'), (snapshot) => {
-    const sessions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(sessions);
-  });
-};
-
-// ========================================
 // 🗑️ 削除機能
 // ========================================
 
@@ -644,5 +596,87 @@ export const getSubmissionStats = async (subject) => {
   } catch (error) {
     console.error('統計取得エラー:', error);
     return null;
+  }
+};
+
+// ========================================
+// 📢 お知らせ関連
+// ========================================
+
+/**
+ * お知らせを追加
+ */
+export const addNotice = async (noticeData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'notices'), {
+      type: 'notice',
+      title: noticeData.title,
+      content: noticeData.content,
+      subject: noticeData.subject,
+      noticeType: noticeData.noticeType, // 'important', 'normal', 'info'
+      date: noticeData.date,
+      showInCalendar: noticeData.showInCalendar || false,
+      createdBy: noticeData.createdBy,
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('お知らせ追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 全お知らせを取得
+ */
+export const getNotices = async () => {
+  try {
+    const querySnapshot = await getDocs(
+      query(collection(db, 'notices'), orderBy('date', 'desc'))
+    );
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('お知らせ取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * お知らせをリアルタイムで監視
+ */
+export const onNoticesChange = (callback) => {
+  const q = query(collection(db, 'notices'), orderBy('date', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const notices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(notices);
+  });
+};
+
+/**
+ * お知らせを更新
+ */
+export const updateNotice = async (noticeId, updateData) => {
+  try {
+    await updateDoc(doc(db, 'notices', noticeId), {
+      ...updateData,
+      updatedAt: serverTimestamp()
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('お知らせ更新エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * お知らせを削除
+ */
+export const deleteNotice = async (noticeId) => {
+  try {
+    await deleteDoc(doc(db, 'notices', noticeId));
+    return { success: true };
+  } catch (error) {
+    console.error('お知らせ削除エラー:', error);
+    return { success: false, error: error.message };
   }
 };
