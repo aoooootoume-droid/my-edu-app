@@ -4,7 +4,6 @@ import ArchivePage from './ArchivePage';
 import HomeworkPage from './HomeworkPage'; 
 import PrintPage from './PrintPage'; 
 import QnaPage from './QnaPage'; 
-import MaterialPage from './MaterialPage';
 
 function SubjectPage({ 
   subject, onCardClick, searchTerm, 
@@ -61,13 +60,7 @@ function SubjectPage({
                 />;
 
       case 'material':
-        return <MaterialPage 
-                  filterSubject={subject}
-                  searchTerm={searchTerm}
-                  onCardClick={onCardClick}
-                  currentUser={currentUser}
-                  selectedClass={selectedClass}
-                />;
+        return <div style={{padding: '20px'}}>資料箱（準備中）</div>;
 
       default:
         return null;
