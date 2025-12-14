@@ -12,6 +12,9 @@ import LoginPage from './components/LoginPage';
 import CalendarPage from './components/CalendarPage';
 import SubmissionsPage from './components/SubmissionsPage';
 
+// ★ 録画機能のコンポーネントをインポート
+import RecordingPage from './components/RecordingPage';
+
 // グループ関連
 import GroupPage from './components/GroupPage';
 import GroupDetailPage from './components/GroupDetailPage';
@@ -25,12 +28,15 @@ import {
   onHomeworksChange,
   onQuestionsChange,
   onNoticesChange,
+  onNotificationsChange,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
   addPrint,
   addQuestion
 } from './firebase';
 
 // ダミーデータ投入スクリプト
-import { seedDatabase } from './seedData';
+import { seedDatabase, clearDatabase } from './seedData';
 
 function App() {
   
@@ -41,51 +47,11 @@ function App() {
   const [homeworks, setHomeworks] = useState([]);
   const [qnaItems, setQnaItems] = useState([]);
   const [notices, setNotices] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // 通知のダミーデータ
-  const [notifications, setNotifications] = useState([
-    { 
-      id: 1, 
-      type: 'archive', 
-      title: '新しいアーカイブ', 
-      message: '「数学」に新しいアーカイブが追加されました。', 
-      time: '5分前',
-      isRead: false,
-      linkType: 'folder',
-      linkId: folders[0]?.id || null
-    },
-    { 
-      id: 3, 
-      type: 'qna', 
-      title: '質問に回答', 
-      message: '「質問箱」に新しい回答がつきました。', 
-      time: '1時間前',
-      isRead: true,
-      linkType: 'qna',
-      linkId: qnaItems[0]?.id || null
-    },
-    { 
-      id: 4, 
-      type: 'homework', 
-      title: '宿題の締切', 
-      message: '「三角関数 練習問題」の締切は明日です。', 
-      time: '2時間前',
-      isRead: false,
-      linkType: 'homework',
-      linkId: homeworks[0]?.id || null
-    },
-    { 
-      id: 5, 
-      type: 'notice', 
-      title: '重要なお知らせ', 
-      message: '次回テストは来週月曜日です。', 
-      time: '3時間前',
-      isRead: true,
-      linkType: 'notice',
-      linkId: 'notice1'
-    },
-  ]);
+  // ★ 選択中のクラスを管理
+  const [selectedClass, setSelectedClass] = useState(null);
   
   // テストのダミーデータ
   const [tests] = useState([
@@ -145,6 +111,7 @@ function App() {
     const unsubscribeHomeworks = onHomeworksChange((data) => setHomeworks(data));
     const unsubscribeQna = onQuestionsChange((data) => setQnaItems(data));
     const unsubscribeNotices = onNoticesChange((data) => setNotices(data));
+    const unsubscribeNotifications = onNotificationsChange((data) => setNotifications(data));
 
     return () => {
       unsubscribeFolders();
@@ -152,23 +119,42 @@ function App() {
       unsubscribeHomeworks();
       unsubscribeQna();
       unsubscribeNotices();
+      unsubscribeNotifications();
     };
   }, [isLoggedIn]);
   
-  useEffect(() => {
-    if (folders.length > 0 && qnaItems.length > 0 && homeworks.length > 0) {
-      setNotifications(prev => prev.map(notif => {
-        if (notif.id === 1 && folders[0]) return { ...notif, linkId: folders[0].id };
-        if (notif.id === 3 && qnaItems[0]) return { ...notif, linkId: qnaItems[0].id };
-        if (notif.id === 4 && homeworks[0]) return { ...notif, linkId: homeworks[0].id };
-        return notif;
-      }));
-    }
-  }, [folders, qnaItems, homeworks]);
+  // ========================================
+  // 🎯 クラスでフィルタリングしたデータ
+  // ========================================
   
-  const allClickableItems = [...folders, ...prints, ...qnaItems, ...homeworks, ...notices, ...tests];
+  const filteredFolders = selectedClass 
+    ? folders.filter(f => f.className === selectedClass || !f.className)
+    : folders;
+    
+  const filteredPrints = selectedClass
+    ? prints.filter(p => p.className === selectedClass || !p.className)
+    : prints;
+    
+  const filteredHomeworks = selectedClass
+    ? homeworks.filter(h => h.className === selectedClass || !h.className)
+    : homeworks;
+    
+  const filteredQnaItems = selectedClass
+    ? qnaItems.filter(q => q.className === selectedClass || !q.className)
+    : qnaItems;
+    
+  const filteredNotices = selectedClass
+    ? notices.filter(n => n.className === selectedClass || !n.className)
+    : notices;
+
+  const filteredNotifications = selectedClass
+    ? notifications.filter(n => n.className === selectedClass || !n.className)
+    : notifications;
   
-  console.log('🔍 allClickableItems:', allClickableItems.map(item => ({ id: item.id, type: item.type, title: item.title })));
+  const allClickableItems = [...filteredFolders, ...filteredPrints, ...filteredQnaItems, ...filteredHomeworks, ...filteredNotices, ...tests];
+  
+  console.log('🔍 selectedClass:', selectedClass);
+  console.log('🔍 allClickableItems:', allClickableItems.map(item => ({ id: item.id, type: item.type, title: item.title, className: item.className })));
   
   
   // ========================================
@@ -187,6 +173,12 @@ function App() {
     setIsLoggedIn(false);
     setCurrentUser(null); 
   };
+  
+  // ★ クラス変更ハンドラ
+  const handleClassChange = (className) => {
+    setSelectedClass(className);
+    console.log('クラス変更:', className);
+  };
 
   const handleAddItem = async (item) => {
     try {
@@ -194,7 +186,8 @@ function App() {
         title: item.title,
         subject: item.subject,
         date: item.date || new Date().toISOString().split('T')[0],
-        imageUrl: item.imageUrl || 'https://picsum.photos/240/135?random=' + Date.now()
+        imageUrl: item.imageUrl || 'https://picsum.photos/240/135?random=' + Date.now(),
+        className: selectedClass // ★ 選択中のクラスを追加
       });
 
       if (result.success) {
@@ -217,7 +210,8 @@ function App() {
     try {
       const result = await addQuestion({
         subject: subject,
-        title: title
+        title: title,
+        className: selectedClass // ★ 選択中のクラスを追加
       });
 
       if (result.success) {
@@ -299,20 +293,19 @@ function App() {
     setSearchTerm(title);
   };
   
-  const handleNotificationClick = (notification) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === notification.id ? { ...n, isRead: true } : n)
-    );
+  // ★ Firebase通知をクリック
+  const handleNotificationClick = async (notification) => {
+    // Firebaseで既読にする
+    await markNotificationAsRead(notification.id);
     
     if (notification.linkId) {
       handleCardClick(notification.linkId);
     }
   };
   
-  const handleMarkAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(n => ({ ...n, isRead: true }))
-    );
+  // ★ 全通知を既読に（Firebase）
+  const handleMarkAllAsRead = async () => {
+    await markAllNotificationsAsRead();
   };
   
   const handleSeedData = async () => {
@@ -320,6 +313,20 @@ function App() {
       const result = await seedDatabase();
       if (result.success) {
         alert('✅ ダミーデータの投入が完了しました!');
+      } else {
+        alert('❌ エラー: ' + result.error);
+      }
+    }
+  };
+  
+  // ★ データ削除ハンドラ
+  const handleClearData = async () => {
+    if (window.confirm('⚠️ 本当に全データを削除しますか？\nこの操作は取り消せません。')) {
+      const result = await clearDatabase();
+      if (result.success) {
+        alert('✅ 全データの削除が完了しました!');
+        // ページをリロードして状態をリセット
+        window.location.reload();
       } else {
         alert('❌ エラー: ' + result.error);
       }
@@ -355,7 +362,14 @@ function App() {
       return <CameraPage onSaveItem={handleAddItem} />;
     }
     if (activeView.type === 'calendar') {
-      return <CalendarPage homeworks={homeworks} tests={tests} notices={notices} onCardClick={handleCardClick} />;
+      return <CalendarPage 
+        homeworks={filteredHomeworks} 
+        tests={tests} 
+        notices={filteredNotices} 
+        onCardClick={handleCardClick} 
+        currentUser={currentUser}
+        selectedClass={selectedClass}
+      />;
     }
     if (activeView.type === 'groups') {
       return <GroupPage currentUser={currentUser} onGroupClick={handleGroupClick} />;
@@ -368,7 +382,12 @@ function App() {
       />;
     }
     if (activeView.type === 'submissions') {
-      return <SubmissionsPage currentUser={currentUser} />;
+      return <SubmissionsPage currentUser={currentUser} selectedClass={selectedClass} />;
+    }
+    
+    // ★ 録画ページ
+    if (activeView.type === 'recording') {
+      return <RecordingPage selectedClass={selectedClass} />;
     }
     
     switch (activeView.type) {
@@ -376,32 +395,35 @@ function App() {
         return <HomePage 
                   onCardClick={handleCardClick} 
                   searchTerm={searchTerm} 
-                  folders={folders} 
-                  prints={prints} 
-                  qnaItems={qnaItems}
-                  notices={notices}
+                  folders={filteredFolders} 
+                  prints={filteredPrints} 
+                  qnaItems={filteredQnaItems}
+                  notices={filteredNotices}
+                  selectedClass={selectedClass}
                 />;
       case 'archive':
         return <ArchivePage 
                   filterSubject={null} 
                   onCardClick={handleCardClick} 
                   searchTerm={searchTerm} 
-                  folders={folders} 
+                  folders={filteredFolders}
+                  selectedClass={selectedClass}
                 />;
       case 'subject':
         return <SubjectPage 
                   subject={activeView.subject} 
                   onCardClick={handleCardClick} 
                   searchTerm={searchTerm}
-                  folders={folders} 
-                  prints={prints}
-                  homeworks={homeworks} 
-                  qnaItems={qnaItems}
-                  notices={notices}
+                  folders={filteredFolders} 
+                  prints={filteredPrints}
+                  homeworks={filteredHomeworks} 
+                  qnaItems={filteredQnaItems}
+                  notices={filteredNotices}
                   activeTab={activeView.activeTab} 
                   onTabClick={handleTabClick}
                   onAddQuestion={handleAddQuestion}
                   currentUser={currentUser}
+                  selectedClass={selectedClass}
                 />;
       default:
         return <h2>ようこそ</h2>;
@@ -456,9 +478,10 @@ function App() {
         currentUser={currentUser}
         suggestions={suggestions} 
         onSuggestionClick={handleSuggestionClick}
-        notifications={notifications}
+        notifications={filteredNotifications}
         onNotificationClick={handleNotificationClick}
         onMarkAllAsRead={handleMarkAllAsRead}
+        selectedClass={selectedClass}
       />
       <div className="appLayout">
         <div className="sidebar">
@@ -467,6 +490,7 @@ function App() {
             activeSubject={sidebarActiveSubject} 
             onNavClick={handleNavClick}
             onSubjectClick={handleSubjectClick}
+            onClassChange={handleClassChange}
             currentUser={currentUser}
           />
         </div>

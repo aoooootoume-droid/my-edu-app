@@ -613,10 +613,11 @@ export const addNotice = async (noticeData) => {
       title: noticeData.title,
       content: noticeData.content,
       subject: noticeData.subject,
-      noticeType: noticeData.noticeType, // 'important', 'normal', 'info'
+      noticeType: noticeData.noticeType,
       date: noticeData.date,
       showInCalendar: noticeData.showInCalendar || false,
       createdBy: noticeData.createdBy,
+      className: noticeData.className || null,  // ← この行を追加！
       createdAt: serverTimestamp()
     });
     return { success: true, id: docRef.id };
@@ -677,6 +678,119 @@ export const deleteNotice = async (noticeId) => {
     return { success: true };
   } catch (error) {
     console.error('お知らせ削除エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+// ========================================
+// 🔔 通知関連（database.jsの末尾に追加）
+// ========================================
+
+/**
+ * 通知を追加
+ */
+export const addNotification = async (notificationData) => {
+  try {
+    const docRef = await addDoc(collection(db, 'notifications'), {
+      type: notificationData.type, // 'archive', 'homework', 'qna', 'notice', 'test'
+      title: notificationData.title,
+      message: notificationData.message,
+      linkType: notificationData.linkType || null,
+      linkId: notificationData.linkId || null,
+      className: notificationData.className || null,
+      isRead: false,
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('通知追加エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 通知をリアルタイムで監視
+ */
+export const onNotificationsChange = (callback) => {
+  const q = query(
+    collection(db, 'notifications'), 
+    orderBy('createdAt', 'desc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const notifications = snapshot.docs.map(doc => {
+      const data = doc.data();
+      // createdAtから経過時間を計算
+      let time = '';
+      if (data.createdAt) {
+        const now = new Date();
+        const created = data.createdAt.toDate();
+        const diffMs = now - created;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) time = 'たった今';
+        else if (diffMins < 60) time = `${diffMins}分前`;
+        else if (diffHours < 24) time = `${diffHours}時間前`;
+        else time = `${diffDays}日前`;
+      }
+      
+      return { 
+        id: doc.id, 
+        ...data,
+        time
+      };
+    });
+    callback(notifications);
+  });
+};
+
+/**
+ * 通知を既読にする
+ */
+export const markNotificationAsRead = async (notificationId) => {
+  try {
+    await updateDoc(doc(db, 'notifications', notificationId), {
+      isRead: true
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('通知既読エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 全通知を既読にする
+ */
+export const markAllNotificationsAsRead = async () => {
+  try {
+    const q = query(
+      collection(db, 'notifications'),
+      where('isRead', '==', false)
+    );
+    const snapshot = await getDocs(q);
+    
+    const updatePromises = snapshot.docs.map(docSnapshot => 
+      updateDoc(doc(db, 'notifications', docSnapshot.id), { isRead: true })
+    );
+    
+    await Promise.all(updatePromises);
+    return { success: true };
+  } catch (error) {
+    console.error('全通知既読エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 通知を削除
+ */
+export const deleteNotification = async (notificationId) => {
+  try {
+    await deleteDoc(doc(db, 'notifications', notificationId));
+    return { success: true };
+  } catch (error) {
+    console.error('通知削除エラー:', error);
     return { success: false, error: error.message };
   }
 };

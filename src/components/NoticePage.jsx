@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import styles from './NoticePage.module.css';
-import { addNotice } from '../firebase';
+import { addNotice, addNotification } from '../firebase';
 
-function NoticePage({ filterSubject, notices, onCardClick, currentUser }) {
+function NoticePage({ filterSubject, notices, onCardClick, currentUser, selectedClass }) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -47,10 +47,21 @@ function NoticePage({ filterSubject, notices, onCardClick, currentUser }) {
         noticeType: formData.noticeType,
         date: formData.date,
         showInCalendar: formData.showInCalendar,
-        createdBy: currentUser.uid
+        createdBy: currentUser.uid,
+        className: selectedClass
       });
 
       if (result.success) {
+        // 通知も作成
+        await addNotification({
+          type: 'notice',
+          title: formData.noticeType === 'important' ? '重要なお知らせ' : '新しいお知らせ',
+          message: `「${formData.title}」が追加されました`,
+          linkType: 'notice',
+          linkId: result.id,
+          className: selectedClass
+        });
+
         // フォームをリセット
         setFormData({
           title: '',
@@ -215,7 +226,7 @@ function NoticePage({ filterSubject, notices, onCardClick, currentUser }) {
               </div>
               <h4 className={styles.noticeTitle}>{notice.title}</h4>
               <p className={styles.noticeContent}>
-                {notice.content.length > 100 
+                {notice.content && notice.content.length > 100 
                   ? notice.content.substring(0, 100) + '...' 
                   : notice.content}
               </p>

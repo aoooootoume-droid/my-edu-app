@@ -1,8 +1,9 @@
 import FolderCard from './FolderCard';
 import styles from './HomePage.module.css';
 import { mainSubjects } from '../data.js';
+import { seedDatabase, clearDatabase } from '../seedData';
 
-function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices }) {
+function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices, selectedClass }) {
   
   const subjects = mainSubjects;
   const term = searchTerm.toLowerCase();
@@ -42,11 +43,48 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices 
     }
   };
 
+  // ダミーデータ投入
+  const handleSeedData = async () => {
+    if (window.confirm('ダミーデータをFirestoreに投入しますか？')) {
+      const result = await seedDatabase();
+      if (result.success) {
+        alert('✅ ダミーデータの投入が完了しました！\nページをリロードします。');
+        window.location.reload();
+      } else {
+        alert('❌ エラー: ' + result.error);
+      }
+    }
+  };
+
+  // データ削除
+  const handleClearData = async () => {
+    if (window.confirm('⚠️ 本当に全データを削除しますか？\nこの操作は取り消せません。')) {
+      const result = await clearDatabase();
+      if (result.success) {
+        alert('✅ 全データの削除が完了しました！\nページをリロードします。');
+        window.location.reload();
+      } else {
+        alert('❌ エラー: ' + result.error);
+      }
+    }
+  };
+
   return (
     <div className={styles.homeContainer}>
       <h2>
         {searchTerm ? `「${searchTerm}」の検索結果 (ホーム)` : 'ホーム'}
+        {selectedClass && <span className={styles.classLabel}> - {selectedClass}</span>}
       </h2>
+      
+      {/* データ管理ボタン（開発用） */}
+      <div className={styles.devButtons}>
+        <button onClick={handleClearData} className={styles.clearButton}>
+          🗑️ データ削除
+        </button>
+        <button onClick={handleSeedData} className={styles.seedButton}>
+          📥 ダミーデータ投入
+        </button>
+      </div>
       
       {!searchTerm && (
         <h3 className={styles.archiveTitle}>最近のアーカイブ</h3>
@@ -76,6 +114,8 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices 
                         title={folder.title} 
                         date={folder.date}
                         imageUrl={folder.imageUrl}
+                        subject={folder.subject}
+                        className={!selectedClass ? folder.className : null}
                         onClick={() => onCardClick(folder.id)}
                       />
                     ))}
@@ -93,6 +133,8 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices 
                         title={print.title} 
                         date={print.date}
                         imageUrl={print.imageUrl}
+                        subject={print.subject}
+                        className={!selectedClass ? print.className : null}
                         onClick={() => onCardClick(print.id)}
                       />
                     ))}
@@ -112,6 +154,9 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices 
                           {qna.status === 'answered' ? '回答済み' : '未回答'}
                         </span>
                         <p className={styles.qnaTitle}>{qna.title}</p>
+                        {!selectedClass && qna.className && (
+                          <span className={styles.qnaClass}>{qna.className}</span>
+                        )}
                       </li>
                     ))}
                   </ul>

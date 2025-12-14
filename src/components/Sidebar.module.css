@@ -1,184 +1,279 @@
-/* ======================================
-   サイドバーコンテナ
-====================================== */
 .sidebarContainer {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem 1rem;
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
   overflow-y: auto;
-  gap: 2rem;
 }
 
-/* ======================================
-   メインナビゲーション
-====================================== */
-.navSection {
+/* ===================================
+   レイヤー1: クラス選択画面
+   =================================== */
+.classSelectLayer {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  height: 100%;
+  padding: 20px;
 }
 
-.navItem {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 0.95rem;
+.layerTitle {
+  font-size: 13px;
   font-weight: 600;
-  color: #6b7280;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.navItem::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  transform: scaleY(0);
-  transition: transform 0.3s ease;
-}
-
-.navItem:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  color: #667eea;
-  transform: translateX(4px);
-}
-
-.navItem:hover::before {
-  transform: scaleY(1);
-}
-
-.navItem.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  transform: translateX(4px);
-}
-
-.navItem.active::before {
-  transform: scaleY(0);
-}
-
-/* ======================================
-   教科セクション
-====================================== */
-.subjectSection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-top: 1rem;
-  border-top: 2px solid #f3f4f6;
-}
-
-.subjectSection::before {
-  content: '教科';
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #9ca3af;
+  color: #888;
+  margin: 0 0 16px 2px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-  padding: 0 1rem;
 }
 
-.subjectItem {
+.classList {
   display: flex;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.classButton {
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 15px;
   font-weight: 500;
-  color: #6b7280;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s ease;
+  color: #333;
   position: relative;
 }
 
-.subjectItem::before {
+.classButton::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 0;
-  bottom: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  height: 60%;
   width: 3px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 0 3px 3px 0;
-  transform: scaleY(0);
-  transition: transform 0.3s ease;
+  border-radius: 2px;
+  transition: transform 0.25s ease;
 }
 
-.subjectItem:hover {
-  background: #f9fafb;
+.classButton:hover {
   color: #667eea;
-  transform: translateX(4px);
+  padding-left: 20px;
 }
 
-.subjectItem:hover::before {
-  transform: scaleY(1);
+.classButton:hover::before {
+  transform: translateY(-50%) scaleY(1);
 }
 
-.subjectItem.active {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+/* ===================================
+   レイヤー2: メインメニュー
+   =================================== */
+.menuLayer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+
+.menuHeader {
+  margin-bottom: 20px;
+}
+
+.classHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: white;
   color: #667eea;
-  font-weight: 700;
-  transform: translateX(4px);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
-.subjectItem.active::before {
-  transform: scaleY(1);
+.backButton:hover {
+  background: #667eea;
+  color: white;
 }
 
-/* ======================================
-   スクロールバーのカスタマイズ
-====================================== */
-.sidebarContainer::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebarContainer::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebarContainer::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
+.selectedClassBadge {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.sidebarContainer::-webkit-scrollbar-thumb:hover {
-  background: #d1d5db;
+/* メインメニュー */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
 }
 
-/* ======================================
-   アニメーション
-====================================== */
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
+.nav button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  color: #333;
+  position: relative;
+}
+
+.nav button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  height: 60%;
+  width: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+  transition: transform 0.25s ease;
+}
+
+.nav button:hover {
+  color: #667eea;
+  padding-left: 20px;
+}
+
+.nav button:hover::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+.nav button.active {
+  color: #667eea;
+  font-weight: 600;
+  padding-left: 20px;
+}
+
+.nav button.active::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+/* ===================================
+   教科一覧セクション
+   =================================== */
+.subjectSection {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.subjectTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  margin: 0 0 12px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.subjectList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.subjectList button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  color: #555;
+  position: relative;
+}
+
+.subjectList button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  height: 60%;
+  width: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+  transition: transform 0.25s ease;
+}
+
+.subjectList button:hover {
+  color: #667eea;
+  padding-left: 20px;
+}
+
+.subjectList button:hover::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+.subjectList button.activeSubject {
+  color: #667eea;
+  font-weight: 600;
+  padding-left: 20px;
+}
+
+.subjectList button.activeSubject::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+/* ===================================
+   レスポンシブ対応
+   =================================== */
+@media (max-width: 768px) {
+  .classSelectLayer,
+  .menuLayer {
+    padding: 12px;
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+
+  .classButton {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .nav button {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .selectedClassBadge {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .subjectList button {
+    padding: 8px 12px;
+    font-size: 13px;
   }
 }
-
-.navItem, .subjectItem {
-  animation: slideInLeft 0.3s ease-out;
-}
-
-.navItem:nth-child(1) { animation-delay: 0.05s; }
-.navItem:nth-child(2) { animation-delay: 0.1s; }
-
-.subjectItem:nth-child(1) { animation-delay: 0.15s; }
-.subjectItem:nth-child(2) { animation-delay: 0.2s; }
-.subjectItem:nth-child(3) { animation-delay: 0.25s; }
-.subjectItem:nth-child(4) { animation-delay: 0.3s; }
-.subjectItem:nth-child(5) { animation-delay: 0.35s; }

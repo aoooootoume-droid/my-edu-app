@@ -4,11 +4,12 @@ import ArchivePage from './ArchivePage';
 import HomeworkPage from './HomeworkPage'; 
 import PrintPage from './PrintPage'; 
 import QnaPage from './QnaPage'; 
+import MaterialPage from './MaterialPage';
 
 function SubjectPage({ 
   subject, onCardClick, searchTerm, 
   folders, prints, homeworks, qnaItems, notices,
-  activeTab, onTabClick, onAddQuestion, currentUser
+  activeTab, onTabClick, onAddQuestion, onAddHomework, currentUser, selectedClass
 }) {
   
   const renderTabContent = () => {
@@ -19,6 +20,7 @@ function SubjectPage({
                   notices={notices} 
                   onCardClick={onCardClick} 
                   currentUser={currentUser}
+                  selectedClass={selectedClass}
                 />;
         
       case 'archive':
@@ -27,6 +29,7 @@ function SubjectPage({
                   onCardClick={onCardClick} 
                   searchTerm={searchTerm} 
                   folders={folders}
+                  selectedClass={selectedClass}
                 />;
                 
       case 'qbox':
@@ -44,6 +47,9 @@ function SubjectPage({
                   searchTerm={searchTerm} 
                   homeworks={homeworks}
                   onCardClick={onCardClick}
+                  onAddHomework={onAddHomework}
+                  currentUser={currentUser}
+                  selectedClass={selectedClass}
                 />;
       
       case 'print':
@@ -53,6 +59,16 @@ function SubjectPage({
                   onCardClick={onCardClick} 
                   prints={prints}
                 />;
+
+      case 'material':
+        return <MaterialPage 
+                  filterSubject={subject}
+                  searchTerm={searchTerm}
+                  onCardClick={onCardClick}
+                  currentUser={currentUser}
+                  selectedClass={selectedClass}
+                />;
+
       default:
         return null;
     }
@@ -81,6 +97,9 @@ function SubjectPage({
         </div>
         <div className={getTabClass('print')} onClick={() => onTabClick('print')}>
           プリント
+        </div>
+        <div className={getTabClass('material')} onClick={() => onTabClick('material')}>
+          資料箱
         </div>
       </nav>
       

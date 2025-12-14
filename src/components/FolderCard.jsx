@@ -1,19 +1,43 @@
 import styles from './FolderCard.module.css';
 
-function FolderCard({ title, date, onClick, imageUrl }) {
+function FolderCard({ title, date, onClick, imageUrl, subject, className }) {
+  
+  const getSubjectClass = (subj) => {
+    switch(subj) {
+      case '数学': return styles.tagMath;
+      case '英語': return styles.tagEnglish;
+      case '国語': return styles.tagJapanese;
+      case '理科': return styles.tagScience;
+      case '社会': return styles.tagSocial;
+      default: return styles.tagDefault;
+    }
+  };
+
   return (
     <div className={styles.cardContainer} onClick={onClick}>
       
-      {/* img タグでサムネイル画像を表示 */}
-      <img 
-        src={imageUrl} 
-        alt={title} 
-        className={styles.thumbnailImage} 
-      />
+      {/* サムネイル画像 */}
+      <div className={styles.thumbnailWrapper}>
+        <img 
+          src={imageUrl} 
+          alt={title} 
+          className={styles.thumbnailImage} 
+        />
+        {subject && (
+          <span className={`${styles.subjectBadge} ${getSubjectClass(subject)}`}>
+            {subject}
+          </span>
+        )}
+      </div>
       
       <div className={styles.cardInfo}>
         <h4 className={styles.cardTitle}>{title}</h4>
-        <p className={styles.cardDate}>{date}</p>
+        <div className={styles.cardMeta}>
+          <p className={styles.cardDate}>{date}</p>
+          {className && (
+            <span className={styles.classBadge}>{className}</span>
+          )}
+        </div>
       </div>
     </div>
   );
