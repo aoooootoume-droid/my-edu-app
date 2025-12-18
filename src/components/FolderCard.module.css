@@ -172,13 +172,125 @@
 /* ======================================
    レスポンシブ対応
 ====================================== */
-@media (max-width: 768px) {
+
+/* タブレット (768px - 1024px) */
+@media (max-width: 1024px) {
   .cardContainer {
     width: 240px;
   }
   
-  .thumbnailImage {
+  .thumbnailImage,
+  .noImage {
     height: 135px;
+  }
+
+  .cardInfo {
+    padding: 1rem;
+  }
+
+  .cardTitle {
+    font-size: 0.9rem;
+    min-height: 42px;
+  }
+}
+
+/* スマートフォン (768px以下) */
+@media (max-width: 768px) {
+  .cardContainer {
+    width: 200px;
+  }
+  
+  .thumbnailImage,
+  .noImage {
+    height: 112px;
+  }
+
+  .subjectBadge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+    top: 8px;
+    left: 8px;
+  }
+
+  .recordingBadge {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.6rem;
+    bottom: 6px;
+    right: 6px;
+  }
+
+  .cardInfo {
+    padding: 0.75rem;
+  }
+
+  .cardTitle {
+    font-size: 0.85rem;
+    min-height: 36px;
+    -webkit-line-clamp: 2;
+  }
+
+  .cardDate {
+    font-size: 0.75rem;
+  }
+
+  .cardDate::before {
+    font-size: 0.75rem;
+  }
+
+  .classBadge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+}
+
+/* 小さいスマートフォン (480px以下) */
+@media (max-width: 480px) {
+  .cardContainer {
+    width: 160px;
+  }
+  
+  .thumbnailImage,
+  .noImage {
+    height: 90px;
+  }
+
+  .noImage {
+    font-size: 2rem;
+  }
+
+  .subjectBadge {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.6rem;
+    border-radius: 4px;
+  }
+
+  .recordingBadge {
+    padding: 0.15rem 0.3rem;
+    font-size: 0.55rem;
+  }
+
+  .cardInfo {
+    padding: 0.625rem;
+  }
+
+  .cardTitle {
+    font-size: 0.75rem;
+    min-height: 32px;
+    margin-bottom: 0.25rem;
+  }
+
+  .cardMeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .cardDate {
+    font-size: 0.7rem;
+  }
+
+  .classBadge {
+    font-size: 0.55rem;
   }
 }
 
@@ -193,3 +305,31 @@
 .cardContainer:nth-child(6) { animation-delay: 0.3s; }
 .cardContainer:nth-child(7) { animation-delay: 0.35s; }
 .cardContainer:nth-child(8) { animation-delay: 0.4s; }
+
+/* ======================================
+   画像なしの場合
+====================================== */
+.noImage {
+  width: 100%;
+  height: 158px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+/* ======================================
+   録画バッジ
+====================================== */
+.recordingBadge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 0.3rem 0.6rem;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}

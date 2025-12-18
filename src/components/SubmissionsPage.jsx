@@ -1,8 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './SubmissionsPage.module.css';
-import { onSubmissionsChange, gradeSubmission } from '../firebase';
+import { db, storage } from '../firebase/config';
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { onSubmissionsChange, gradeSubmission, onHomeworksChange, submitHomework } from '../firebase';
 
-function SubmissionsPage({ currentUser }) {
+function SubmissionsPage({ currentUser, selectedClass }) {
+  const isTeacher = currentUser?.role === 'teacher';
+
+  if (isTeacher) {
+    return <TeacherSubmissionsView currentUser={currentUser} selectedClass={selectedClass} />;
+  } else {
+    return <StudentSubmissionsView currentUser={currentUser} selectedClass={selectedClass} />;
+  }
+}
+
+// ============================================
+// 教師用ビュー（既存のまま）
+// ============================================
+function TeacherSubmissionsView({ currentUser, selectedClass }) {
   const [submissions, setSubmissions] = useState([]);
   const [filteredSubmissions, setFilteredSubmissions] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('all');
@@ -11,15 +27,16 @@ function SubmissionsPage({ currentUser }) {
   const [gradeInput, setGradeInput] = useState('');
   const [feedbackInput, setFeedbackInput] = useState('');
 
-  // 提出物をリアルタイムで取得
   useEffect(() => {
     const unsubscribe = onSubmissionsChange((data) => {
-      setSubmissions(data);
+      const filtered = selectedClass 
+        ? data.filter(s => s.className === selectedClass || !s.className)
+        : data;
+      setSubmissions(filtered);
     });
     return () => unsubscribe();
-  }, []);
+  }, [selectedClass]);
 
-  // フィルタリング
   useEffect(() => {
     let filtered = submissions;
 
@@ -38,17 +55,14 @@ function SubmissionsPage({ currentUser }) {
     setFilteredSubmissions(filtered);
   }, [submissions, selectedSubject, selectedStatus]);
 
-  // 教科一覧を取得
   const subjects = [...new Set(submissions.map(s => s.subject))];
 
-  // 統計情報
   const stats = {
     total: submissions.length,
     graded: submissions.filter(s => s && s.grade !== null && s.grade !== undefined).length,
     ungraded: submissions.filter(s => s && (s.grade === null || s.grade === undefined)).length,
   };
 
-  // 評価を送信
   const handleGradeSubmit = async (e) => {
     e.preventDefault();
     if (!selectedSubmission || !gradeInput) return;
@@ -69,7 +83,6 @@ function SubmissionsPage({ currentUser }) {
     }
   };
 
-  // 提出日時をフォーマット
   const formatDate = (timestamp) => {
     if (!timestamp) return '未提出';
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -102,7 +115,6 @@ function SubmissionsPage({ currentUser }) {
         </div>
       </div>
 
-      {/* フィルター */}
       <div className={styles.filters}>
         <div className={styles.filterGroup}>
           <label>教科:</label>
@@ -132,7 +144,6 @@ function SubmissionsPage({ currentUser }) {
         </div>
       </div>
 
-      {/* 提出物一覧 */}
       <div className={styles.submissionsList}>
         {filteredSubmissions.length === 0 ? (
           <div className={styles.empty}>
@@ -192,7 +203,6 @@ function SubmissionsPage({ currentUser }) {
         )}
       </div>
 
-      {/* 詳細モーダル */}
       {selectedSubmission && (
         <div className={styles.modal} onClick={() => setSelectedSubmission(null)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -247,7 +257,6 @@ function SubmissionsPage({ currentUser }) {
                 </div>
               )}
 
-              {/* 評価フォーム */}
               <form onSubmit={handleGradeSubmit} className={styles.gradeForm}>
                 <h3>評価を入力</h3>
                 
@@ -285,7 +294,6 @@ function SubmissionsPage({ currentUser }) {
                 </button>
               </form>
 
-              {/* 既存の評価を表示 */}
               {selectedSubmission.grade && (
                 <div className={styles.existingGrade}>
                   <h3>現在の評価</h3>
@@ -297,6 +305,370 @@ function SubmissionsPage({ currentUser }) {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================
+// 生徒用ビュー（新規）
+// ============================================
+function StudentSubmissionsView({ currentUser, selectedClass }) {
+  const [homeworks, setHomeworks] = useState([]);
+  const [mySubmissions, setMySubmissions] = useState([]);
+  const [selectedHomework, setSelectedHomework] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [comment, setComment] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [cameraMode, setCameraMode] = useState(false);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+
+  // 宿題一覧を取得
+  useEffect(() => {
+    const unsubscribe = onHomeworksChange((data) => {
+      const filtered = selectedClass 
+        ? data.filter(h => h.className === selectedClass || !h.className)
+        : data;
+      // 締め切りでソート（近い順）
+      filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+      setHomeworks(filtered);
+    });
+    return () => unsubscribe();
+  }, [selectedClass]);
+
+  // 自分の提出物を取得
+  useEffect(() => {
+    if (!currentUser?.uid) return;
+
+    const q = query(
+      collection(db, 'submissions'),
+      where('studentId', '==', currentUser.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setMySubmissions(data);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  // 提出済みかチェック
+  const isSubmitted = (homeworkId) => {
+    return mySubmissions.some(s => s.homeworkId === homeworkId);
+  };
+
+  // 提出情報を取得
+  const getSubmission = (homeworkId) => {
+    return mySubmissions.find(s => s.homeworkId === homeworkId);
+  };
+
+  // 締め切りまでの日数
+  const getDaysUntilDeadline = (deadline) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const deadlineDate = new Date(deadline);
+    deadlineDate.setHours(0, 0, 0, 0);
+    const diff = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
+    return diff;
+  };
+
+  // 締め切りステータス
+  const getDeadlineStatus = (deadline) => {
+    const days = getDaysUntilDeadline(deadline);
+    if (days < 0) return { text: '締切超過', class: styles.deadlineOverdue };
+    if (days === 0) return { text: '今日まで', class: styles.deadlineToday };
+    if (days <= 3) return { text: `あと${days}日`, class: styles.deadlineSoon };
+    return { text: `あと${days}日`, class: styles.deadlineNormal };
+  };
+
+  // カメラを起動
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: 1280, height: 720 }
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setCameraMode(true);
+    } catch (err) {
+      console.error('カメラ起動エラー:', err);
+      alert('カメラを起動できませんでした');
+    }
+  };
+
+  // カメラを停止
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setCameraMode(false);
+  };
+
+  // 写真を撮影
+  const capturePhoto = () => {
+    if (!videoRef.current) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(videoRef.current, 0, 0);
+
+    canvas.toBlob((blob) => {
+      setCapturedImage(blob);
+      stopCamera();
+    }, 'image/jpeg', 0.9);
+  };
+
+  // ファイル選択
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setCapturedImage(null);
+    }
+  };
+
+  // 提出処理
+  const handleSubmit = async () => {
+    if (!selectedHomework) return;
+    if (!selectedFile && !capturedImage) {
+      alert('ファイルまたは写真を選択してください');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const fileToUpload = capturedImage || selectedFile;
+      const fileName = capturedImage 
+        ? `photo_${Date.now()}.jpg` 
+        : selectedFile.name;
+      
+      const storageRef = ref(storage, `submissions/${Date.now()}_${currentUser.uid}_${fileName}`);
+      await uploadBytes(storageRef, fileToUpload);
+      const fileUrl = await getDownloadURL(storageRef);
+
+      await submitHomework({
+        homeworkId: selectedHomework.id,
+        studentId: currentUser.uid,
+        studentName: currentUser.displayName || currentUser.email,
+        subject: selectedHomework.subject,
+        homeworkTitle: selectedHomework.title,
+        fileUrl: fileUrl,
+        comment: comment,
+        className: selectedClass
+      });
+
+      alert('提出が完了しました！');
+      setSelectedHomework(null);
+      setSelectedFile(null);
+      setCapturedImage(null);
+      setComment('');
+    } catch (err) {
+      console.error('提出エラー:', err);
+      alert('提出に失敗しました: ' + err.message);
+    }
+
+    setIsSubmitting(false);
+  };
+
+  // モーダルを閉じる
+  const closeModal = () => {
+    stopCamera();
+    setSelectedHomework(null);
+    setSelectedFile(null);
+    setCapturedImage(null);
+    setComment('');
+  };
+
+  // 統計
+  const stats = {
+    total: homeworks.length,
+    submitted: homeworks.filter(h => isSubmitted(h.id)).length,
+    pending: homeworks.filter(h => !isSubmitted(h.id)).length,
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>📝 課題一覧</h1>
+        <div className={styles.stats}>
+          <div className={styles.statCard}>
+            <div className={styles.statNumber}>{stats.total}</div>
+            <div className={styles.statLabel}>全課題</div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={styles.statNumber}>{stats.pending}</div>
+            <div className={styles.statLabel}>未提出</div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={styles.statNumber}>{stats.submitted}</div>
+            <div className={styles.statLabel}>提出済み</div>
+          </div>
+        </div>
+      </div>
+
+      {/* 課題一覧 */}
+      <div className={styles.homeworkList}>
+        {homeworks.length === 0 ? (
+          <div className={styles.empty}>
+            <p>📭 課題がありません</p>
+          </div>
+        ) : (
+          homeworks.map(homework => {
+            const submitted = isSubmitted(homework.id);
+            const submission = getSubmission(homework.id);
+            const deadlineStatus = getDeadlineStatus(homework.deadline);
+
+            return (
+              <div 
+                key={homework.id} 
+                className={`${styles.homeworkCard} ${submitted ? styles.submitted : ''}`}
+              >
+                <div className={styles.homeworkHeader}>
+                  <span className={styles.subjectBadge}>{homework.subject}</span>
+                  <span className={deadlineStatus.class}>{deadlineStatus.text}</span>
+                </div>
+
+                <h3 className={styles.homeworkTitle}>{homework.title}</h3>
+                
+                <div className={styles.homeworkMeta}>
+                  <span>📅 締切: {homework.deadline}</span>
+                </div>
+
+                {homework.description && (
+                  <p className={styles.homeworkDesc}>{homework.description}</p>
+                )}
+
+                <div className={styles.homeworkFooter}>
+                  {submitted ? (
+                    <div className={styles.submittedInfo}>
+                      <span className={styles.submittedBadge}>✓ 提出済み</span>
+                      {submission?.grade && (
+                        <span className={styles.gradeBadge}>{submission.grade}</span>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      className={styles.submitBtn}
+                      onClick={() => setSelectedHomework(homework)}
+                    >
+                      提出する
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* 提出モーダル */}
+      {selectedHomework && (
+        <div className={styles.modal} onClick={closeModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>課題を提出</h2>
+              <button className={styles.closeButton} onClick={closeModal}>✕</button>
+            </div>
+
+            <div className={styles.modalBody}>
+              <div className={styles.homeworkInfo}>
+                <span className={styles.subjectBadge}>{selectedHomework.subject}</span>
+                <h3>{selectedHomework.title}</h3>
+                <p>締切: {selectedHomework.deadline}</p>
+              </div>
+
+              {/* カメラモード */}
+              {cameraMode ? (
+                <div className={styles.cameraSection}>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className={styles.cameraPreview}
+                  />
+                  <div className={styles.cameraButtons}>
+                    <button className={styles.captureBtn} onClick={capturePhoto}>
+                      📷 撮影
+                    </button>
+                    <button className={styles.cancelBtn} onClick={stopCamera}>
+                      キャンセル
+                    </button>
+                  </div>
+                </div>
+              ) : capturedImage ? (
+                <div className={styles.previewSection}>
+                  <img
+                    src={URL.createObjectURL(capturedImage)}
+                    alt="撮影した画像"
+                    className={styles.imagePreview}
+                  />
+                  <button
+                    className={styles.retakeBtn}
+                    onClick={() => {
+                      setCapturedImage(null);
+                      startCamera();
+                    }}
+                  >
+                    撮り直す
+                  </button>
+                </div>
+              ) : selectedFile ? (
+                <div className={styles.previewSection}>
+                  <div className={styles.filePreview}>
+                    <span>📎 {selectedFile.name}</span>
+                    <button onClick={() => setSelectedFile(null)}>✕</button>
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.uploadOptions}>
+                  <button className={styles.optionBtn} onClick={startCamera}>
+                    📷 カメラで撮影
+                  </button>
+                  <label className={styles.optionBtn}>
+                    📁 ファイルを選択
+                    <input
+                      type="file"
+                      accept="image/*,.pdf,.doc,.docx"
+                      onChange={handleFileSelect}
+                      hidden
+                    />
+                  </label>
+                </div>
+              )}
+
+              <div className={styles.formGroup}>
+                <label>コメント（任意）</label>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="先生へのコメントがあれば入力..."
+                  className={styles.textarea}
+                  rows={3}
+                />
+              </div>
+
+              <button
+                className={styles.submitButton}
+                onClick={handleSubmit}
+                disabled={isSubmitting || (!selectedFile && !capturedImage)}
+              >
+                {isSubmitting ? '提出中...' : '提出する'}
+              </button>
             </div>
           </div>
         </div>

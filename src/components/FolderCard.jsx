@@ -1,6 +1,6 @@
 import styles from './FolderCard.module.css';
 
-function FolderCard({ title, date, onClick, imageUrl, subject, className }) {
+function FolderCard({ title, date, onClick, imageUrl, subject, className, isRecording }) {
   
   const getSubjectClass = (subj) => {
     switch(subj) {
@@ -18,15 +18,24 @@ function FolderCard({ title, date, onClick, imageUrl, subject, className }) {
       
       {/* サムネイル画像 */}
       <div className={styles.thumbnailWrapper}>
-        <img 
-          src={imageUrl} 
-          alt={title} 
-          className={styles.thumbnailImage} 
-        />
+        {imageUrl ? (
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            className={styles.thumbnailImage} 
+          />
+        ) : (
+          <div className={styles.noImage}>
+            {isRecording ? '🎬' : '📁'}
+          </div>
+        )}
         {subject && (
           <span className={`${styles.subjectBadge} ${getSubjectClass(subject)}`}>
             {subject}
           </span>
+        )}
+        {isRecording && (
+          <span className={styles.recordingBadge}>🎥 録画</span>
         )}
       </div>
       

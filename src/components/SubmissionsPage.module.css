@@ -351,6 +351,7 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .input:focus,
@@ -377,9 +378,14 @@
   transition: all 0.2s;
 }
 
-.submitButton:hover {
+.submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* 既存の評価表示 */
@@ -420,22 +426,132 @@
 }
 
 /* レスポンシブ */
+
+/* タブレット (768px - 1024px) */
+@media (max-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .statNumber {
+    font-size: 2rem;
+  }
+}
+
+/* スマートフォン (768px以下) */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
   }
 
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .statCard {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .statLabel {
+    font-size: 0.7rem;
+  }
+
   .filters {
     flex-direction: column;
+    padding: 1rem;
+    gap: 0.75rem;
   }
 
+  .filterGroup {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .select {
+    width: 100%;
+  }
+
+  /* テーブルをカード形式に変更 */
   .table {
-    font-size: 0.85rem;
+    display: block;
   }
 
-  .table th,
+  .table thead {
+    display: none;
+  }
+
+  .table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .table tr {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #667eea;
+  }
+
   .table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.25rem 0;
+    border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .table td::before {
+    font-weight: 600;
+    color: #718096;
+    font-size: 0.75rem;
+  }
+
+  .table td:nth-child(1)::before { content: '生徒名'; }
+  .table td:nth-child(2)::before { content: '教科'; }
+  .table td:nth-child(3)::before { content: '宿題'; }
+  .table td:nth-child(4)::before { content: '提出日時'; }
+  .table td:nth-child(5)::before { content: '評価'; }
+  .table td:nth-child(6)::before { content: ''; }
+
+  .studentName {
+    font-size: 1rem;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .viewButton {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 
   .infoGrid {
@@ -443,10 +559,410 @@
   }
 
   .modal {
+    padding: 0.5rem;
+    align-items: flex-end;
+  }
+
+  .modalContent {
+    max-height: 90vh;
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+  }
+
+  .modalHeader {
     padding: 1rem;
   }
 
+  .modalHeader h2 {
+    font-size: 1.1rem;
+  }
+
   .modalBody {
-    padding: 1.5rem;
+    padding: 1rem;
+  }
+
+  .gradeForm {
+    padding: 1rem;
+  }
+
+  .gradeLarge {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 1.5rem;
+  }
+}
+
+/* 小さいスマートフォン (480px以下) */
+@media (max-width: 480px) {
+  .container {
+    padding: 0.75rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .statNumber {
+    font-size: 1.25rem;
+  }
+
+  .statLabel {
+    font-size: 0.6rem;
+  }
+
+  .table tr {
+    padding: 0.75rem;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+}
+
+/* ============================================
+   生徒用スタイル
+============================================ */
+
+.homeworkList {
+  display: grid;
+  gap: 1rem;
+}
+
+.homeworkCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+  border-left: 4px solid #667eea;
+}
+
+.homeworkCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.homeworkCard.submitted {
+  border-left-color: #48bb78;
+  background: #f0fff4;
+}
+
+.homeworkHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.homeworkTitle {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  color: #1a202c;
+}
+
+.homeworkMeta {
+  font-size: 0.9rem;
+  color: #718096;
+  margin-bottom: 0.5rem;
+}
+
+.homeworkDesc {
+  font-size: 0.9rem;
+  color: #4a5568;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.homeworkFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.submittedInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.submittedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: #48bb78;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.submitBtn {
+  padding: 0.625rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* 締め切りステータス */
+.deadlineNormal {
+  font-size: 0.85rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.deadlineSoon {
+  font-size: 0.85rem;
+  color: #dd6b20;
+  font-weight: 600;
+}
+
+.deadlineToday {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  background: #feb2b2;
+  color: #c53030;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.deadlineOverdue {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  background: #c53030;
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* 提出モーダル（生徒用） */
+.homeworkInfo {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.homeworkInfo h3 {
+  margin: 0.5rem 0;
+  font-size: 1.25rem;
+  color: #1a202c;
+}
+
+.homeworkInfo p {
+  margin: 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.uploadOptions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.optionBtn {
+  flex: 1;
+  padding: 1.5rem;
+  background: #f7fafc;
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.optionBtn:hover {
+  border-color: #667eea;
+  background: #edf2f7;
+}
+
+.cameraSection {
+  margin-bottom: 1.5rem;
+}
+
+.cameraPreview {
+  width: 100%;
+  border-radius: 12px;
+  background: #000;
+}
+
+.cameraButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.captureBtn {
+  flex: 1;
+  padding: 0.875rem;
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 0.875rem;
+  background: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.previewSection {
+  margin-bottom: 1.5rem;
+}
+
+.imagePreview {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.retakeBtn {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filePreview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  border: 2px solid #667eea;
+}
+
+.filePreview button {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: #718096;
+}
+
+.filePreview button:hover {
+  color: #c53030;
+}
+
+/* ============================================
+   生徒用スタイル - レスポンシブ
+============================================ */
+
+/* スマートフォン (768px以下) */
+@media (max-width: 768px) {
+  .homeworkCard {
+    padding: 1rem;
+  }
+
+  .homeworkHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .homeworkTitle {
+    font-size: 1rem;
+  }
+
+  .homeworkMeta {
+    font-size: 0.8rem;
+  }
+
+  .homeworkDesc {
+    font-size: 0.8rem;
+  }
+
+  .homeworkFooter {
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .submitBtn {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .submittedBadge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .deadlineToday,
+  .deadlineOverdue,
+  .deadlineSoon,
+  .deadlineNormal {
+    font-size: 0.75rem;
+  }
+
+  .uploadOptions {
+    flex-direction: column;
+  }
+
+  .optionBtn {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .cameraButtons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .captureBtn,
+  .cancelBtn {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* 小さいスマートフォン (480px以下) */
+@media (max-width: 480px) {
+  .homeworkCard {
+    padding: 0.75rem;
+  }
+
+  .homeworkTitle {
+    font-size: 0.9rem;
+  }
+
+  .subjectBadge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .submitBtn {
+    font-size: 0.85rem;
   }
 }

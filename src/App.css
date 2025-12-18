@@ -1,226 +1,90 @@
 /* ======================================
-   全体のリセットと基本設定
+   グローバルリセット & ベース
 ====================================== */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f5f7fa;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-  height: 100vh;
-  overflow: hidden; /* 追加 */
-}
-
-#root {
-  height: 100vh;
-  overflow: hidden; /* 追加 */
 }
 
 /* ======================================
-   アプリレイアウト
+   メインレイアウト
 ====================================== */
 .appLayout {
   display: flex;
-  height: calc(100vh - 70px); /* ヘッダーの高さを引く */
-  margin-top: 70px; /* ヘッダー分のマージン */
-  overflow: hidden; /* 追加 */
+  min-height: calc(100vh - 64px);
 }
 
 .sidebar {
-  position: fixed; /* 追加 */
-  left: 0;
-  top: 70px; /* ヘッダーの下に配置 */
-  width: 240px;
-  height: calc(100vh - 70px); /* ヘッダー分を引いた高さ */
+  width: 260px;
   flex-shrink: 0;
-  background: white;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
-  z-index: 10;
-  overflow-y: auto; /* サイドバー内でスクロール */
-}
-
-.mainContent {
-  margin-left: 240px; /* サイドバーの幅分 */
-  flex: 1;
-  height: calc(100vh - 70px);
-  padding: 2rem;
-  overflow-y: auto; /* メインコンテンツだけスクロール */
-  width: calc(100% - 240px);
-}
-
-/* ======================================
-   スクロールバーのカスタマイズ
-====================================== */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
-}
-
-/* ======================================
-   アニメーション
-====================================== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-/* ======================================
-   共通のカードスタイル
-====================================== */
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fadeIn 0.4s ease-out;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-/* ======================================
-   ボタン共通スタイル
-====================================== */
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  outline: none;
+  background: #f8f9fa;
+  border-right: 1px solid #e0e0e0;
+  height: calc(100vh - 64px);
+  position: sticky;
+  top: 64px;
+  overflow-y: auto;
   transition: all 0.3s ease;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
-
-.btn-secondary {
-  background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  font-weight: 600;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
+.mainContent {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  overflow-x: hidden;
 }
 
 /* ======================================
-   レスポンシブ対応
+   タブレット対応 (768px - 1024px)
 ====================================== */
-@media (max-width: 768px) {
-  body {
-    overflow: auto; /* モバイルでは通常スクロール */
-  }
-
-  #root {
-    overflow: auto;
-  }
-
-  .appLayout {
-    flex-direction: column;
-    height: auto;
-    margin-top: 70px;
-    overflow: visible;
-  }
-  
+@media (max-width: 1024px) {
   .sidebar {
-    position: relative; /* モバイルでは固定しない */
-    top: 0;
-    width: 100%;
-    height: auto;
-    max-height: 200px;
+    width: 220px;
   }
   
   .mainContent {
-    margin-left: 0;
-    width: 100%;
-    height: auto;
-    overflow-y: visible;
-    padding: 1rem;
+    padding: 20px;
   }
 }
 
 /* ======================================
-   ローディングアニメーション
+   スマートフォン対応 (768px以下)
 ====================================== */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+@media (max-width: 768px) {
+  .appLayout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    position: relative;
+    top: 0;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    overflow-y: visible;
+  }
+  
+  .mainContent {
+    padding: 16px;
+    min-height: calc(100vh - 200px);
+  }
 }
 
-.loading h2 {
-  color: white;
-  font-size: 1.5rem;
-  animation: pulse 1.5s ease-in-out infinite;
+/* ======================================
+   小さいスマートフォン (480px以下)
+====================================== */
+@media (max-width: 480px) {
+  .mainContent {
+    padding: 12px;
+  }
 }

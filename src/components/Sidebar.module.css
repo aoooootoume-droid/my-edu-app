@@ -251,10 +251,12 @@
 /* ===================================
    レスポンシブ対応
    =================================== */
-@media (max-width: 768px) {
+
+/* タブレット (768px - 1024px) */
+@media (max-width: 1024px) {
   .classSelectLayer,
   .menuLayer {
-    padding: 12px;
+    padding: 14px;
   }
 
   .classButton {
@@ -263,17 +265,155 @@
   }
 
   .nav button {
-    padding: 10px 14px;
-    font-size: 14px;
-  }
-
-  .selectedClassBadge {
-    padding: 10px 14px;
+    padding: 12px 14px;
     font-size: 14px;
   }
 
   .subjectList button {
-    padding: 8px 12px;
+    padding: 10px 14px;
     font-size: 13px;
+  }
+}
+
+/* スマートフォン (768px以下) */
+@media (max-width: 768px) {
+  .sidebarContainer {
+    flex-direction: row;
+    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 0;
+  }
+
+  .classSelectLayer {
+    display: flex;
+    flex-direction: row;
+    padding: 12px;
+    gap: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+    height: auto;
+  }
+
+  .layerTitle {
+    display: none;
+  }
+
+  .classList {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .classButton {
+    padding: 10px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid #e0e0e0;
+  }
+
+  .classButton::before {
+    display: none;
+  }
+
+  .classButton:hover {
+    padding-left: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+  }
+
+  .menuLayer {
+    display: flex;
+    flex-direction: row;
+    padding: 8px 12px;
+    gap: 0;
+    overflow-x: auto;
+    height: auto;
+    align-items: center;
+  }
+
+  .menuHeader {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  .classHeader {
+    gap: 8px;
+  }
+
+  .backButton {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .selectedClassBadge {
+    padding: 8px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 16px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    margin-top: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .nav button {
+    padding: 8px 14px;
+    font-size: 13px;
+    white-space: nowrap;
+    border-radius: 20px;
+    background: #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .nav button::before {
+    display: none;
+  }
+
+  .nav button:hover,
+  .nav button.active {
+    padding-left: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .subjectSection {
+    display: none;
+  }
+}
+
+/* 小さいスマートフォン (480px以下) */
+@media (max-width: 480px) {
+  .classButton {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .nav button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .selectedClassBadge {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .backButton {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
   }
 }

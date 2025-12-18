@@ -3,8 +3,19 @@ import styles from './Sidebar.module.css';
 
 function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, onClassChange, currentUser }) {
   
+  // 教師かどうか判定
+  const isTeacher = currentUser?.role === 'teacher';
+  
   // クラス選択の状態管理
-  const [selectedClass, setSelectedClass] = useState(null);
+  // 生徒の場合は最初からクラス選択済み状態にする（仮のクラス名）
+  const [selectedClass, setSelectedClass] = useState(isTeacher ? null : (currentUser?.className || '1年A組'));
+  
+  // 生徒の場合、初回マウント時に親に通知
+  useEffect(() => {
+    if (!isTeacher && selectedClass && onClassChange) {
+      onClassChange(selectedClass);
+    }
+  }, []);
   
   // クラス一覧
   const classes = [
@@ -39,7 +50,7 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
     onNavClick('home');
   };
   
-  // 戻るボタンの処理
+  // 戻るボタンの処理（教師のみ使用）
   const handleBackToClassList = () => {
     setSelectedClass(null);
     // 親コンポーネントにクラス解除を通知
@@ -53,8 +64,8 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
   return (
     <div className={styles.sidebarContainer}>
       
-      {/* ===== レイヤー1: クラス選択画面 ===== */}
-      {!selectedClass && (
+      {/* ===== レイヤー1: クラス選択画面（教師のみ） ===== */}
+      {isTeacher && !selectedClass && (
         <div className={styles.classSelectLayer}>
           <h2 className={styles.layerTitle}>クラス選択</h2>
           
@@ -73,18 +84,21 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
       )}
       
       {/* ===== レイヤー2: メインメニュー ===== */}
-      {selectedClass && (
+      {/* 教師: クラス選択後に表示 / 生徒: 常に表示 */}
+      {(selectedClass || !isTeacher) && (
         <div className={styles.menuLayer}>
-          {/* 戻るボタン + 選択中のクラス表示 */}
+          {/* 戻るボタン + 選択中のクラス表示（教師のみ戻るボタン表示） */}
           <div className={styles.menuHeader}>
             <div className={styles.classHeader}>
-              <button 
-                className={styles.backButton}
-                onClick={handleBackToClassList}
-                title="クラス選択に戻る"
-              >
-                ◀
-              </button>
+              {isTeacher && (
+                <button 
+                  className={styles.backButton}
+                  onClick={handleBackToClassList}
+                  title="クラス選択に戻る"
+                >
+                  ◀
+                </button>
+              )}
               <div className={styles.selectedClassBadge}>
                 <span>{selectedClass}</span>
               </div>
@@ -135,12 +149,15 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
               課題提出
             </button>
 
-            <button 
-              className={activeViewType === 'recording' ? styles.active : ''}
-              onClick={() => onNavClick('recording')}
-            >
-              授業録画
-            </button>
+            {/* 授業録画は教師のみ表示 */}
+            {isTeacher && (
+              <button 
+                className={activeViewType === 'recording' ? styles.active : ''}
+                onClick={() => onNavClick('recording')}
+              >
+                授業録画
+              </button>
+            )}
           </nav>
 
           {/* 教科一覧セクション */}

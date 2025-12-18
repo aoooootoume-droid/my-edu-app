@@ -1,17 +1,64 @@
+import { useState, useEffect } from 'react';
 import FolderCard from './FolderCard';
 import styles from './HomePage.module.css';
 import { mainSubjects } from '../data.js';
 import { seedDatabase, clearDatabase } from '../seedData';
+import { db } from '../firebase/config';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices, selectedClass }) {
+  
+  const [recordings, setRecordings] = useState([]);
+  
+  // 録画アーカイブをリアルタイムで取得
+  useEffect(() => {
+    const q = query(
+      collection(db, 'recordings'),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => {
+        const docData = doc.data();
+        return {
+          id: doc.id,
+          ...docData,
+          type: 'recording',
+          // FolderCardで使う形式に変換
+          title: docData.title,
+          date: docData.createdAt?.toDate?.()?.toISOString().split('T')[0] || '',
+          imageUrl: docData.thumbnailUrl || null,
+          subject: docData.subject,
+          className: docData.className
+        };
+      });
+      setRecordings(data);
+    });
+    
+    return () => unsubscribe();
+  }, []);
   
   const subjects = mainSubjects;
   const term = searchTerm.toLowerCase();
 
+  // 通常アーカイブと録画を合わせて取得
   const getFoldersBySubject = (subject) => {
-    return folders
+    // 通常のfolders
+    const normalFolders = folders
       .filter(folder => folder.subject === subject)
-      .filter(folder => folder.title.toLowerCase().includes(term))
+      .filter(folder => folder.title.toLowerCase().includes(term));
+    
+    // 録画アーカイブ
+    const recordingFolders = recordings
+      .filter(rec => rec.subject === subject)
+      .filter(rec => {
+        if (!selectedClass) return true;
+        return rec.className === selectedClass || !rec.className;
+      })
+      .filter(rec => rec.title.toLowerCase().includes(term));
+    
+    // 合わせてソート
+    return [...normalFolders, ...recordingFolders]
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 10);
   };
@@ -103,6 +150,7 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
               
               <h3 className={styles.subjectTitle}>{subject}</h3>
               
+              {/* アーカイブ（通常 + 録画を統合） */}
               {foundFolders.length > 0 && (
                 <>
                   {searchTerm && <h4 className={styles.archiveSubTitle}>アーカイブ</h4>}
@@ -116,6 +164,7 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
                         imageUrl={folder.imageUrl}
                         subject={folder.subject}
                         className={!selectedClass ? folder.className : null}
+                        isRecording={folder.type === 'recording'}
                         onClick={() => onCardClick(folder.id)}
                       />
                     ))}

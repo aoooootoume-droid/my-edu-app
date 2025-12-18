@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { db, storage } from '../firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import styles from './RecordingPage.module.css';
 
 const RecordingPage = ({ selectedClass }) => {
@@ -11,6 +11,8 @@ const RecordingPage = ({ selectedClass }) => {
   const [stream, setStream] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState('');
   const [showSaveForm, setShowSaveForm] = useState(false);
   const [thumbnailBlob, setThumbnailBlob] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
@@ -151,6 +153,36 @@ const RecordingPage = ({ selectedClass }) => {
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // ファイルサイズフォーマット
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+  };
+
+  // 進捗付きアップロード
+  const uploadWithProgress = (storageRef, blob) => {
+    return new Promise((resolve, reject) => {
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(Math.round(progress));
+          setUploadStatus(`${formatFileSize(snapshot.bytesTransferred)} / ${formatFileSize(snapshot.totalBytes)}`);
+        },
+        (error) => {
+          reject(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
+  };
+
   // Firebaseに保存
   const saveRecording = async () => {
     if (recordedChunks.length === 0) {
@@ -164,26 +196,30 @@ const RecordingPage = ({ selectedClass }) => {
     }
 
     setIsUploading(true);
+    setUploadProgress(0);
+    setUploadStatus('準備中...');
 
     try {
       const blob = new Blob(recordedChunks, { type: 'video/webm' });
       const timestamp = Date.now();
       
-      // 動画をアップロード
-      const videoFilename = `recordings/${timestamp}_${title.replace(/[^a-zA-Z0-9]/g, '_')}.webm`;
-      const videoStorageRef = ref(storage, videoFilename);
-      await uploadBytes(videoStorageRef, blob);
-      const videoURL = await getDownloadURL(videoStorageRef);
-
-      // サムネイルをアップロード
+      // サムネイルをアップロード（小さいので先に）
       let thumbnailURL = null;
       if (thumbnailBlob) {
+        setUploadStatus('サムネイルをアップロード中...');
         const thumbFilename = `thumbnails/${timestamp}_${title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
         const thumbStorageRef = ref(storage, thumbFilename);
-        await uploadBytes(thumbStorageRef, thumbnailBlob);
-        thumbnailURL = await getDownloadURL(thumbStorageRef);
+        thumbnailURL = await uploadWithProgress(thumbStorageRef, thumbnailBlob);
       }
 
+      // 動画をアップロード（進捗表示）
+      setUploadProgress(0);
+      setUploadStatus('動画をアップロード中...');
+      const videoFilename = `recordings/${timestamp}_${title.replace(/[^a-zA-Z0-9]/g, '_')}.webm`;
+      const videoStorageRef = ref(storage, videoFilename);
+      const videoURL = await uploadWithProgress(videoStorageRef, blob);
+
+      setUploadStatus('データベースに保存中...');
       await addDoc(collection(db, 'recordings'), {
         title: title.trim(),
         subject: subject.trim(),
@@ -207,6 +243,8 @@ const RecordingPage = ({ selectedClass }) => {
       setShowSaveForm(false);
       setThumbnailBlob(null);
       setThumbnailPreview(null);
+      setUploadProgress(0);
+      setUploadStatus('');
     } catch (error) {
       console.error('保存エラー:', error);
       alert('保存中にエラーが発生しました: ' + error.message);
@@ -291,6 +329,7 @@ const RecordingPage = ({ selectedClass }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="例: 数学 - 二次関数の応用"
                 className={styles.input}
+                disabled={isUploading}
               />
             </div>
 
@@ -300,6 +339,7 @@ const RecordingPage = ({ selectedClass }) => {
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 className={styles.select}
+                disabled={isUploading}
               >
                 <option value="">選択してください</option>
                 <option value="国語">国語</option>
@@ -323,8 +363,25 @@ const RecordingPage = ({ selectedClass }) => {
                 placeholder="授業の内容や重要なポイントを記入"
                 className={styles.textarea}
                 rows="4"
+                disabled={isUploading}
               />
             </div>
+
+            {/* アップロード進捗表示 */}
+            {isUploading && (
+              <div className={styles.uploadProgress}>
+                <div className={styles.progressLabel}>
+                  <span>{uploadStatus}</span>
+                  <span className={styles.progressPercent}>{uploadProgress}%</span>
+                </div>
+                <div className={styles.progressBarContainer}>
+                  <div 
+                    className={styles.progressBar} 
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className={styles.formButtons}>
               <button
@@ -332,7 +389,7 @@ const RecordingPage = ({ selectedClass }) => {
                 disabled={isUploading}
                 className={styles.saveBtn}
               >
-                {isUploading ? 'アップロード中...' : '保存する'}
+                {isUploading ? `アップロード中... ${uploadProgress}%` : '保存する'}
               </button>
               <button
                 onClick={discardRecording}
