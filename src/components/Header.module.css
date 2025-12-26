@@ -1,50 +1,55 @@
 /* ======================================
-   ヘッダーコンテナ
+   Header.module.css
+   カラーパレット: #bed5e8, #abb0bc, #ecf0f4
+   全置き換え
 ====================================== */
+
 /* ======================================
    ヘッダーコンテナ
 ====================================== */
 .headerContainer {
-  background: white;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  position: fixed; /* 変更: sticky → fixed */
+  background: #ffffff;
+  border-bottom: 1px solid #d5dce6;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  backdrop-filter: blur(10px);
 }
 
 .headerContentWrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  padding: 14px 24px;
   max-width: 1920px;
   margin: 0 auto;
-  gap: 2rem;
+  gap: 24px;
 }
-
-/* 以下は既存のまま... */
 
 /* ======================================
    ロゴエリア
 ====================================== */
 .logoArea {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2d3748;
   white-space: nowrap;
   letter-spacing: -0.5px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoArea::before {
+  content: '📚';
+  font-size: 1.5rem;
 }
 
 .logoArea:hover {
-  transform: scale(1.05);
+  color: #5a6578;
 }
 
 /* ======================================
@@ -52,7 +57,7 @@
 ====================================== */
 .searchNavContainer {
   flex: 1;
-  max-width: 600px;
+  max-width: 520px;
   position: relative;
 }
 
@@ -63,46 +68,47 @@
 
 .searchIcon {
   position: absolute;
-  left: 1rem;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.2rem;
-  color: #9ca3af;
+  font-size: 1.1rem;
+  color: #abb0bc;
   pointer-events: none;
 }
 
 .searchInput {
   width: 100%;
-  padding: 0.875rem 3rem 0.875rem 3rem;
-  font-size: 0.95rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  padding: 12px 44px 12px 44px;
+  font-size: 14px;
+  border: 2px solid #ecf0f4;
+  border-radius: 14px;
   outline: none;
-  transition: all 0.3s ease;
-  background: #f9fafb;
+  transition: all 0.25s ease;
+  background: #ecf0f4;
+  color: #2d3748;
 }
 
 .searchInput:focus {
-  border-color: #667eea;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  border-color: #bed5e8;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(190, 213, 232, 0.3);
 }
 
 .searchInput::placeholder {
-  color: #9ca3af;
+  color: #abb0bc;
 }
 
 .searchClearButton {
   position: absolute;
-  right: 1rem;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.5rem;
-  color: #9ca3af;
+  font-size: 1.25rem;
+  color: #abb0bc;
   cursor: pointer;
   background: none;
   border: none;
-  padding: 0.25rem;
+  padding: 4px;
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -113,21 +119,22 @@
 }
 
 .searchClearButton:hover {
-  background: #f3f4f6;
-  color: #374151;
+  background: #bed5e8;
+  color: #2d3748;
 }
 
 /* 検索サジェスト */
 .suggestionsList {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ecf0f4;
   list-style: none;
-  padding: 0.5rem;
+  padding: 8px;
   margin: 0;
   z-index: 1000;
   animation: slideDown 0.2s ease;
@@ -136,7 +143,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -145,17 +152,18 @@
 }
 
 .suggestionItem {
-  padding: 0.75rem 1rem;
+  padding: 12px 14px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.2s ease;
-  color: #374151;
-  font-size: 0.95rem;
+  color: #5a6578;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .suggestionItem:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #bed5e8;
+  color: #2d3748;
   transform: translateX(4px);
 }
 
@@ -165,7 +173,7 @@
 .userActions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 12px;
 }
 
 .notificationContainer {
@@ -174,44 +182,40 @@
 
 .notificationBell {
   position: relative;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  background: #f3f4f6;
+  padding: 10px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  background: #ecf0f4;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid transparent;
 }
 
 .notificationBell:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  transform: scale(1.1) rotate(15deg);
+  background: #bed5e8;
+  border-color: #9bc2de;
+  transform: translateY(-2px);
 }
 
 .notificationBadge {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: #e57373;
   color: white;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 0.2rem 0.4rem;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
   border-radius: 10px;
   min-width: 20px;
   height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  box-shadow: 0 2px 6px rgba(229, 115, 115, 0.4);
 }
 
 .userIconContainer {
@@ -219,101 +223,189 @@
 }
 
 .userIcon {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 10px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
+  border: 2px solid transparent;
 }
 
 .userIcon:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(190, 213, 232, 0.5);
+  border-color: #9bc2de;
 }
 
 /* プロフィールメニュー */
 .profileMenu {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 10px);
   right: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ecf0f4;
   min-width: 220px;
-  padding: 0.5rem;
+  padding: 8px;
   z-index: 1000;
   animation: slideDown 0.2s ease;
 }
 
 .menuHeader {
-  padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 0.85rem;
-  color: #6b7280;
+  padding: 14px 12px;
+  border-bottom: 1px solid #ecf0f4;
+  font-size: 12px;
+  color: #abb0bc;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
 }
 
 .userName {
-  font-size: 1rem;
+  font-size: 15px;
   font-weight: 700;
-  color: #1f2937;
-  margin-top: 0.25rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2d3748;
+  margin-top: 4px;
 }
 
 .menuItem {
-  padding: 0.75rem 1rem;
+  padding: 12px 14px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.2s ease;
-  font-size: 0.95rem;
-  color: #374151;
+  font-size: 14px;
+  color: #5a6578;
   font-weight: 500;
 }
 
 .menuItem:hover {
-  background: #f3f4f6;
+  background: #ecf0f4;
+  color: #2d3748;
   transform: translateX(4px);
 }
 
 .menuItemDanger {
-  color: #ef4444;
+  color: #e57373;
 }
 
 .menuItemDanger:hover {
-  background: #fee2e2;
+  background: #fef2f2;
+  color: #c53030;
 }
 
 /* ======================================
    レスポンシブ対応
 ====================================== */
-@media (max-width: 768px) {
+
+@media (max-width: 1024px) {
   .headerContentWrapper {
-    padding: 1rem;
-    gap: 1rem;
+    padding: 12px 20px;
+    gap: 20px;
   }
   
   .logoArea {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+  }
+  
+  .searchInput {
+    font-size: 13px;
+    padding: 10px 40px 10px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContentWrapper {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  
+  .logoArea {
+    display: none;
   }
   
   .searchNavContainer {
     max-width: 100%;
+    flex: 1;
   }
   
   .searchInput {
+    font-size: 13px;
+    padding: 10px 36px 10px 36px;
+    border-radius: 12px;
+  }
+
+  .searchIcon {
+    font-size: 1rem;
+    left: 10px;
+  }
+
+  .searchClearButton {
+    right: 10px;
+    font-size: 1.1rem;
+  }
+  
+  .userActions {
+    gap: 8px;
+  }
+  
+  .notificationBell {
+    font-size: 1.15rem;
+    padding: 8px;
+    border-radius: 10px;
+  }
+  
+  .userIcon {
+    font-size: 1.1rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .notificationBadge {
+    font-size: 10px;
+    min-width: 18px;
+    height: 18px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .profileMenu {
+    right: -8px;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerContentWrapper {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .searchInput {
+    font-size: 12px;
+    padding: 8px 32px 8px 32px;
+  }
+
+  .searchIcon {
     font-size: 0.9rem;
-    padding: 0.75rem 2.5rem 0.75rem 2.5rem;
+    left: 8px;
+  }
+
+  .notificationBell {
+    font-size: 1rem;
+    padding: 6px;
+  }
+
+  .userIcon {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
   }
 }

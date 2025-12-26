@@ -1,4 +1,10 @@
 /* ======================================
+   HomePage.module.css
+   カラーパレット: #bed5e8, #abb0bc, #ecf0f4
+   全置き換え
+====================================== */
+
+/* ======================================
    ホームコンテナ
 ====================================== */
 .homeContainer { 
@@ -18,24 +24,31 @@
 }
 
 .homeContainer h2 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 800;
   margin: 0 0 2rem 0;
-  background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2d3748;
+}
+
+.classLabel {
+  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
+  color: #2d3748;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 12px;
 }
 
 /* ======================================
    Live配信中セクション
 ====================================== */
 .liveSection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
   border-radius: 20px;
   padding: 2rem;
-  margin-bottom: 3rem;
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.3);
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 24px rgba(190, 213, 232, 0.4);
   animation: slideUp 0.6s ease-out;
 }
 
@@ -58,9 +71,9 @@
 }
 
 .liveSectionTitle {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  color: white;
+  color: #2d3748;
   margin: 0;
   display: flex;
   align-items: center;
@@ -78,37 +91,36 @@
 }
 
 .liveCount {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  color: white;
-  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: #2d3748;
+  padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .liveGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.25rem;
-  width: 100%; /* 追加 */
+  width: 100%;
 }
 
 .liveCard {
-  background: white;
+  background: #ffffff;
   border-radius: 16px;
   padding: 1.5rem;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   border: 2px solid transparent;
-  min-width: 0; /* 追加: グリッドアイテムが縮めるようにする */
+  min-width: 0;
 }
 
 .liveCard:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-  border-color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  border-color: #bed5e8;
 }
 
 .liveCardHeader {
@@ -119,39 +131,36 @@
 }
 
 .subjectBadge {
-  padding: 0.4rem 0.9rem;
+  padding: 6px 12px;
   border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-.tagMath { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-.tagEnglish { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-.tagJapanese { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
-.tagScience { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-.tagSocial { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-.tagDefault { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+.tagMath { background: #e57373; }
+.tagEnglish { background: #64b5f6; }
+.tagJapanese { background: #ba68c8; }
+.tagScience { background: #81c784; }
+.tagSocial { background: #ffb74d; }
+.tagDefault { background: #abb0bc; }
 
 .liveBadge {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: #ef4444;
-  color: white;
-  padding: 0.4rem 0.9rem;
+  gap: 6px;
+  background: #e57373;
+  color: #ffffff;
+  padding: 6px 12px;
   border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 800;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .livePulse {
-  width: 10px;
-  height: 10px;
-  background: white;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
   border-radius: 50%;
   animation: livePulse 1.5s ease-in-out infinite;
 }
@@ -162,9 +171,9 @@
 }
 
 .liveCardTitle {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #2d3748;
   margin: 0 0 1.25rem 0;
   line-height: 1.5;
 }
@@ -174,47 +183,45 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
-  border-top: 2px solid #f3f4f6;
+  border-top: 1px solid #ecf0f4;
 }
 
 .viewersCount {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: #5a6578;
   font-weight: 600;
 }
 
 .joinButton {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
+  color: #2d3748;
   border: none;
-  padding: 0.6rem 1.25rem;
+  padding: 10px 20px;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.25s ease;
 }
 
 .joinButton:hover {
-  transform: translateX(4px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(190, 213, 232, 0.5);
 }
 
 .noLiveCard {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 2px dashed rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px dashed #abb0bc;
   border-radius: 16px;
   padding: 3rem;
   text-align: center;
 }
 
 .noLiveIcon {
-  font-size: 4rem;
+  font-size: 3.5rem;
   display: block;
   margin-bottom: 1rem;
-  opacity: 0.8;
+  opacity: 0.7;
   animation: float 3s ease-in-out infinite;
 }
 
@@ -224,15 +231,15 @@
 }
 
 .noLiveText {
-  color: white;
-  font-size: 1.1rem;
+  color: #2d3748;
+  font-size: 1.05rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
 }
 
 .noLiveSubtext {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.95rem;
+  color: #5a6578;
+  font-size: 0.9rem;
   margin: 0;
 }
 
@@ -240,15 +247,15 @@
    お知らせセクション
 ====================================== */
 .noticeSection {
-  margin: 3rem 0;
+  margin: 2.5rem 0;
   animation: fadeIn 0.6s ease-out 0.2s both;
 }
 
 .noticeSectionTitle {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  margin-bottom: 1.5rem;
-  color: #1f2937;
+  margin-bottom: 1.25rem;
+  color: #2d3748;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -258,95 +265,90 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.25rem;
-  width: 100%; /* 追加 */
+  width: 100%;
 }
 
 .noticeCard {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 1.25rem;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   border-left: 4px solid;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  min-width: 0; /* 追加: グリッドアイテムが縮めるようにする */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  min-width: 0;
 }
 
 .noticeCard:hover {
-  transform: translateY(-6px) translateX(4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px) translateX(4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .noticeCard.noticeImportant {
-  border-left-color: #ef4444;
-  background: linear-gradient(to right, #fef2f2 0%, white 20%);
+  border-left-color: #e57373;
+  background: linear-gradient(to right, #fef5f5 0%, #ffffff 30%);
 }
 
 .noticeCard.noticeNormal {
-  border-left-color: #3b82f6;
-  background: linear-gradient(to right, #eff6ff 0%, white 20%);
+  border-left-color: #bed5e8;
+  background: linear-gradient(to right, #f5fafd 0%, #ffffff 30%);
 }
 
 .noticeCard.noticeInfo {
-  border-left-color: #10b981;
-  background: linear-gradient(to right, #f0fdf4 0%, white 20%);
+  border-left-color: #81c784;
+  background: linear-gradient(to right, #f5fdf5 0%, #ffffff 30%);
 }
 
 .noticeCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .noticeBadge {
-  padding: 0.35rem 0.75rem;
+  padding: 5px 10px;
   border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .noticeBadge.noticeImportant {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  background: #e57373;
 }
 
 .noticeBadge.noticeNormal {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  background: #64b5f6;
 }
 
 .noticeBadge.noticeInfo {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  background: #81c784;
 }
 
 .noticeSubject {
-  font-size: 0.85rem;
-  color: #6b7280;
-  font-weight: 700;
-  background: #f3f4f6;
-  padding: 0.25rem 0.75rem;
+  font-size: 12px;
+  color: #5a6578;
+  font-weight: 600;
+  background: #ecf0f4;
+  padding: 4px 10px;
   border-radius: 6px;
 }
 
 .noticeCardTitle {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #2d3748;
   margin: 0 0 0.75rem 0;
   line-height: 1.5;
 }
 
 .noticeDate {
-  font-size: 0.85rem;
-  color: #9ca3af;
+  font-size: 13px;
+  color: #abb0bc;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
 }
 
 .noticeDate::before {
@@ -357,24 +359,24 @@
    アーカイブセクション
 ====================================== */
 .archiveTitle {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  margin: 3rem 0 1.5rem 0;
-  color: #1f2937;
+  margin: 2.5rem 0 1.25rem 0;
+  color: #2d3748;
 }
 
 .subjectRow {
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   animation: fadeIn 0.6s ease-out;
 }
 
 .subjectTitle {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  margin-bottom: 1.25rem;
-  color: #374151;
+  margin-bottom: 1rem;
+  color: #2d3748;
   position: relative;
-  padding-left: 1rem;
+  padding-left: 14px;
 }
 
 .subjectTitle::before {
@@ -384,18 +386,18 @@
   top: 50%;
   transform: translateY(-50%);
   width: 4px;
-  height: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  height: 22px;
+  background: #bed5e8;
   border-radius: 2px;
 }
 
 .archiveSubTitle, .printSubTitle, .qnaSubTitle {
-  font-size: 1rem;
+  font-size: 13px;
   font-weight: 700;
-  margin: 1.5rem 0 1rem 0;
-  color: #6b7280;
+  margin: 1.25rem 0 0.75rem 0;
+  color: #abb0bc;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 /* ======================================
@@ -407,64 +409,69 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 8px;
 }
 
 .qnaItem {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.25rem;
-  background: white;
-  border: 2px solid #f3f4f6;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 2px solid #ecf0f4;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s ease;
 }
 
 .qnaItem:hover {
-  border-color: #667eea;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
+  border-color: #bed5e8;
+  box-shadow: 0 4px 16px rgba(190, 213, 232, 0.3);
   transform: translateY(-2px);
 }
 
 .qnaStatus {
-  padding: 0.5rem 1rem;
+  padding: 6px 12px;
   border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .statusAnswered {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  color: #065f46;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  background: #e8f5e9;
+  color: #2e7d32;
 }
 
 .statusUnanswered {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  color: #92400e;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+  background: #fff3e0;
+  color: #ef6c00;
 }
 
 .qnaTitle {
   margin: 0;
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 600;
-  color: #374151;
+  color: #2d3748;
   flex: 1;
+}
+
+.qnaClass {
+  font-size: 12px;
+  color: #5a6578;
+  background: #ecf0f4;
+  padding: 4px 10px;
+  border-radius: 6px;
 }
 
 .noDataMessage {
   text-align: center;
-  padding: 3rem;
-  color: #9ca3af;
-  font-size: 1rem;
-  background: #f9fafb;
+  padding: 2.5rem;
+  color: #abb0bc;
+  font-size: 14px;
+  background: #f8fafc;
   border-radius: 12px;
+  border: 1px dashed #d5dce6;
 }
 
 /* ======================================
@@ -472,150 +479,128 @@
 ====================================== */
 .cardScroller {
   display: flex;
-  gap: 1.25rem;
+  gap: 16px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding-bottom: 1.5rem;
+  padding-bottom: 16px;
   scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f3f4f6;
-  flex-wrap: nowrap; /* 追加: 折り返しを防ぐ */
+  flex-wrap: nowrap;
 }
 
 .cardScroller > * {
-  flex-shrink: 0; /* 追加: 各カードが縮まないようにする */
+  flex-shrink: 0;
 }
 
 .cardScroller::-webkit-scrollbar { 
-  height: 10px; 
+  height: 8px; 
 }
 
 .cardScroller::-webkit-scrollbar-track { 
-  background: #f3f4f6; 
-  border-radius: 10px; 
+  background: #ecf0f4; 
+  border-radius: 4px; 
 }
 
 .cardScroller::-webkit-scrollbar-thumb { 
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px; 
+  background: #abb0bc;
+  border-radius: 4px; 
 }
 
 .cardScroller::-webkit-scrollbar-thumb:hover { 
-  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+  background: #8a90a0;
 }
 
 /* ======================================
-   レスポンシブ対応
+   開発用ボタン
 ====================================== */
-@media (max-width: 768px) {
-  .homeContainer h2 {
-    font-size: 1.5rem;
-  }
-  
-  .liveSection {
-    padding: 1.5rem;
-  }
-  
-  .liveGrid, .noticeGrid {
-    grid-template-columns: 1fr;
-  }
-}
-/* ======================================
-   開発用ボタン（既存のCSSの末尾に追加）
-====================================== */
-
-.classLabel {
-  font-size: 0.6em;
-  color: #667eea;
-  font-weight: 500;
-}
-
 .devButtons {
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
-  padding: 16px;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  border-radius: 8px;
+  padding: 14px 16px;
+  background: #ecf0f4;
+  border: 1px solid #d5dce6;
+  border-radius: 12px;
+  align-items: center;
 }
 
 .devButtons::before {
   content: '⚙️ 開発用';
   font-size: 12px;
-  color: #856404;
+  color: #5a6578;
   margin-right: auto;
-  align-self: center;
+  font-weight: 600;
 }
 
 .clearButton {
   padding: 8px 16px;
   border: none;
-  border-radius: 6px;
-  background: #dc3545;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 8px;
+  background: #e57373;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .clearButton:hover {
-  background: #c82333;
+  background: #ef5350;
+  transform: translateY(-1px);
 }
 
 .seedButton {
   padding: 8px 16px;
   border: none;
-  border-radius: 6px;
-  background: #28a745;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 8px;
+  background: #81c784;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .seedButton:hover {
-  background: #218838;
+  background: #66bb6a;
+  transform: translateY(-1px);
 }
-/* 既存のHomePage.module.cssに以下を追加してください */
 
 /* ======================================
    授業録画カードスタイル
 ====================================== */
-
 .recordingSubTitle {
-  font-size: 1rem;
+  font-size: 13px;
   font-weight: 700;
-  color: #667eea;
-  margin: 1.5rem 0 0.75rem 0;
+  color: #5a6578;
+  margin: 1.25rem 0 0.75rem 0;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .recordingCard {
   flex-shrink: 0;
   width: 280px;
-  background: white;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #ecf0f4;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .recordingCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+  box-shadow: 0 8px 24px rgba(190, 213, 232, 0.4);
+  border-color: #bed5e8;
 }
 
 .recordingThumbnail {
   position: relative;
   width: 100%;
   height: 157px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
   overflow: hidden;
 }
 
@@ -632,30 +617,31 @@
   align-items: center;
   justify-content: center;
   font-size: 3rem;
-  color: white;
+  color: #ffffff;
 }
 
 .duration {
   position: absolute;
   bottom: 8px;
   right: 8px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  background: rgba(45, 55, 72, 0.85);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
   font-weight: 600;
+  font-family: 'SF Mono', monospace;
 }
 
 .recordingInfo {
-  padding: 0.875rem;
+  padding: 14px;
 }
 
 .recordingTitle {
-  font-size: 0.95rem;
+  font-size: 14px;
   font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 0.5rem 0;
+  color: #2d3748;
+  margin: 0 0 8px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -663,17 +649,135 @@
 }
 
 .recordingDate {
-  font-size: 0.8rem;
-  color: #6b7280;
+  font-size: 12px;
+  color: #abb0bc;
 }
 
 .recordingClass {
   display: inline-block;
-  margin-left: 0.5rem;
-  padding: 0.15rem 0.5rem;
-  background: #f3f4f6;
-  color: #6b7280;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  margin-left: 8px;
+  padding: 3px 8px;
+  background: #ecf0f4;
+  color: #5a6578;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 600;
+}
+
+/* ======================================
+   文字起こし検索マッチ
+====================================== */
+.recordingCardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 280px;
+}
+
+.matchesContainer {
+  background: #f8fafc;
+  border: 1px solid #ecf0f4;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.matchesLabel {
+  font-size: 11px;
+  color: #5a6578;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.matchesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.matchButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #ecf0f4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.matchButton:hover {
+  background: #bed5e8;
+  border-color: #9bc2de;
+  transform: translateX(3px);
+}
+
+.matchTime {
+  background: #abb0bc;
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-family: 'SF Mono', monospace;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.matchText {
+  font-size: 12px;
+  color: #5a6578;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moreMatches {
+  font-size: 11px;
+  color: #5a6578;
+  font-weight: 600;
+  padding: 4px 0;
+}
+
+.highlight {
+  background: #bed5e8;
+  color: #2d3748;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* ======================================
+   レスポンシブ対応
+====================================== */
+@media (max-width: 768px) {
+  .homeContainer h2 {
+    font-size: 1.4rem;
+  }
+  
+  .liveSection {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+  
+  .liveGrid, .noticeGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .classLabel {
+    display: block;
+    margin-left: 0;
+    margin-top: 8px;
+    width: fit-content;
+  }
+  
+  .recordingCard {
+    width: 260px;
+  }
+  
+  .recordingCardWrapper {
+    min-width: 260px;
+  }
 }

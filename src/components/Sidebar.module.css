@@ -1,9 +1,15 @@
+/* ======================================
+   Sidebar.module.css
+   カラーパレット: #bed5e8, #abb0bc, #ecf0f4
+   全置き換え
+====================================== */
+
 .sidebarContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #f8f9fa;
-  border-right: 1px solid #ddd;
+  background: #ffffff;
+  border-right: 1px solid #d5dce6;
   overflow-y: auto;
 }
 
@@ -14,58 +20,60 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 20px;
+  padding: 24px 18px;
 }
 
 .layerTitle {
-  font-size: 13px;
-  font-weight: 600;
-  color: #888;
-  margin: 0 0 16px 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #abb0bc;
+  margin: 0 0 18px 2px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .classList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .classButton {
   padding: 14px 16px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: #ecf0f4;
   text-align: left;
   cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   transition: all 0.25s ease;
-  color: #333;
+  color: #5a6578;
   position: relative;
 }
 
-.classButton::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%) scaleY(0);
-  height: 60%;
-  width: 3px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 2px;
-  transition: transform 0.25s ease;
-}
-
 .classButton:hover {
-  color: #667eea;
-  padding-left: 20px;
+  background: #bed5e8;
+  color: #2d3748;
+  border-color: #9bc2de;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(190, 213, 232, 0.4);
 }
 
-.classButton:hover::before {
-  transform: translateY(-50%) scaleY(1);
+.classButton::after {
+  content: '›';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #abb0bc;
+  transition: all 0.25s;
+}
+
+.classButton:hover::after {
+  color: #2d3748;
+  transform: translateY(-50%) translateX(4px);
 }
 
 /* ===================================
@@ -75,11 +83,13 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px;
+  padding: 20px 14px;
 }
 
 .menuHeader {
   margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ecf0f4;
 }
 
 .classHeader {
@@ -92,12 +102,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 8px;
-  background: white;
-  color: #667eea;
+  width: 38px;
+  height: 38px;
+  border: 2px solid #ecf0f4;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #abb0bc;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
@@ -105,8 +115,9 @@
 }
 
 .backButton:hover {
-  background: #667eea;
-  color: white;
+  background: #bed5e8;
+  border-color: #bed5e8;
+  color: #2d3748;
 }
 
 .selectedClassBadge {
@@ -114,11 +125,12 @@
   align-items: center;
   flex: 1;
   padding: 10px 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
-  color: white;
-  font-weight: 600;
+  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
+  border-radius: 12px;
+  color: #2d3748;
+  font-weight: 700;
   font-size: 14px;
+  box-shadow: 0 2px 8px rgba(190, 213, 232, 0.4);
 }
 
 /* メインメニュー */
@@ -126,156 +138,186 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-top: 8px;
 }
 
 .nav button {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 13px 14px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   background: transparent;
   text-align: left;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  transition: all 0.25s ease;
-  color: #333;
+  transition: all 0.2s;
+  color: #5a6578;
   position: relative;
 }
 
-.nav button::before {
+.nav button:hover {
+  background: #ecf0f4;
+  color: #2d3748;
+}
+
+.nav button.active {
+  background: #bed5e8;
+  color: #2d3748;
+  font-weight: 700;
+}
+
+.nav button.active::before {
   content: '';
   position: absolute;
   left: 0;
   top: 50%;
-  transform: translateY(-50%) scaleY(0);
-  height: 60%;
-  width: 3px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 2px;
-  transition: transform 0.25s ease;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 4px;
+  background: #abb0bc;
+  border-radius: 0 4px 4px 0;
 }
 
-.nav button:hover {
-  color: #667eea;
-  padding-left: 20px;
+/* アイコン */
+.nav button span:first-child {
+  font-size: 17px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ecf0f4;
+  border-radius: 8px;
+  transition: all 0.2s;
 }
 
-.nav button:hover::before {
-  transform: translateY(-50%) scaleY(1);
+.nav button:hover span:first-child {
+  background: #bed5e8;
 }
 
-.nav button.active {
-  color: #667eea;
-  font-weight: 600;
-  padding-left: 20px;
-}
-
-.nav button.active::before {
-  transform: translateY(-50%) scaleY(1);
+.nav button.active span:first-child {
+  background: #ffffff;
 }
 
 /* ===================================
    教科一覧セクション
    =================================== */
 .subjectSection {
-  margin-top: 24px;
+  margin-top: auto;
   padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #ecf0f4;
 }
 
 .subjectTitle {
-  font-size: 12px;
-  font-weight: 600;
-  color: #888;
+  font-size: 11px;
+  font-weight: 700;
+  color: #abb0bc;
   margin: 0 0 12px 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .subjectList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .subjectList button {
-  padding: 12px 16px;
+  padding: 11px 14px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
   text-align: left;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  transition: all 0.25s ease;
-  color: #555;
-  position: relative;
+  transition: all 0.2s;
+  color: #5a6578;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .subjectList button::before {
   content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%) scaleY(0);
-  height: 60%;
-  width: 3px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 2px;
-  transition: transform 0.25s ease;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #abb0bc;
+  flex-shrink: 0;
+  transition: all 0.2s;
 }
 
 .subjectList button:hover {
-  color: #667eea;
-  padding-left: 20px;
+  background: #ecf0f4;
+  color: #2d3748;
 }
 
 .subjectList button:hover::before {
-  transform: translateY(-50%) scaleY(1);
+  background: #bed5e8;
+  transform: scale(1.2);
 }
 
 .subjectList button.activeSubject {
-  color: #667eea;
+  background: #bed5e8;
+  color: #2d3748;
   font-weight: 600;
-  padding-left: 20px;
 }
 
 .subjectList button.activeSubject::before {
-  transform: translateY(-50%) scaleY(1);
+  background: #2d3748;
+  box-shadow: 0 0 0 3px rgba(190, 213, 232, 0.5);
+}
+
+/* ===================================
+   スクロールバー
+   =================================== */
+.sidebarContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebarContainer::-webkit-scrollbar-track {
+  background: #ecf0f4;
+}
+
+.sidebarContainer::-webkit-scrollbar-thumb {
+  background: #abb0bc;
+  border-radius: 3px;
+}
+
+.sidebarContainer::-webkit-scrollbar-thumb:hover {
+  background: #8a90a0;
 }
 
 /* ===================================
    レスポンシブ対応
    =================================== */
 
-/* タブレット (768px - 1024px) */
 @media (max-width: 1024px) {
   .classSelectLayer,
   .menuLayer {
-    padding: 14px;
+    padding: 16px 12px;
   }
 
   .classButton {
     padding: 12px 14px;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .nav button {
-    padding: 12px 14px;
-    font-size: 14px;
+    padding: 11px 12px;
+    font-size: 13px;
   }
 
   .subjectList button {
-    padding: 10px 14px;
-    font-size: 13px;
+    padding: 9px 12px;
+    font-size: 12px;
   }
 }
 
-/* スマートフォン (768px以下) */
 @media (max-width: 768px) {
   .sidebarContainer {
     flex-direction: row;
@@ -283,15 +325,16 @@
     overflow-x: auto;
     overflow-y: hidden;
     border-right: none;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #d5dce6;
+    background: #ffffff;
     padding: 0;
   }
 
   .classSelectLayer {
     display: flex;
     flex-direction: row;
-    padding: 12px;
-    gap: 8px;
+    padding: 12px 16px;
+    gap: 10px;
     overflow-x: auto;
     white-space: nowrap;
     height: auto;
@@ -304,33 +347,33 @@
   .classList {
     display: flex;
     flex-direction: row;
-    gap: 8px;
+    gap: 10px;
   }
 
   .classButton {
-    padding: 10px 16px;
+    padding: 10px 18px;
     font-size: 13px;
     white-space: nowrap;
-    border-radius: 20px;
-    background: white;
-    border: 1px solid #e0e0e0;
+    border-radius: 24px;
+    background: #ecf0f4;
+    border: 1px solid #d5dce6;
   }
 
-  .classButton::before {
+  .classButton::after {
     display: none;
   }
 
   .classButton:hover {
-    padding-left: 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-color: transparent;
+    transform: none;
+    background: #bed5e8;
+    border-color: #9bc2de;
+    box-shadow: none;
   }
 
   .menuLayer {
     display: flex;
     flex-direction: row;
-    padding: 8px 12px;
+    padding: 10px 16px;
     gap: 0;
     overflow-x: auto;
     height: auto;
@@ -339,8 +382,10 @@
 
   .menuHeader {
     margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
     flex-shrink: 0;
-    margin-right: 12px;
+    margin-right: 14px;
   }
 
   .classHeader {
@@ -348,33 +393,33 @@
   }
 
   .backButton {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     font-size: 12px;
+    border-radius: 10px;
   }
 
   .selectedClassBadge {
-    padding: 8px 12px;
+    padding: 8px 14px;
     font-size: 12px;
     white-space: nowrap;
-    border-radius: 16px;
+    border-radius: 20px;
   }
 
   .nav {
     display: flex;
     flex-direction: row;
-    gap: 4px;
+    gap: 8px;
     margin-top: 0;
     overflow-x: auto;
-    padding-bottom: 4px;
   }
 
   .nav button {
-    padding: 8px 14px;
+    padding: 9px 16px;
     font-size: 13px;
     white-space: nowrap;
-    border-radius: 20px;
-    background: #f0f0f0;
+    border-radius: 24px;
+    background: #ecf0f4;
     flex-shrink: 0;
   }
 
@@ -382,11 +427,16 @@
     display: none;
   }
 
+  .nav button span:first-child {
+    background: transparent;
+    width: auto;
+    height: auto;
+  }
+
   .nav button:hover,
   .nav button.active {
-    padding-left: 14px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #bed5e8;
+    color: #2d3748;
   }
 
   .subjectSection {
@@ -394,26 +444,40 @@
   }
 }
 
-/* 小さいスマートフォン (480px以下) */
 @media (max-width: 480px) {
   .classButton {
-    padding: 8px 12px;
+    padding: 8px 14px;
     font-size: 12px;
   }
 
   .nav button {
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 12px;
+    gap: 6px;
   }
 
   .selectedClassBadge {
-    padding: 6px 10px;
+    padding: 6px 12px;
     font-size: 11px;
   }
 
   .backButton {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     font-size: 11px;
   }
+}
+/* Sidebar.module.css に以下を追加してください */
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.emptyMessage {
+  padding: 1rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.875rem;
 }

@@ -1,128 +1,155 @@
 import { useState, useRef, useEffect } from 'react';
-import { db, storage } from '../firebase/config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { storage, db } from '../firebase/config';
 import styles from './RecordingPage.module.css';
 
-const RecordingPage = ({ selectedClass }) => {
+const ASSEMBLYAI_API_KEY = import.meta.env.VITE_ASSEMBLYAI_API_KEY;
+
+function RecordingPage({ selectedClass }) {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [recordedChunks, setRecordedChunks] = useState([]);
-  const [stream, setStream] = useState(null);
+  const [recordedBlob, setRecordedBlob] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState('');
-  const [showSaveForm, setShowSaveForm] = useState(false);
-  const [thumbnailBlob, setThumbnailBlob] = useState(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [uploadedFileSize, setUploadedFileSize] = useState(0);
+  const [totalFileSize, setTotalFileSize] = useState(0);
   
-  // フォーム入力
+  // 文字起こし関連
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcriptionProgress, setTranscriptionProgress] = useState('');
+  const [transcription, setTranscription] = useState('');
+  
+  // フォーム
   const [title, setTitle] = useState('');
-  const [subject, setSubject] = useState('');
+  const [subject, setSubject] = useState('数学');
   const [description, setDescription] = useState('');
   
+  // コーデック
+  const [selectedMimeType, setSelectedMimeType] = useState('');
+  
   const videoRef = useRef(null);
+  const previewVideoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
   const timerRef = useRef(null);
+  const streamRef = useRef(null);
+  const thumbnailRef = useRef(null);
+
+  const subjects = ['数学', '英語', '国語', '理科', '社会', '情報', '音楽', '美術', '体育', 'その他'];
+
+  // 録画時間のフォーマット
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // ファイルサイズのフォーマット
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   // カメラ起動
-  useEffect(() => {
-    const startCamera = async () => {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 1280, height: 720 },
-          audio: true
-        });
-        setStream(mediaStream);
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-        }
-      } catch (error) {
-        console.error('カメラアクセスエラー:', error);
-        alert('カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。');
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { 
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: 'user'
+        },
+        audio: true
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
       }
-    };
-
-    startCamera();
-
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, []);
-
-  // サムネイルを生成
-  const generateThumbnail = () => {
-    return new Promise((resolve) => {
-      if (!videoRef.current) {
-        resolve(null);
-        return;
-      }
-
-      const video = videoRef.current;
-      const canvas = document.createElement('canvas');
-      canvas.width = 320;
-      canvas.height = 180;
-      
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      canvas.toBlob((blob) => {
-        resolve(blob);
-      }, 'image/jpeg', 0.8);
-    });
+    } catch (err) {
+      console.error('カメラの起動に失敗:', err);
+      alert('カメラの起動に失敗しました。カメラへのアクセスを許可してください。');
+    }
   };
 
   // 録画開始
   const startRecording = () => {
-    if (!stream) return;
-
-    const options = { mimeType: 'video/webm;codecs=vp9' };
-    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-      options.mimeType = 'video/webm';
+    if (!streamRef.current) return;
+    
+    chunksRef.current = [];
+    
+    // ブラウザがサポートするコーデックを検出
+    const mimeTypes = [
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm;codecs=vp8',
+      'video/webm',
+      'video/mp4'
+    ];
+    
+    let mimeType = '';
+    for (const type of mimeTypes) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        mimeType = type;
+        break;
+      }
     }
-
-    const mediaRecorder = new MediaRecorder(stream, options);
+    
+    if (!mimeType) {
+      alert('このブラウザは録画に対応していません');
+      return;
+    }
+    
+    setSelectedMimeType(mimeType);
+    
+    const mediaRecorder = new MediaRecorder(streamRef.current, {
+      mimeType: mimeType
+    });
+    
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) {
+        chunksRef.current.push(e.data);
+      }
+    };
+    
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunksRef.current, { type: mimeType });
+      setRecordedBlob(blob);
+      generateThumbnail();
+    };
+    
     mediaRecorderRef.current = mediaRecorder;
-
-    const chunks = [];
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        chunks.push(event.data);
-      }
-    };
-
-    mediaRecorder.onstop = async () => {
-      setRecordedChunks(chunks);
-      
-      // サムネイルを生成
-      const thumbnail = await generateThumbnail();
-      setThumbnailBlob(thumbnail);
-      if (thumbnail) {
-        setThumbnailPreview(URL.createObjectURL(thumbnail));
-      }
-      
-      setShowSaveForm(true);
-    };
-
     mediaRecorder.start(1000);
     setIsRecording(true);
-    setRecordingTime(0);
-
+    setIsPaused(false);
+    
     timerRef.current = setInterval(() => {
       setRecordingTime(prev => prev + 1);
     }, 1000);
   };
 
-  // 録画一時停止/再開
+  // サムネイル生成
+  const generateThumbnail = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 180;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      thumbnailRef.current = canvas.toDataURL('image/jpeg', 0.7);
+    }
+  };
+
+  // 一時停止/再開
   const togglePause = () => {
     if (!mediaRecorderRef.current) return;
-
+    
     if (isPaused) {
       mediaRecorderRef.current.resume();
       timerRef.current = setInterval(() => {
@@ -137,61 +164,130 @@ const RecordingPage = ({ selectedClass }) => {
 
   // 録画停止
   const stopRecording = () => {
-    if (!mediaRecorderRef.current) return;
-
-    mediaRecorderRef.current.stop();
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    clearInterval(timerRef.current);
     setIsRecording(false);
     setIsPaused(false);
-    clearInterval(timerRef.current);
   };
 
-  // 時間フォーマット
-  const formatTime = (seconds) => {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  // 録画をキャンセル（やり直し）
+  const cancelRecording = () => {
+    setRecordedBlob(null);
+    setRecordingTime(0);
+    setTranscription('');
+    setTitle('');
+    setDescription('');
+    thumbnailRef.current = null;
   };
 
-  // ファイルサイズフォーマット
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
-  };
-
-  // 進捗付きアップロード
-  const uploadWithProgress = (storageRef, blob) => {
-    return new Promise((resolve, reject) => {
-      const uploadTask = uploadBytesResumable(storageRef, blob);
-
-      uploadTask.on('state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(Math.round(progress));
-          setUploadStatus(`${formatFileSize(snapshot.bytesTransferred)} / ${formatFileSize(snapshot.totalBytes)}`);
-        },
-        (error) => {
-          reject(error);
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadURL);
-        }
-      );
-    });
-  };
-
-  // Firebaseに保存
-  const saveRecording = async () => {
-    if (recordedChunks.length === 0) {
-      alert('録画データがありません');
-      return;
+  // AssemblyAI で文字起こし
+  const transcribeWithAssemblyAI = async (videoUrl) => {
+    if (!ASSEMBLYAI_API_KEY) {
+      console.warn('AssemblyAI APIキーが設定されていません');
+      return null;
     }
 
-    if (!title.trim()) {
-      alert('授業タイトルを入力してください');
+    try {
+      setIsTranscribing(true);
+      setTranscriptionProgress('文字起こしを開始しています...');
+
+      const response = await fetch('https://api.assemblyai.com/v2/transcript', {
+        method: 'POST',
+        headers: {
+          'Authorization': ASSEMBLYAI_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          audio_url: videoUrl,
+          language_code: 'ja'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('文字起こしの開始に失敗しました');
+      }
+
+      const { id } = await response.json();
+      setTranscriptionProgress('音声を解析中...');
+
+      let result = null;
+      let attempts = 0;
+      const maxAttempts = 60;
+
+      while (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        
+        const statusResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
+          headers: { 'Authorization': ASSEMBLYAI_API_KEY }
+        });
+        
+        const statusData = await statusResponse.json();
+        
+        if (statusData.status === 'completed') {
+          result = statusData;
+          break;
+        } else if (statusData.status === 'error') {
+          throw new Error(statusData.error || '文字起こしに失敗しました');
+        }
+        
+        setTranscriptionProgress(`音声を解析中... (${Math.min(attempts * 5, 95)}%)`);
+        attempts++;
+      }
+
+      if (!result) {
+        throw new Error('文字起こしがタイムアウトしました');
+      }
+
+      let transcriptText = '';
+      if (result.words && result.words.length > 0) {
+        let currentParagraph = [];
+        let paragraphStartTime = 0;
+        
+        result.words.forEach((word) => {
+          if (currentParagraph.length === 0) {
+            paragraphStartTime = word.start;
+          }
+          currentParagraph.push(word.text);
+          
+          if (word.text.includes('。') || word.text.includes('？') || word.text.includes('！') || currentParagraph.length >= 10) {
+            const timeSeconds = Math.floor(paragraphStartTime / 1000);
+            const mins = Math.floor(timeSeconds / 60);
+            const secs = timeSeconds % 60;
+            const timestamp = `[${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}]`;
+            transcriptText += `${timestamp} ${currentParagraph.join('')}\n`;
+            currentParagraph = [];
+          }
+        });
+        
+        if (currentParagraph.length > 0) {
+          const timeSeconds = Math.floor(paragraphStartTime / 1000);
+          const mins = Math.floor(timeSeconds / 60);
+          const secs = timeSeconds % 60;
+          const timestamp = `[${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}]`;
+          transcriptText += `${timestamp} ${currentParagraph.join('')}\n`;
+        }
+      } else if (result.text) {
+        transcriptText = result.text;
+      }
+
+      setTranscriptionProgress('文字起こし完了！');
+      return transcriptText;
+
+    } catch (error) {
+      console.error('文字起こしエラー:', error);
+      setTranscriptionProgress(`エラー: ${error.message}`);
+      return null;
+    } finally {
+      setIsTranscribing(false);
+    }
+  };
+
+  // アップロード
+  const handleUpload = async () => {
+    if (!recordedBlob || !title.trim()) {
+      alert('タイトルを入力してください');
       return;
     }
 
@@ -200,210 +296,273 @@ const RecordingPage = ({ selectedClass }) => {
     setUploadStatus('準備中...');
 
     try {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
       const timestamp = Date.now();
       
-      // サムネイルをアップロード（小さいので先に）
-      let thumbnailURL = null;
-      if (thumbnailBlob) {
+      let thumbnailUrl = null;
+      if (thumbnailRef.current) {
         setUploadStatus('サムネイルをアップロード中...');
-        const thumbFilename = `thumbnails/${timestamp}_${title.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
-        const thumbStorageRef = ref(storage, thumbFilename);
-        thumbnailURL = await uploadWithProgress(thumbStorageRef, thumbnailBlob);
+        const thumbnailBlob = await fetch(thumbnailRef.current).then(r => r.blob());
+        const thumbnailStorageRef = ref(storage, `thumbnails/${timestamp}.jpg`);
+        await uploadBytesResumable(thumbnailStorageRef, thumbnailBlob);
+        thumbnailUrl = await getDownloadURL(thumbnailStorageRef);
       }
-
-      // 動画をアップロード（進捗表示）
-      setUploadProgress(0);
+      
       setUploadStatus('動画をアップロード中...');
-      const videoFilename = `recordings/${timestamp}_${title.replace(/[^a-zA-Z0-9]/g, '_')}.webm`;
-      const videoStorageRef = ref(storage, videoFilename);
-      const videoURL = await uploadWithProgress(videoStorageRef, blob);
-
+      const ext = selectedMimeType.includes('mp4') ? 'mp4' : 'webm';
+      const videoStorageRef = ref(storage, `recordings/${timestamp}.${ext}`);
+      
+      const uploadTask = uploadBytesResumable(videoStorageRef, recordedBlob);
+      setTotalFileSize(recordedBlob.size);
+      
+      await new Promise((resolve, reject) => {
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(progress);
+            setUploadedFileSize(snapshot.bytesTransferred);
+          },
+          (error) => reject(error),
+          () => resolve()
+        );
+      });
+      
+      const videoUrl = await getDownloadURL(videoStorageRef);
+      
+      setUploadStatus('文字起こしを実行中...');
+      let finalTranscription = transcription;
+      
+      if (ASSEMBLYAI_API_KEY) {
+        const assemblyTranscript = await transcribeWithAssemblyAI(videoUrl);
+        if (assemblyTranscript) {
+          finalTranscription = assemblyTranscript;
+          setTranscription(assemblyTranscript);
+        }
+      }
+      
       setUploadStatus('データベースに保存中...');
       await addDoc(collection(db, 'recordings'), {
         title: title.trim(),
-        subject: subject.trim(),
+        subject,
         description: description.trim(),
-        videoUrl: videoURL,
-        thumbnailUrl: thumbnailURL,
-        duration: recordingTime,
         className: selectedClass || null,
-        createdAt: serverTimestamp(),
-        fileSize: blob.size
+        videoUrl,
+        thumbnailUrl,
+        duration: recordingTime,
+        transcription: finalTranscription,
+        hasTranscription: !!finalTranscription,
+        createdAt: serverTimestamp()
       });
-
-      alert('授業アーカイブの保存が完了しました！');
       
-      // フォームをリセット
-      setRecordedChunks([]);
+      setUploadStatus('完了！');
+      alert('✅ アップロードが完了しました！');
+      
+      setRecordedBlob(null);
       setRecordingTime(0);
       setTitle('');
-      setSubject('');
       setDescription('');
-      setShowSaveForm(false);
-      setThumbnailBlob(null);
-      setThumbnailPreview(null);
+      setTranscription('');
       setUploadProgress(0);
-      setUploadStatus('');
+      thumbnailRef.current = null;
+      
     } catch (error) {
-      console.error('保存エラー:', error);
-      alert('保存中にエラーが発生しました: ' + error.message);
+      console.error('アップロードエラー:', error);
+      alert('❌ アップロードに失敗しました: ' + error.message);
     } finally {
       setIsUploading(false);
+      setUploadStatus('');
     }
   };
 
-  // 録画破棄
-  const discardRecording = () => {
-    if (window.confirm('録画を破棄しますか？')) {
-      setRecordedChunks([]);
-      setRecordingTime(0);
-      setTitle('');
-      setSubject('');
-      setDescription('');
-      setShowSaveForm(false);
-      setThumbnailBlob(null);
-      setThumbnailPreview(null);
-    }
-  };
+  useEffect(() => {
+    startCamera();
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      clearInterval(timerRef.current);
+    };
+  }, []);
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>授業録画</h1>
-      </div>
-
-      <div className={styles.mainContent}>
-        <div className={styles.videoContainer}>
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            playsInline
-            className={styles.video}
-          />
-          
-          <div className={styles.controls}>
-            <div className={styles.timer}>
-              {isRecording && <span className={styles.recordingDot}>●</span>}
-              {formatTime(recordingTime)}
-            </div>
-
-            <div className={styles.buttons}>
-              {!isRecording && recordedChunks.length === 0 && (
-                <button onClick={startRecording} className={styles.startBtn}>
-                  録画開始
-                </button>
-              )}
-
-              {isRecording && (
-                <>
-                  <button onClick={togglePause} className={styles.pauseBtn}>
-                    {isPaused ? '再開' : '一時停止'}
-                  </button>
-                  <button onClick={stopRecording} className={styles.stopBtn}>
-                    停止
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+  // ===== 録画前の画面 =====
+  if (!recordedBlob) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h2 className={styles.pageTitle}>🎥 授業を録画</h2>
+          {selectedClass && <span className={styles.classLabel}>{selectedClass}</span>}
         </div>
 
-        {showSaveForm && (
-          <div className={styles.saveForm}>
-            <h2 className={styles.formTitle}>授業情報を入力</h2>
+        {ASSEMBLYAI_API_KEY ? (
+          <div className={styles.apiReady}>✅ 文字起こし対応（全ブラウザOK）</div>
+        ) : (
+          <div className={styles.apiNotReady}>⚠️ 文字起こし未設定</div>
+        )}
+        
+        <div className={styles.cameraSection}>
+          <div className={styles.cameraContainer}>
+            <video 
+              ref={videoRef} 
+              autoPlay 
+              muted 
+              playsInline
+              className={styles.cameraVideo}
+            />
             
-            {thumbnailPreview && (
-              <div className={styles.thumbnailPreview}>
-                <label>サムネイル</label>
-                <img src={thumbnailPreview} alt="サムネイル" />
+            {isRecording && (
+              <div className={styles.recordingBadge}>
+                <span className={styles.recordingDot}></span>
+                {isPaused ? '一時停止中' : 'REC'}
               </div>
             )}
             
-            <div className={styles.inputGroup}>
-              <label>授業タイトル *</label>
+            <div className={styles.timeOverlay}>
+              {formatTime(recordingTime)}
+            </div>
+          </div>
+          
+          <div className={styles.cameraControls}>
+            {!isRecording ? (
+              <button onClick={startRecording} className={styles.startBtn}>
+                <span className={styles.startIcon}>⏺</span>
+                録画開始
+              </button>
+            ) : (
+              <>
+                <button onClick={togglePause} className={styles.pauseBtn}>
+                  {isPaused ? '▶️ 再開' : '⏸️ 一時停止'}
+                </button>
+                <button onClick={stopRecording} className={styles.stopBtn}>
+                  ⏹️ 録画終了
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== 録画後のアップロード画面 =====
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h2 className={styles.pageTitle}>📤 録画をアップロード</h2>
+      </div>
+
+      <div className={styles.uploadLayout}>
+        {/* 左側：プレビュー */}
+        <div className={styles.previewSection}>
+          <div className={styles.previewCard}>
+            <video 
+              ref={previewVideoRef}
+              src={URL.createObjectURL(recordedBlob)} 
+              controls 
+              className={styles.previewVideo}
+            />
+            <div className={styles.previewInfo}>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>録画時間</span>
+                <span className={styles.infoValue}>{formatTime(recordingTime)}</span>
+              </div>
+              <div className={styles.infoItem}>
+                <span className={styles.infoLabel}>ファイルサイズ</span>
+                <span className={styles.infoValue}>{formatFileSize(recordedBlob.size)}</span>
+              </div>
+            </div>
+          </div>
+          
+          <button onClick={cancelRecording} className={styles.retakeBtn}>
+            🔄 撮り直す
+          </button>
+        </div>
+
+        {/* 右側：フォーム */}
+        <div className={styles.formSection}>
+          <div className={styles.formCard}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                タイトル <span className={styles.required}>*必須</span>
+              </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="例: 数学 - 二次関数の応用"
+                placeholder="例: 第5回 二次関数の応用"
                 className={styles.input}
-                disabled={isUploading}
+                autoFocus
               />
             </div>
-
-            <div className={styles.inputGroup}>
-              <label>科目</label>
-              <select
-                value={subject}
+            
+            <div className={styles.formGroup}>
+              <label className={styles.label}>教科</label>
+              <select 
+                value={subject} 
                 onChange={(e) => setSubject(e.target.value)}
                 className={styles.select}
-                disabled={isUploading}
               >
-                <option value="">選択してください</option>
-                <option value="国語">国語</option>
-                <option value="数学">数学</option>
-                <option value="英語">英語</option>
-                <option value="理科">理科</option>
-                <option value="社会">社会</option>
-                <option value="音楽">音楽</option>
-                <option value="美術">美術</option>
-                <option value="保健体育">保健体育</option>
-                <option value="技術">技術</option>
-                <option value="家庭">家庭</option>
+                {subjects.map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
               </select>
             </div>
-
-            <div className={styles.inputGroup}>
-              <label>説明</label>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.label}>説明（任意）</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="授業の内容や重要なポイントを記入"
+                placeholder="授業の内容や補足事項など"
                 className={styles.textarea}
-                rows="4"
-                disabled={isUploading}
+                rows={4}
               />
             </div>
 
-            {/* アップロード進捗表示 */}
-            {isUploading && (
-              <div className={styles.uploadProgress}>
-                <div className={styles.progressLabel}>
-                  <span>{uploadStatus}</span>
-                  <span className={styles.progressPercent}>{uploadProgress}%</span>
-                </div>
-                <div className={styles.progressBarContainer}>
+            {ASSEMBLYAI_API_KEY && (
+              <div className={styles.transcriptNote}>
+                💡 アップロード後、自動で文字起こしされます（約1〜3分）
+              </div>
+            )}
+            
+            <button 
+              onClick={handleUpload} 
+              className={styles.uploadBtn}
+              disabled={!title.trim()}
+            >
+              📤 アップロードする
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* アップロード中のモーダル */}
+      {isUploading && (
+        <div className={styles.uploadModal}>
+          <div className={styles.uploadModalContent}>
+            <div className={styles.spinner}></div>
+            <h3 className={styles.uploadTitle}>{uploadStatus}</h3>
+            
+            {uploadProgress > 0 && uploadProgress < 100 && (
+              <div className={styles.progressSection}>
+                <div className={styles.progressBar}>
                   <div 
-                    className={styles.progressBar} 
+                    className={styles.progressFill} 
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
+                <p className={styles.progressText}>
+                  {uploadProgress.toFixed(0)}% （{formatFileSize(uploadedFileSize)} / {formatFileSize(totalFileSize)}）
+                </p>
               </div>
             )}
-
-            <div className={styles.formButtons}>
-              <button
-                onClick={saveRecording}
-                disabled={isUploading}
-                className={styles.saveBtn}
-              >
-                {isUploading ? `アップロード中... ${uploadProgress}%` : '保存する'}
-              </button>
-              <button
-                onClick={discardRecording}
-                disabled={isUploading}
-                className={styles.discardBtn}
-              >
-                破棄する
-              </button>
-            </div>
+            
+            {isTranscribing && (
+              <p className={styles.transcribingText}>🎤 {transcriptionProgress}</p>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default RecordingPage;

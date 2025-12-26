@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './LoginPage.module.css';
 import { loginUser, registerUser, loginWithGoogle, loginWithApple } from '../firebase';
 import { db } from '../firebase/config';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 function LoginPage({ onLogin }) {
-  // ステップ管理: 'login' -> 'school-code'
+  // ステップ管理: 'login' -> 'school-code' -> 'class-code'
   const [step, setStep] = useState('login');
   const [authUser, setAuthUser] = useState(null);
   
@@ -23,23 +23,89 @@ function LoginPage({ onLogin }) {
   const [schoolPassword, setSchoolPassword] = useState('');
   const [schoolError, setSchoolError] = useState('');
   const [schoolLoading, setSchoolLoading] = useState(false);
+  const [schoolData, setSchoolData] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  // クラス選択関連（ドロップダウン選択）
+  const [classList, setClassList] = useState([]);
+  const [selectedClassCode, setSelectedClassCode] = useState('');
+  const [classError, setClassError] = useState('');
+  const [classLoading, setClassLoading] = useState(false);
+
+  // 学校のクラス一覧を取得
+  const fetchClasses = async (schoolCodeValue) => {
+    try {
+      const q = query(
+        collection(db, 'classes'),
+        where('schoolCode', '==', schoolCodeValue)
+      );
+      const snap = await getDocs(q);
+      const classes = snap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      // 学年・組でソート
+      classes.sort((a, b) => {
+        if (a.grade !== b.grade) return a.grade - b.grade;
+        return (a.className || '').localeCompare(b.className || '');
+      });
+      setClassList(classes);
+    } catch (err) {
+      console.error('クラス一覧取得エラー:', err);
+      setClassList([]);
+    }
+  };
 
   // 認証後に学校コードをチェック
   const checkSchoolCode = async (user) => {
     const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (userDoc.exists() && userDoc.data().schoolCode) {
-      // 既に登録済みならそのままログイン
-      onLogin({
-        ...user,
-        role: userDoc.data().role,
-        schoolCode: userDoc.data().schoolCode,
-        schoolName: userDoc.data().schoolName
-      });
-    } else {
-      // 学校コード入力画面へ
-      setAuthUser(user);
-      setStep('school-code');
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      
+      // 学校コードがある場合
+      if (userData.schoolCode) {
+        // 先生はclassCodeなしでOK
+        if (userData.role === 'teacher') {
+          onLogin({
+            ...user,
+            role: userData.role,
+            schoolCode: userData.schoolCode,
+            schoolName: userData.schoolName,
+            classCode: userData.classCode || null,
+            className: userData.className || null
+          });
+          return;
+        }
+        
+        // 生徒でclassCodeがある場合
+        if (userData.classCode) {
+          onLogin({
+            ...user,
+            role: userData.role,
+            schoolCode: userData.schoolCode,
+            schoolName: userData.schoolName,
+            classCode: userData.classCode,
+            className: userData.className
+          });
+          return;
+        }
+        
+        // 生徒でclassCodeがない場合 → クラス選択へ
+        setAuthUser(user);
+        setSchoolCode(userData.schoolCode);
+        setSchoolData({ name: userData.schoolName });
+        setUserRole(userData.role);
+        setSelectedClassCode('');
+        await fetchClasses(userData.schoolCode);
+        setStep('class-code');
+        return;
+      }
     }
+    
+    // 学校コード未設定 → 学校コード入力画面へ
+    setAuthUser(user);
+    setStep('school-code');
   };
 
   // Googleログイン処理
@@ -140,7 +206,6 @@ function LoginPage({ onLogin }) {
     try {
       const codeUpper = schoolCode.toUpperCase();
       
-      // 学校コードの存在確認
       const schoolDoc = await getDoc(doc(db, 'schools', codeUpper));
       
       if (!schoolDoc.exists()) {
@@ -149,39 +214,53 @@ function LoginPage({ onLogin }) {
         return;
       }
 
-      const schoolData = schoolDoc.data();
+      const school = schoolDoc.data();
 
-      // パスワードで役割を判定
-      let userRole = null;
+      let role = null;
       
-      if (schoolData.studentPassword === schoolPassword) {
-        userRole = 'student';
-      } else if (schoolData.teacherPassword === schoolPassword) {
-        userRole = 'teacher';
+      if (school.studentPassword === schoolPassword) {
+        role = 'student';
+      } else if (school.teacherPassword === schoolPassword) {
+        role = 'teacher';
       } else {
         setSchoolError('パスワードが正しくありません');
         setSchoolLoading(false);
         return;
       }
 
-      // ユーザー情報を更新
-      await setDoc(doc(db, 'users', authUser.uid), {
-        email: authUser.email,
-        displayName: authUser.displayName,
-        photoURL: authUser.photoURL,
-        role: userRole,
-        schoolCode: codeUpper,
-        schoolName: schoolData.name,
-        updatedAt: new Date()
-      }, { merge: true });
+      // 先生の場合はクラス選択をスキップしてそのままログイン
+      if (role === 'teacher') {
+        await setDoc(doc(db, 'users', authUser.uid), {
+          email: authUser.email || '',
+          displayName: authUser.displayName || '',
+          photoURL: authUser.photoURL || '',
+          role: 'teacher',
+          schoolCode: codeUpper,
+          schoolName: school.name,
+          classCode: null,
+          className: null,
+          updatedAt: new Date()
+        }, { merge: true });
 
-      // ログイン完了
-      onLogin({
-        ...authUser,
-        role: userRole,
-        schoolCode: codeUpper,
-        schoolName: schoolData.name
-      });
+        onLogin({
+          ...authUser,
+          role: 'teacher',
+          schoolCode: codeUpper,
+          schoolName: school.name,
+          classCode: null,
+          className: null
+        });
+        return;
+      }
+
+      // 生徒の場合はクラス選択へ
+      setSchoolData(school);
+      setUserRole(role);
+      setSchoolCode(codeUpper);
+      setSelectedClassCode('');
+      await fetchClasses(codeUpper);
+      
+      setStep('class-code');
 
     } catch (err) {
       console.error('学校コード認証エラー:', err);
@@ -191,14 +270,193 @@ function LoginPage({ onLogin }) {
     setSchoolLoading(false);
   };
 
-  // 戻るボタン
-  const handleBack = () => {
-    setStep('login');
-    setSchoolCode('');
-    setSchoolPassword('');
-    setSchoolError('');
-    setAuthUser(null);
+  // クラス選択処理
+  const handleClassCodeSubmit = async (e) => {
+    e.preventDefault();
+    setClassError('');
+    setClassLoading(true);
+
+    try {
+      if (!selectedClassCode) {
+        setClassError('クラスを選択してください');
+        setClassLoading(false);
+        return;
+      }
+      
+      // 選択されたクラスを取得
+      const selectedClass = classList.find(c => c.id === selectedClassCode);
+      
+      if (!selectedClass) {
+        setClassError('クラスが見つかりません');
+        setClassLoading(false);
+        return;
+      }
+
+      await setDoc(doc(db, 'users', authUser.uid), {
+        email: authUser.email || '',
+        displayName: authUser.displayName || '',
+        photoURL: authUser.photoURL || '',
+        role: userRole,
+        schoolCode: schoolCode,
+        schoolName: schoolData.name,
+        classCode: selectedClassCode,
+        className: selectedClass.displayName,
+        grade: selectedClass.grade,
+        updatedAt: new Date()
+      }, { merge: true });
+
+      onLogin({
+        ...authUser,
+        role: userRole,
+        schoolCode: schoolCode,
+        schoolName: schoolData.name,
+        classCode: selectedClassCode,
+        className: selectedClass.displayName
+      });
+
+    } catch (err) {
+      console.error('クラス選択エラー:', err);
+      setClassError('エラーが発生しました');
+    }
+
+    setClassLoading(false);
   };
+
+  const handleBack = () => {
+    if (step === 'class-code') {
+      setStep('school-code');
+      setClassSuffix('');
+      setClassError('');
+    } else {
+      setStep('login');
+      setSchoolCode('');
+      setSchoolPassword('');
+      setSchoolError('');
+      setAuthUser(null);
+    }
+  };
+
+  // クラスコード入力画面
+  if (step === 'class-code') {
+    return (
+      <div className={styles.loginContainer}>
+        <div className={styles.loginCard}>
+          <div className={styles.logoSection}>
+            <div className={styles.logoIcon}>
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <path d="M20 5L5 12.5V27.5C5 31 12.5 35 20 35C27.5 35 35 31 35 27.5V12.5L20 5Z" fill="url(#gradient)" />
+                <path d="M20 15V25M15 20H25" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                <defs>
+                  <linearGradient id="gradient" x1="5" y1="5" x2="35" y2="35">
+                    <stop offset="0%" stopColor="#667eea" />
+                    <stop offset="100%" stopColor="#764ba2" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h1 className={styles.title}>クラス認証</h1>
+            <p className={styles.subtitle}>{schoolData?.name || '学校'}</p>
+          </div>
+
+          <div className={styles.userInfo}>
+            {authUser?.photoURL && (
+              <img src={authUser.photoURL} alt="" className={styles.userAvatar} />
+            )}
+            <div className={styles.userDetails}>
+              <span className={styles.userName}>{authUser?.displayName || authUser?.email}</span>
+              <span className={styles.userEmail}>
+                {userRole === 'teacher' ? '👨‍🏫 先生' : '👨‍🎓 生徒'}
+              </span>
+            </div>
+          </div>
+
+          <form onSubmit={handleClassCodeSubmit} className={styles.formContainer}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="classCode">クラスを選択</label>
+              <div className={styles.inputWrapper}>
+                <select
+                  id="classCode"
+                  value={selectedClassCode}
+                  onChange={(e) => setSelectedClassCode(e.target.value)}
+                  required
+                  style={{ 
+                    width: '100%',
+                    padding: '0.625rem 0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    appearance: 'none',
+                    background: 'white url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%236b7280\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E") no-repeat right 0.75rem center',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="">-- クラスを選択してください --</option>
+                  {classList.map(cls => (
+                    <option key={cls.id} value={cls.id}>
+                      {cls.displayName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {classList.length === 0 && (
+                <p style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.5rem' }}>
+                  クラスが登録されていません
+                </p>
+              )}
+            </div>
+
+            {classError && (
+              <div className={styles.errorAlert}>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                  <path d="M10 6V10M10 13V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+                <span>{classError}</span>
+              </div>
+            )}
+
+            <button 
+              type="submit" 
+              className={styles.submitButton}
+              disabled={classLoading || classList.length === 0}
+            >
+              {classLoading ? (
+                <>
+                  <svg className={styles.spinner} width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="50" strokeDashoffset="25" />
+                  </svg>
+                  処理中...
+                </>
+              ) : (
+                <>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M7 10L9 12L13 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                  </svg>
+                  始める
+                </>
+              )}
+            </button>
+
+            <button 
+              type="button" 
+              className={styles.backButton}
+              onClick={handleBack}
+            >
+              ← 戻る
+            </button>
+          </form>
+
+          <div className={styles.footer}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2C4.69 2 2 4.69 2 8C2 11.31 4.69 14 8 14C11.31 14 14 11.31 14 8C14 4.69 11.31 2 8 2ZM7 11V9H9V11H7ZM9 8H7V5H9V8Z" fill="currentColor"/>
+            </svg>
+            <p>クラスは後から変更できます</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // 学校コード入力画面
   if (step === 'school-code') {
@@ -219,12 +477,9 @@ function LoginPage({ onLogin }) {
               </svg>
             </div>
             <h1 className={styles.title}>学校認証</h1>
-            <p className={styles.subtitle}>
-              学校コードとパスワードを入力してください
-            </p>
+            <p className={styles.subtitle}>学校コードとパスワードを入力してください</p>
           </div>
 
-          {/* ログイン中のユーザー表示 */}
           <div className={styles.userInfo}>
             {authUser?.photoURL && (
               <img src={authUser.photoURL} alt="" className={styles.userAvatar} />
@@ -247,7 +502,7 @@ function LoginPage({ onLogin }) {
                   type="text"
                   value={schoolCode}
                   onChange={(e) => setSchoolCode(e.target.value.toUpperCase())}
-                  placeholder="例: SCHOOL001"
+                  placeholder="例: SCH12345"
                   required
                   autoComplete="off"
                   style={{ textTransform: 'uppercase' }}
@@ -302,7 +557,7 @@ function LoginPage({ onLogin }) {
                     <path d="M7 10L9 12L13 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
                   </svg>
-                  認証して続ける
+                  次へ
                 </>
               )}
             </button>
@@ -364,7 +619,6 @@ function LoginPage({ onLogin }) {
           </div>
         )}
 
-        {/* ソーシャルログインボタン */}
         <div className={styles.socialLogin}>
           <button 
             type="button"
@@ -398,7 +652,6 @@ function LoginPage({ onLogin }) {
           <span>またはメールアドレスで</span>
         </div>
 
-        {/* メールログインフォーム */}
         <form onSubmit={handleEmailSubmit} className={styles.formContainer}>
           {isRegisterMode && (
             <div className={styles.inputGroup}>

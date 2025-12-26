@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import FolderCard from './FolderCard';
+import VideoDetailModal from './VideoDetailModal';
 import styles from './HomePage.module.css';
 import { mainSubjects } from '../data.js';
 import { seedDatabase, clearDatabase } from '../seedData';
@@ -9,6 +10,8 @@ import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices, selectedClass }) {
   
   const [recordings, setRecordings] = useState([]);
+  const [selectedRecording, setSelectedRecording] = useState(null);
+  const [initialJumpTime, setInitialJumpTime] = useState(null);
   
   // 録画アーカイブをリアルタイムで取得
   useEffect(() => {
@@ -24,7 +27,6 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
           id: doc.id,
           ...docData,
           type: 'recording',
-          // FolderCardで使う形式に変換
           title: docData.title,
           date: docData.createdAt?.toDate?.()?.toISOString().split('T')[0] || '',
           imageUrl: docData.thumbnailUrl || null,
@@ -39,23 +41,86 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
   }, []);
   
   const subjects = mainSubjects;
-  const term = searchTerm.toLowerCase();
+  const term = (searchTerm || '').toLowerCase();
 
-  // 通常アーカイブと録画を合わせて取得
+  // 文字起こしから検索にマッチする行を抽出
+  const getTranscriptMatches = (transcription, searchTerm) => {
+    if (!transcription || !searchTerm) return [];
+    
+    const lines = transcription.split('\n').filter(line => line.trim());
+    const matches = [];
+    
+    lines.forEach(line => {
+      if (line.toLowerCase().includes(searchTerm.toLowerCase())) {
+        const timestampMatch = line.match(/^\[(\d{2}):(\d{2})(?::(\d{2}))?\]/);
+        if (timestampMatch) {
+          const timestamp = timestampMatch[0];
+          const content = line.replace(timestamp, '').trim();
+          
+          const parts = timestampMatch[0].replace('[', '').replace(']', '').split(':');
+          let seconds = 0;
+          if (parts.length === 3) {
+            seconds = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+          } else {
+            seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+          }
+          
+          matches.push({
+            timestamp,
+            content,
+            seconds
+          });
+        }
+      }
+    });
+    
+    return matches;
+  };
+
+  // 検索キーワードをハイライト
+  const highlightText = (text, keyword) => {
+    if (!keyword || !text) return text;
+    
+    const regex = new RegExp(`(${keyword})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, i) => 
+      part.toLowerCase() === keyword.toLowerCase() 
+        ? <mark key={i} className={styles.highlight}>{part}</mark>
+        : part
+    );
+  };
+
+  // 通常アーカイブと録画を合わせて取得（文字起こし検索対応）
   const getFoldersBySubject = (subject) => {
     // 通常のfolders
     const normalFolders = folders
       .filter(folder => folder.subject === subject)
-      .filter(folder => folder.title.toLowerCase().includes(term));
+      .filter(folder => folder.title.toLowerCase().includes(term))
+      .map(folder => ({ ...folder, transcriptMatches: [] }));
     
-    // 録画アーカイブ
+    // 録画アーカイブ（文字起こし検索対応）
     const recordingFolders = recordings
       .filter(rec => rec.subject === subject)
       .filter(rec => {
         if (!selectedClass) return true;
         return rec.className === selectedClass || !rec.className;
       })
-      .filter(rec => rec.title.toLowerCase().includes(term));
+      .map(rec => {
+        const titleMatch = rec.title?.toLowerCase().includes(term);
+        const transcriptMatches = term ? getTranscriptMatches(rec.transcription, term) : [];
+        
+        // タイトルか文字起こしにマッチ
+        if (titleMatch || transcriptMatches.length > 0) {
+          return {
+            ...rec,
+            transcriptMatches,
+            matchType: titleMatch ? 'title' : 'transcript'
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
     
     // 合わせてソート
     return [...normalFolders, ...recordingFolders]
@@ -78,16 +143,21 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
       .sort((a, b) => (a.status === 'unanswered' && b.status === 'answered') ? -1 : 1) 
       .slice(0, 5); 
   };
-  
-  const getSubjectTagClass = (subject) => {
-    switch(subject) {
-      case '数学': return styles.tagMath;
-      case '英語': return styles.tagEnglish;
-      case '国語': return styles.tagJapanese;
-      case '理科': return styles.tagScience;
-      case '社会': return styles.tagSocial;
-      default: return styles.tagDefault;
+
+  // カードクリック時の処理
+  const handleCardClick = (folder, jumpTime = null) => {
+    if (folder.type === 'recording') {
+      setSelectedRecording(folder);
+      setInitialJumpTime(jumpTime);
+    } else {
+      onCardClick(folder.id);
     }
+  };
+
+  // モーダルを閉じる
+  const closeModal = () => {
+    setSelectedRecording(null);
+    setInitialJumpTime(null);
   };
 
   // ダミーデータ投入
@@ -114,6 +184,62 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
         alert('❌ エラー: ' + result.error);
       }
     }
+  };
+
+  // 録画カードのレンダリング（文字起こし検索結果付き）
+  const renderRecordingCard = (folder) => {
+    const hasMatches = folder.transcriptMatches && folder.transcriptMatches.length > 0;
+    
+    return (
+      <div key={folder.id} className={styles.recordingCardWrapper}>
+        <FolderCard
+          title={folder.title} 
+          date={folder.date}
+          imageUrl={folder.imageUrl}
+          subject={folder.subject}
+          className={!selectedClass ? folder.className : null}
+          isRecording={folder.type === 'recording'}
+          hasTranscription={!!folder.transcription}
+          onClick={() => handleCardClick(folder)}
+        />
+        
+        {/* 文字起こし検索マッチ表示 */}
+        {hasMatches && (
+          <div className={styles.matchesContainer}>
+            <p className={styles.matchesLabel}>
+              🔍 文字起こしで{folder.transcriptMatches.length}件ヒット
+            </p>
+            <div className={styles.matchesList}>
+              {folder.transcriptMatches.slice(0, 2).map((match, idx) => (
+                <button
+                  key={idx}
+                  className={styles.matchButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCardClick(folder, match.seconds);
+                  }}
+                >
+                  <span className={styles.matchTime}>{match.timestamp}</span>
+                  <span className={styles.matchText}>
+                    {highlightText(
+                      match.content.length > 30 
+                        ? match.content.substring(0, 30) + '...' 
+                        : match.content,
+                      searchTerm
+                    )}
+                  </span>
+                </button>
+              ))}
+              {folder.transcriptMatches.length > 2 && (
+                <span className={styles.moreMatches}>
+                  +{folder.transcriptMatches.length - 2}件
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -156,18 +282,21 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
                   {searchTerm && <h4 className={styles.archiveSubTitle}>アーカイブ</h4>}
                   
                   <div className={styles.cardScroller}>
-                    {foundFolders.map(folder => (
-                      <FolderCard
-                        key={folder.id} 
-                        title={folder.title} 
-                        date={folder.date}
-                        imageUrl={folder.imageUrl}
-                        subject={folder.subject}
-                        className={!selectedClass ? folder.className : null}
-                        isRecording={folder.type === 'recording'}
-                        onClick={() => onCardClick(folder.id)}
-                      />
-                    ))}
+                    {foundFolders.map(folder => 
+                      folder.type === 'recording' 
+                        ? renderRecordingCard(folder)
+                        : (
+                          <FolderCard
+                            key={folder.id} 
+                            title={folder.title} 
+                            date={folder.date}
+                            imageUrl={folder.imageUrl}
+                            subject={folder.subject}
+                            className={!selectedClass ? folder.className : null}
+                            onClick={() => handleCardClick(folder)}
+                          />
+                        )
+                    )}
                   </div>
                 </>
               )}
@@ -220,6 +349,15 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
           );
         })}
       </>
+
+      {/* 動画詳細モーダル */}
+      {selectedRecording && (
+        <VideoDetailModal
+          recording={selectedRecording}
+          onClose={closeModal}
+          initialTime={initialJumpTime}
+        />
+      )}
     </div>
   );
 }

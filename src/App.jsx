@@ -88,20 +88,45 @@ function App() {
   // ========================================
   
   useEffect(() => {
-    const unsubscribeAuth = onAuthChange((user) => {
-      if (user) {
-        setIsLoggedIn(true);
-        setCurrentUser(user);
-        setLoading(false);
-      } else {
+  const unsubscribeAuth = onAuthChange(async (user) => {
+    if (user) {
+      // ユーザードキュメントを確認して学校・クラスが設定済みかチェック
+      try {
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('./firebase/config');
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        
+        if (userDoc.exists() && userDoc.data().schoolCode && userDoc.data().classCode) {
+          // 学校・クラス設定済み → ログイン完了
+          setIsLoggedIn(true);
+          setCurrentUser({
+            ...user,
+            role: userDoc.data().role,
+            schoolCode: userDoc.data().schoolCode,
+            schoolName: userDoc.data().schoolName,
+            classCode: userDoc.data().classCode,
+            className: userDoc.data().className
+          });
+        } else {
+          // 学校・クラス未設定 → ログイン画面に戻す
+          setIsLoggedIn(false);
+          setCurrentUser(null);
+        }
+      } catch (error) {
+        console.error('ユーザー情報取得エラー:', error);
         setIsLoggedIn(false);
         setCurrentUser(null);
-        setLoading(false);
       }
-    });
+      setLoading(false);
+    } else {
+      setIsLoggedIn(false);
+      setCurrentUser(null);
+      setLoading(false);
+    }
+  });
 
-    return () => unsubscribeAuth();
-  }, []);
+  return () => unsubscribeAuth();
+}, []);
 
   useEffect(() => {
     if (!isLoggedIn) return;
