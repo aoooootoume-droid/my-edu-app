@@ -1,29 +1,34 @@
-html, body, #root {
+/* ======================================
+   スクロール防止 & ベースリセット
+====================================== */
+html {
+  height: 100%;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
   height: 100%;
   overflow: hidden;
 }
 
-body {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  overscroll-behavior: none;
-}
-/* ブラウザが元々持っている余白（margin）をリセットして、
-  画面全体にコンテンツが広がるようにします。
-*/
-body {
-  margin: 0;
-  padding: 0;
-  /* (オプション) アプリ全体で使いたいフォントを指定できます */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-/*
-  これは「おまじない」のようなものですが、
-  paddingやborderが要素の幅(width)に影響しないようにする
-  非常に重要な設定です。レイアウトが格段に組みやすくなります。
-*/
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
