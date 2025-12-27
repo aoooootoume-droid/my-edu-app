@@ -1,9 +1,22 @@
 /* ======================================
-   メインレイアウト
+   アプリ全体のレイアウト
+====================================== */
+
+/* 一番外側のdiv（App.jsxのルート） */
+#root > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ======================================
+   メインレイアウト（Header以下）
 ====================================== */
 .appLayout {
   display: flex;
-  height: 100%;
+  flex: 1;
+  min-height: 0; /* これが重要！flexboxでスクロールを効かせる */
   overflow: hidden;
 }
 
@@ -27,15 +40,6 @@
   -webkit-overflow-scrolling: touch;
   background: #f5f7fa;
   padding: 24px;
-}
-
-/* ======================================
-   ログイン画面用
-====================================== */
-.loginWrapper {
-  height: 100%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* ======================================
