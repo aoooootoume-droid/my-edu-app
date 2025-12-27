@@ -1,5 +1,5 @@
 /* ======================================
-   メインレイアウト（スクロール修正版）
+   メインレイアウト
 ====================================== */
 .appLayout {
   display: flex;
@@ -16,7 +16,6 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
 }
 
 .mainContent {
@@ -26,13 +25,17 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
   background: #f5f7fa;
+  padding: 24px;
 }
 
-/* コンテンツ内のパディング用ラッパー */
-.mainContent > * {
-  padding: 24px;
+/* ======================================
+   ログイン画面用
+====================================== */
+.loginWrapper {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ======================================
@@ -43,7 +46,7 @@
     width: 220px;
   }
   
-  .mainContent > * {
+  .mainContent {
     padding: 20px;
   }
 }
@@ -67,9 +70,6 @@
   .mainContent {
     flex: 1;
     min-height: 0;
-  }
-  
-  .mainContent > * {
     padding: 16px;
   }
 }
@@ -78,7 +78,7 @@
    小さいスマートフォン (480px以下)
 ====================================== */
 @media (max-width: 480px) {
-  .mainContent > * {
+  .mainContent {
     padding: 12px;
   }
 }
