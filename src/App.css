@@ -1,23 +1,27 @@
 /* ======================================
-   アプリ全体のレイアウト
+   グローバルリセット & ベース
 ====================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* 一番外側のdiv（App.jsxのルート） */
-#root > div {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f5f7fa;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ======================================
-   メインレイアウト（Header以下）
+   メインレイアウト
 ====================================== */
 .appLayout {
   display: flex;
-  flex: 1;
-  min-height: 0; /* これが重要！flexboxでスクロールを効かせる */
-  overflow: hidden;
+  min-height: calc(100vh - 72px);
+  margin-top: 72px; /* ヘッダーの高さ分 */
 }
 
 .sidebar {
@@ -25,21 +29,20 @@
   flex-shrink: 0;
   background: #f8f9fa;
   border-right: 1px solid #e0e0e0;
-  height: 100%;
+  height: calc(100vh - 72px);
+  position: sticky;
+  top: 72px;
   overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  transition: all 0.3s ease;
 }
 
 .mainContent {
   flex: 1;
   min-width: 0;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  background: #f5f7fa;
   padding: 24px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: calc(100vh - 72px);
 }
 
 /* ======================================
@@ -61,20 +64,26 @@
 @media (max-width: 768px) {
   .appLayout {
     flex-direction: column;
+    margin-top: 64px;
+    min-height: calc(100vh - 64px);
   }
   
   .sidebar {
     width: 100%;
     height: auto;
-    max-height: 40vh;
+    max-height: none;
+    position: relative;
+    top: 0;
     border-right: none;
     border-bottom: 1px solid #e0e0e0;
+    overflow-y: visible;
   }
   
   .mainContent {
-    flex: 1;
-    min-height: 0;
     padding: 16px;
+    min-height: auto;
+    height: auto;
+    overflow-y: visible;
   }
 }
 
@@ -82,6 +91,10 @@
    小さいスマートフォン (480px以下)
 ====================================== */
 @media (max-width: 480px) {
+  .appLayout {
+    margin-top: 60px;
+  }
+
   .mainContent {
     padding: 12px;
   }
