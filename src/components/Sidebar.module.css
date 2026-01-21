@@ -50,12 +50,12 @@
   transition: all 0.2s ease;
   color: #5a6578;
   position: relative;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
 }
 
 .classButton:hover {
   color: #2d3748;
-  border-bottom-color: #bed5e8;
+  border-bottom-color: #667eea;
 }
 
 .classButton::after {
@@ -141,7 +141,7 @@
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .nav button {
@@ -150,38 +150,31 @@
   gap: 12px;
   padding: 13px 14px;
   border: none;
-  border-radius: 12px;
-  background: transparent;
+  border-radius: 0;
+  background: #ffffff;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 600;
+  transition: all 0.2s ease;
   color: #5a6578;
   position: relative;
+  border-bottom: 3px solid transparent;
 }
 
 .nav button:hover {
-  background: #ecf0f4;
   color: #2d3748;
+  border-bottom-color: #667eea;
 }
 
 .nav button.active {
-  background: #bed5e8;
   color: #2d3748;
   font-weight: 700;
+  border-bottom-color: #667eea;
 }
 
 .nav button.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 20px;
-  width: 4px;
-  background: #abb0bc;
-  border-radius: 0 4px 4px 0;
+  display: none;
 }
 
 /* アイコン */
@@ -415,18 +408,24 @@
   .nav button {
     padding: 13px 14px;
     font-size: 14px;
-    border-radius: 12px;
-    background: transparent;
+    border-radius: 0;
+    background: #ffffff;
+    border-bottom: 3px solid transparent;
   }
 
   .nav button.active::before {
-    display: block;
+    display: none;
   }
 
-  .nav button:hover,
+  .nav button:hover {
+    background: #ffffff;
+    border-bottom-color: transparent;
+  }
+
+  .nav button:active,
   .nav button.active {
-    background: #bed5e8;
     color: #2d3748;
+    border-bottom-color: #667eea;
   }
 
   .subjectSection {
