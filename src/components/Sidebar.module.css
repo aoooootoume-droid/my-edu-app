@@ -1,15 +1,14 @@
 /* ======================================
    Sidebar.module.css
-   カラーパレット: #bed5e8, #abb0bc, #ecf0f4
-   全置き換え
+   モダン & ミニマルデザイン
 ====================================== */
 
 .sidebarContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #ffffff;
-  border-right: 1px solid #d5dce6;
+  background: linear-gradient(180deg, #fafbfc 0%, #f5f7fa 100%);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
   overflow-y: auto;
 }
 
@@ -20,58 +19,77 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 24px 18px;
+  padding: 28px 20px;
 }
 
 .layerTitle {
-  font-size: 12px;
-  font-weight: 700;
-  color: #abb0bc;
-  margin: 0 0 18px 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin: 0 0 20px 4px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .classList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .classButton {
-  padding: 14px 16px;
+  padding: 16px 18px;
   border: none;
-  border-radius: 0;
-  background: #ffffff;
+  border-radius: 12px;
+  background: transparent;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  transition: all 0.2s ease;
-  color: #5a6578;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #475569;
   position: relative;
-  border-bottom: 3px solid transparent;
+  overflow: hidden;
+}
+
+.classButton::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 3px;
 }
 
 .classButton:hover {
-  color: #2d3748;
-  border-bottom-color: #667eea;
+  color: #1e293b;
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.classButton:hover::before {
+  width: 100%;
 }
 
 .classButton::after {
-  content: '›';
+  content: '→';
   position: absolute;
-  right: 16px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 18px;
-  color: #abb0bc;
-  transition: all 0.25s;
+  font-size: 14px;
+  font-weight: 400;
+  color: #cbd5e1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
 }
 
 .classButton:hover::after {
-  color: #2d3748;
+  color: #6366f1;
   transform: translateY(-50%) translateX(4px);
+  opacity: 1;
 }
 
 /* ===================================
@@ -81,121 +99,116 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 20px 14px;
+  padding: 24px 16px;
 }
 
 .menuHeader {
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #ecf0f4;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .classHeader {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .backButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  border: 2px solid #ecf0f4;
+  width: 42px;
+  height: 42px;
+  border: none;
   border-radius: 12px;
-  background: #ffffff;
-  color: #abb0bc;
+  background: #f1f5f9;
+  color: #64748b;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 }
 
 .backButton:hover {
-  background: #bed5e8;
-  border-color: #bed5e8;
-  color: #2d3748;
+  background: #e2e8f0;
+  color: #1e293b;
+  transform: translateX(-2px);
 }
 
 .selectedClassBadge {
   display: flex;
   align-items: center;
   flex: 1;
-  padding: 10px 14px;
-  background: #ffffff;
-  border: 2px solid #ecf0f4;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   border-radius: 12px;
-  color: #2d3748;
+  color: #ffffff;
   font-weight: 700;
   font-size: 14px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
   transition: all 0.2s ease;
 }
 
 .selectedClassBadge:hover {
-  background: #bed5e8;
-  border-color: #bed5e8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
 }
 
 /* メインメニュー */
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .nav button {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 13px 14px;
+  padding: 14px 16px;
   border: none;
-  border-radius: 0;
-  background: #ffffff;
+  border-radius: 12px;
+  background: transparent;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  color: #5a6578;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #64748b;
   position: relative;
-  border-bottom: 3px solid transparent;
+  overflow: hidden;
+}
+
+.nav button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 3px;
 }
 
 .nav button:hover {
-  color: #2d3748;
-  border-bottom-color: #667eea;
+  color: #1e293b;
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.nav button:hover::before {
+  width: 100%;
 }
 
 .nav button.active {
-  color: #2d3748;
-  font-weight: 700;
-  border-bottom-color: #667eea;
+  color: #1e293b;
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.08);
 }
 
 .nav button.active::before {
-  display: none;
-}
-
-/* アイコン */
-.nav button span:first-child {
-  font-size: 17px;
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ecf0f4;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-
-.nav button:hover span:first-child {
-  background: #bed5e8;
-}
-
-.nav button.active span:first-child {
-  background: #ffffff;
+  width: 100%;
 }
 
 /* ===================================
@@ -203,27 +216,27 @@
    =================================== */
 .subjectSection {
   margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid #ecf0f4;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .subjectTitle {
   font-size: 11px;
-  font-weight: 700;
-  color: #abb0bc;
-  margin: 0 0 12px 4px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin: 0 0 14px 4px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .subjectList {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .subjectList button {
-  padding: 11px 14px;
+  padding: 12px 14px;
   border: none;
   border-radius: 10px;
   background: transparent;
@@ -231,62 +244,65 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  transition: all 0.2s;
-  color: #5a6578;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #64748b;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  position: relative;
 }
 
 .subjectList button::before {
   content: '';
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #abb0bc;
+  background: currentColor;
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.4;
 }
 
 .subjectList button:hover {
-  background: #ecf0f4;
-  color: #2d3748;
+  background: rgba(99, 102, 241, 0.04);
+  color: #1e293b;
 }
 
 .subjectList button:hover::before {
-  background: #bed5e8;
-  transform: scale(1.2);
+  opacity: 0.8;
+  transform: scale(1.15);
 }
 
 .subjectList button.activeSubject {
-  background: #bed5e8;
-  color: #2d3748;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  color: #4f46e5;
   font-weight: 600;
 }
 
 .subjectList button.activeSubject::before {
-  background: #2d3748;
-  box-shadow: 0 0 0 3px rgba(190, 213, 232, 0.5);
+  opacity: 1;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 /* ===================================
    スクロールバー
    =================================== */
 .sidebarContainer::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .sidebarContainer::-webkit-scrollbar-track {
-  background: #ecf0f4;
+  background: transparent;
 }
 
 .sidebarContainer::-webkit-scrollbar-thumb {
-  background: #abb0bc;
-  border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 
 .sidebarContainer::-webkit-scrollbar-thumb:hover {
-  background: #8a90a0;
+  background: #94a3b8;
 }
 
 /* ===================================
@@ -296,21 +312,21 @@
 @media (max-width: 1024px) {
   .classSelectLayer,
   .menuLayer {
-    padding: 16px 12px;
+    padding: 20px 14px;
   }
 
   .classButton {
-    padding: 12px 14px;
+    padding: 14px 16px;
     font-size: 13px;
   }
 
   .nav button {
-    padding: 11px 12px;
+    padding: 12px 14px;
     font-size: 13px;
   }
 
   .subjectList button {
-    padding: 9px 12px;
+    padding: 10px 12px;
     font-size: 12px;
   }
 }
@@ -322,80 +338,82 @@
     height: 100%;
     overflow-y: auto;
     border-right: none;
-    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     padding: 0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
   }
 
   .classSelectLayer {
     display: flex;
     flex-direction: column;
-    padding: 20px 16px;
-    gap: 6px;
+    padding: 24px 20px;
+    gap: 4px;
     height: auto;
   }
 
   .layerTitle {
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .classList {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
   }
 
   .classButton {
-    padding: 12px 16px;
-    font-size: 14px;
-    border-radius: 0;
-    background: #ffffff;
-    border: none;
-    border-bottom: 2px solid transparent;
-  }
-
-  .classButton::after {
-    display: block;
-  }
-
-  .classButton:hover {
-    background: #ffffff;
-    border-bottom-color: transparent;
+    padding: 16px 18px;
+    font-size: 15px;
+    border-radius: 12px;
+    background: transparent;
   }
 
   .classButton:active {
-    border-bottom-color: #bed5e8;
+    background: rgba(99, 102, 241, 0.08);
+  }
+
+  .classButton:active::before {
+    width: 100%;
+  }
+
+  .classButton:hover {
+    background: transparent;
+  }
+
+  .classButton:hover::before {
+    width: 0;
   }
 
   .menuLayer {
     display: flex;
     flex-direction: column;
-    padding: 16px;
+    padding: 20px;
     gap: 0;
     height: 100%;
   }
 
   .menuHeader {
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #ecf0f4;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   .classHeader {
-    gap: 10px;
+    gap: 12px;
   }
 
   .backButton {
-    width: 38px;
-    height: 38px;
-    font-size: 14px;
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
     border-radius: 12px;
   }
 
   .selectedClassBadge {
-    padding: 10px 14px;
-    font-size: 14px;
-    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 15px;
+    border-radius: 14px;
   }
 
   .nav {
@@ -406,82 +424,102 @@
   }
 
   .nav button {
-    padding: 13px 14px;
-    font-size: 14px;
-    border-radius: 0;
-    background: #ffffff;
-    border-bottom: 3px solid transparent;
-  }
-
-  .nav button.active::before {
-    display: none;
+    padding: 16px 18px;
+    font-size: 15px;
+    border-radius: 12px;
+    background: transparent;
   }
 
   .nav button:hover {
-    background: #ffffff;
-    border-bottom-color: transparent;
+    background: transparent;
   }
 
-  .nav button:active,
+  .nav button:hover::before {
+    width: 0;
+  }
+
+  .nav button:active {
+    background: rgba(99, 102, 241, 0.08);
+  }
+
+  .nav button:active::before {
+    width: 100%;
+  }
+
   .nav button.active {
-    color: #2d3748;
-    border-bottom-color: #667eea;
+    color: #1e293b;
+    background: rgba(99, 102, 241, 0.08);
+  }
+
+  .nav button.active::before {
+    width: 100%;
   }
 
   .subjectSection {
     display: block;
     margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #ecf0f4;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .subjectList button {
+    padding: 14px 16px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .classSelectLayer {
-    padding: 16px 14px;
+    padding: 20px 16px;
   }
 
   .classButton {
-    padding: 10px 14px;
-    font-size: 13px;
+    padding: 14px 16px;
+    font-size: 14px;
   }
 
   .menuLayer {
-    padding: 14px;
+    padding: 16px;
   }
 
   .nav button {
-    padding: 11px 12px;
-    font-size: 13px;
+    padding: 14px 16px;
+    font-size: 14px;
   }
 
   .selectedClassBadge {
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 12px 14px;
+    font-size: 14px;
   }
 
   .backButton {
-    width: 34px;
-    height: 34px;
-    font-size: 12px;
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
   }
 
   .subjectList button {
-    padding: 10px 12px;
-    font-size: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
   }
 }
-/* Sidebar.module.css に以下を追加してください */
 
+/* ===================================
+   ユーティリティ
+   =================================== */
 .loading {
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
-  color: #6b7280;
+  color: #94a3b8;
+  font-size: 14px;
 }
 
 .emptyMessage {
-  padding: 1rem;
+  padding: 1.5rem;
   text-align: center;
-  color: #9ca3af;
-  font-size: 0.875rem;
+  color: #94a3b8;
+  font-size: 13px;
+  background: rgba(148, 163, 184, 0.05);
+  border-radius: 10px;
+  margin-top: 8px;
 }
