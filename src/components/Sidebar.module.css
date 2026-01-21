@@ -92,6 +92,29 @@
   opacity: 1;
 }
 
+/* ホームボタン（全学年） */
+.homeButton {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #4f46e5;
+}
+
+.homeButton:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.homeButton::after {
+  content: none;
+}
+
+/* クラス一覧との区切り線 */
+.classDivider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.08), transparent);
+  margin: 16px 0;
+}
+
 /* ===================================
    レイヤー2: メインメニュー
    =================================== */

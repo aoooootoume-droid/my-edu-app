@@ -109,7 +109,17 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
       {isTeacher && !selectedClass && (
         <div className={styles.classSelectLayer}>
           <h2 className={styles.layerTitle}>クラス選択</h2>
-          
+
+          {/* ホーム（全学年）ボタン */}
+          <button
+            className={`${styles.classButton} ${styles.homeButton}`}
+            onClick={() => handleClassSelect({ displayName: '全学年', id: 'all' })}
+          >
+            🏠 ホーム（全学年）
+          </button>
+
+          <div className={styles.classDivider}></div>
+
           {classes.length === 0 ? (
             <div className={styles.emptyMessage}>
               クラスが登録されていません

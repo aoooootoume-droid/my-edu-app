@@ -159,34 +159,37 @@ function App() {
   // 🎯 クラスでフィルタリングしたデータ
   // ========================================
 
+  // 「全学年」選択時はフィルターなし
+  const shouldFilter = selectedClass && selectedClass !== '全学年';
+
   const filteredFolders = useMemo(() =>
-    selectedClass ? folders.filter(f => f.className === selectedClass || !f.className) : folders,
-    [folders, selectedClass]
+    shouldFilter ? folders.filter(f => f.className === selectedClass || !f.className) : folders,
+    [folders, selectedClass, shouldFilter]
   );
 
   const filteredPrints = useMemo(() =>
-    selectedClass ? prints.filter(p => p.className === selectedClass || !p.className) : prints,
-    [prints, selectedClass]
+    shouldFilter ? prints.filter(p => p.className === selectedClass || !p.className) : prints,
+    [prints, selectedClass, shouldFilter]
   );
 
   const filteredHomeworks = useMemo(() =>
-    selectedClass ? homeworks.filter(h => h.className === selectedClass || !h.className) : homeworks,
-    [homeworks, selectedClass]
+    shouldFilter ? homeworks.filter(h => h.className === selectedClass || !h.className) : homeworks,
+    [homeworks, selectedClass, shouldFilter]
   );
 
   const filteredQnaItems = useMemo(() =>
-    selectedClass ? qnaItems.filter(q => q.className === selectedClass || !q.className) : qnaItems,
-    [qnaItems, selectedClass]
+    shouldFilter ? qnaItems.filter(q => q.className === selectedClass || !q.className) : qnaItems,
+    [qnaItems, selectedClass, shouldFilter]
   );
 
   const filteredNotices = useMemo(() =>
-    selectedClass ? notices.filter(n => n.className === selectedClass || !n.className) : notices,
-    [notices, selectedClass]
+    shouldFilter ? notices.filter(n => n.className === selectedClass || !n.className) : notices,
+    [notices, selectedClass, shouldFilter]
   );
 
   const filteredNotifications = useMemo(() =>
-    selectedClass ? notifications.filter(n => n.className === selectedClass || !n.className) : notifications,
-    [notifications, selectedClass]
+    shouldFilter ? notifications.filter(n => n.className === selectedClass || !n.className) : notifications,
+    [notifications, selectedClass, shouldFilter]
   );
 
   const allClickableItems = useMemo(() =>
