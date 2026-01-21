@@ -330,12 +330,22 @@ function App() {
 
   // ★ モバイルメニューの開閉
   const handleMobileMenuToggle = () => {
-    setIsMobileMenuOpen(prev => !prev);
+    setIsMobileMenuOpen(prev => {
+      const newState = !prev;
+      // メニュー開いてるときはbodyスクロール禁止
+      if (newState) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+      return newState;
+    });
   };
 
   // ★ メニュー項目クリック時にメニューを閉じる
   const handleMobileMenuClose = () => {
     setIsMobileMenuOpen(false);
+    document.body.style.overflow = '';
   };
   
   // ★ Firebase通知をクリック
