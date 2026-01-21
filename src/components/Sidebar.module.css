@@ -335,11 +335,13 @@
   /* オーバーレイメニュー用にスタイル調整 */
   .sidebarContainer {
     flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
+    height: auto;
+    min-height: 100%;
+    overflow-y: visible;
     border-right: none;
     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     padding: 0;
+    padding-bottom: 80px;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
   }
 
@@ -390,7 +392,8 @@
     flex-direction: column;
     padding: 20px;
     gap: 0;
-    height: 100%;
+    height: auto;
+    min-height: 100%;
   }
 
   .menuHeader {

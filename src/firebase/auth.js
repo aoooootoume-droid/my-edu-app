@@ -97,8 +97,8 @@ export const registerUser = async (email, password, username, role = 'student') 
 
     return { success: true, user };
   } catch (error) {
-    console.error('登録エラー:', error.message);
-    
+    console.error('登録エラー:', error.code, error.message);
+
     // Firebaseのエラーメッセージを日本語化
     let errorMessage = error.message;
     if (error.code === 'auth/email-already-in-use') {
@@ -107,9 +107,20 @@ export const registerUser = async (email, password, username, role = 'student') 
       errorMessage = '無効なメールアドレスです';
     } else if (error.code === 'auth/weak-password') {
       errorMessage = 'パスワードは6文字以上で設定してください';
+    } else if (error.code === 'auth/network-request-failed') {
+      errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください';
+    } else if (error.code === 'auth/invalid-api-key') {
+      errorMessage = 'Firebase設定エラー：APIキーが無効です';
+    } else if (error.code === 'auth/operation-not-allowed') {
+      errorMessage = 'メール/パスワード認証が有効になっていません';
     }
-    
-    return { success: false, error: errorMessage };
+
+    return {
+      success: false,
+      error: errorMessage,
+      errorCode: error.code,
+      errorDetail: error.message
+    };
   }
 };
 
@@ -136,8 +147,8 @@ export const loginUser = async (email, password) => {
       }
     };
   } catch (error) {
-    console.error('ログインエラー:', error.message);
-    
+    console.error('ログインエラー:', error.code, error.message);
+
     // Firebaseのエラーメッセージを日本語化
     let errorMessage = error.message;
     if (error.code === 'auth/user-not-found') {
@@ -148,9 +159,24 @@ export const loginUser = async (email, password) => {
       errorMessage = '無効なメールアドレスです';
     } else if (error.code === 'auth/user-disabled') {
       errorMessage = 'このアカウントは無効化されています';
+    } else if (error.code === 'auth/invalid-credential') {
+      errorMessage = 'メールアドレスまたはパスワードが正しくありません';
+    } else if (error.code === 'auth/too-many-requests') {
+      errorMessage = 'ログイン試行回数が多すぎます。しばらく待ってから再試行してください';
+    } else if (error.code === 'auth/network-request-failed') {
+      errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください';
+    } else if (error.code === 'auth/invalid-api-key') {
+      errorMessage = 'Firebase設定エラー：APIキーが無効です';
+    } else if (error.code === 'auth/app-deleted') {
+      errorMessage = 'Firebase設定エラー：アプリが削除されました';
     }
-    
-    return { success: false, error: errorMessage };
+
+    return {
+      success: false,
+      error: errorMessage,
+      errorCode: error.code,
+      errorDetail: error.message
+    };
   }
 };
 
@@ -257,16 +283,29 @@ export const loginWithGoogle = async (role = 'student') => {
       }
     };
   } catch (error) {
-    console.error('Googleログインエラー:', error.message);
-    
+    console.error('Googleログインエラー:', error.code, error.message);
+
     let errorMessage = error.message;
     if (error.code === 'auth/popup-closed-by-user') {
       errorMessage = 'ログインがキャンセルされました';
     } else if (error.code === 'auth/account-exists-with-different-credential') {
       errorMessage = 'このメールアドレスは既に別の方法で登録されています';
+    } else if (error.code === 'auth/popup-blocked') {
+      errorMessage = 'ポップアップがブロックされました。ポップアップを許可してください';
+    } else if (error.code === 'auth/network-request-failed') {
+      errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください';
+    } else if (error.code === 'auth/invalid-api-key') {
+      errorMessage = 'Firebase設定エラー：APIキーが無効です';
+    } else if (error.code === 'auth/unauthorized-domain') {
+      errorMessage = 'このドメインはFirebaseで承認されていません';
     }
-    
-    return { success: false, error: errorMessage };
+
+    return {
+      success: false,
+      error: errorMessage,
+      errorCode: error.code,
+      errorDetail: error.message
+    };
   }
 };
 
@@ -306,15 +345,28 @@ export const loginWithApple = async (role = 'student') => {
       }
     };
   } catch (error) {
-    console.error('Appleログインエラー:', error.message);
-    
+    console.error('Appleログインエラー:', error.code, error.message);
+
     let errorMessage = error.message;
     if (error.code === 'auth/popup-closed-by-user') {
       errorMessage = 'ログインがキャンセルされました';
     } else if (error.code === 'auth/account-exists-with-different-credential') {
       errorMessage = 'このメールアドレスは既に別の方法で登録されています';
+    } else if (error.code === 'auth/popup-blocked') {
+      errorMessage = 'ポップアップがブロックされました。ポップアップを許可してください';
+    } else if (error.code === 'auth/network-request-failed') {
+      errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください';
+    } else if (error.code === 'auth/invalid-api-key') {
+      errorMessage = 'Firebase設定エラー：APIキーが無効です';
+    } else if (error.code === 'auth/unauthorized-domain') {
+      errorMessage = 'このドメインはFirebaseで承認されていません';
     }
-    
-    return { success: false, error: errorMessage };
+
+    return {
+      success: false,
+      error: errorMessage,
+      errorCode: error.code,
+      errorDetail: error.message
+    };
   }
 };

@@ -15,6 +15,8 @@ function LoginPage({ onLogin }) {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
+  const [errorDetail, setErrorDetail] = useState(null);
+  const [showErrorDetail, setShowErrorDetail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -111,42 +113,54 @@ function LoginPage({ onLogin }) {
   // Googleログイン処理
   const handleGoogleLogin = async () => {
     setError('');
+    setErrorDetail(null);
+    setShowErrorDetail(false);
     setLoading(true);
-    
+
     try {
       const result = await loginWithGoogle();
-      
+
       if (result.success) {
         await checkSchoolCode(result.user);
       } else {
         setError(result.error || 'Googleログインに失敗しました');
+        if (result.errorCode || result.errorDetail) {
+          setErrorDetail({ code: result.errorCode, detail: result.errorDetail });
+        }
       }
     } catch (err) {
       setError('エラーが発生しました');
+      setErrorDetail({ code: err.code, detail: err.message });
       console.error(err);
     }
-    
+
     setLoading(false);
   };
 
   // Appleログイン処理
   const handleAppleLogin = async () => {
     setError('');
+    setErrorDetail(null);
+    setShowErrorDetail(false);
     setLoading(true);
-    
+
     try {
       const result = await loginWithApple();
-      
+
       if (result.success) {
         await checkSchoolCode(result.user);
       } else {
         setError(result.error || 'Appleログインに失敗しました');
+        if (result.errorCode || result.errorDetail) {
+          setErrorDetail({ code: result.errorCode, detail: result.errorDetail });
+        }
       }
     } catch (err) {
       setError('エラーが発生しました');
+      setErrorDetail({ code: err.code, detail: err.message });
       console.error(err);
     }
-    
+
     setLoading(false);
   };
 
@@ -154,6 +168,8 @@ function LoginPage({ onLogin }) {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setErrorDetail(null);
+    setShowErrorDetail(false);
     setLoading(true);
 
     try {
@@ -165,23 +181,30 @@ function LoginPage({ onLogin }) {
         }
 
         const result = await registerUser(email, password, username, 'student');
-        
+
         if (result.success) {
           await checkSchoolCode(result.user);
         } else {
           setError(result.error || '登録に失敗しました');
+          if (result.errorCode || result.errorDetail) {
+            setErrorDetail({ code: result.errorCode, detail: result.errorDetail });
+          }
         }
       } else {
         const result = await loginUser(email, password);
-        
+
         if (result.success) {
           await checkSchoolCode(result.user);
         } else {
           setError(result.error || 'ログインに失敗しました');
+          if (result.errorCode || result.errorDetail) {
+            setErrorDetail({ code: result.errorCode, detail: result.errorDetail });
+          }
         }
       }
     } catch (err) {
       setError('エラーが発生しました');
+      setErrorDetail({ code: err.code, detail: err.message });
       console.error(err);
     }
 
@@ -192,6 +215,8 @@ function LoginPage({ onLogin }) {
   const toggleMode = () => {
     setIsRegisterMode(!isRegisterMode);
     setError('');
+    setErrorDetail(null);
+    setShowErrorDetail(false);
     setEmail('');
     setPassword('');
     setUsername('');
@@ -615,7 +640,42 @@ function LoginPage({ onLogin }) {
               <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
               <path d="M10 6V10M10 13V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-            <span>{error}</span>
+            <div style={{ flex: 1 }}>
+              <span>{error}</span>
+              {errorDetail && (
+                <div style={{ marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowErrorDetail(!showErrorDetail)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#dc2626',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      padding: 0
+                    }}
+                  >
+                    {showErrorDetail ? '詳細を隠す ▲' : '詳細を表示 ▼'}
+                  </button>
+                  {showErrorDetail && (
+                    <div style={{
+                      marginTop: '8px',
+                      padding: '8px',
+                      background: 'rgba(0,0,0,0.05)',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      fontFamily: 'monospace',
+                      wordBreak: 'break-all'
+                    }}>
+                      {errorDetail.code && <div><strong>コード:</strong> {errorDetail.code}</div>}
+                      {errorDetail.detail && <div><strong>詳細:</strong> {errorDetail.detail}</div>}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
 

@@ -46,6 +46,20 @@
   transform: scaleX(1);
 }
 
+.classBadge {
+  font-size: 0.7rem;
+  padding: 0;
+  color: #e5e7eb !important;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.cardContainer:hover .classBadge {
+  color: #667eea !important;
+  font-weight: 700 !important;
+}
+
 /* ======================================
    サムネイル画像
 ====================================== */
@@ -161,12 +175,11 @@
 
 .classBadge {
   font-size: 0.7rem;
-  padding: 2px 8px;
-  background: #f3f4f6;
-  color: #666;
-  border-radius: 4px;
-  font-weight: 600;
+  padding: 0;
+  color: #9ca3af !important;
+  font-weight: 500;
   white-space: nowrap;
+  transition: all 0.3s ease;
 }
 
 /* ======================================
@@ -239,7 +252,14 @@
 
   .classBadge {
     font-size: 0.6rem;
-    padding: 2px 6px;
+    padding: 0;
+    color: #e5e7eb !important;
+    transition: all 0.3s ease;
+  }
+
+  .cardContainer:hover .classBadge {
+    color: #667eea !important;
+    font-weight: 700 !important;
   }
 }
 
@@ -291,6 +311,14 @@
 
   .classBadge {
     font-size: 0.55rem;
+    padding: 0;
+    color: #e5e7eb !important;
+    transition: all 0.3s ease;
+  }
+
+  .cardContainer:hover .classBadge {
+    color: #667eea !important;
+    font-weight: 700 !important;
   }
 }
 

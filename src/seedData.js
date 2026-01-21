@@ -36,9 +36,9 @@ export const clearDatabase = async () => {
 // ダミーフォルダ（クラスごとに作成）
 const dummyFolders = [
   // 1年A組
-  { title: '三角関数の基礎', date: '2025/01/10', subject: '数学', className: '1年A組', imageUrl: 'https://picsum.photos/240/135?random=1' },
-  { title: '古文読解入門', date: '2025/01/09', subject: '国語', className: '1年A組', imageUrl: 'https://picsum.photos/240/135?random=2' },
-  { title: '英文法 - 時制', date: '2025/01/08', subject: '英語', className: '1年A組', imageUrl: 'https://picsum.photos/240/135?random=3' },
+  { title: '三角関数の基礎', date: '2025/01/10', subject: '数学', className: '1年1組', imageUrl: 'https://picsum.photos/240/135?random=1' },
+  { title: '古文読解入門', date: '2025/01/09', subject: '国語', className: '1年1組', imageUrl: 'https://picsum.photos/240/135?random=2' },
+  { title: '英文法 - 時制', date: '2025/01/08', subject: '英語', className: '1年1組', imageUrl: 'https://picsum.photos/240/135?random=3' },
   
   // 1年B組
   { title: '二次関数のグラフ', date: '2025/01/10', subject: '数学', className: '1年B組', imageUrl: 'https://picsum.photos/240/135?random=4' },
@@ -68,8 +68,8 @@ const dummyFolders = [
 
 // ダミープリント（クラスごと）
 const dummyPrints = [
-  { title: '三角関数 練習プリント', date: '2025/01/10', subject: '数学', className: '1年A組', imageUrl: 'https://picsum.photos/240/135?random=21' },
-  { title: '古文単語テスト', date: '2025/01/09', subject: '国語', className: '1年A組', imageUrl: 'https://picsum.photos/240/135?random=22' },
+  { title: '三角関数 練習プリント', date: '2025/01/10', subject: '数学', className: '1年1組', imageUrl: 'https://picsum.photos/240/135?random=21' },
+  { title: '古文単語テスト', date: '2025/01/09', subject: '国語', className: '1年1組', imageUrl: 'https://picsum.photos/240/135?random=22' },
   
   { title: '二次関数 演習プリント', date: '2025/01/10', subject: '数学', className: '1年B組', imageUrl: 'https://picsum.photos/240/135?random=23' },
   { title: '漢文練習プリント', date: '2025/01/09', subject: '国語', className: '1年B組', imageUrl: 'https://picsum.photos/240/135?random=24' },
@@ -89,8 +89,8 @@ const dummyPrints = [
 
 // ダミー宿題（クラスごと）
 const dummyHomeworks = [
-  { title: '三角関数 練習問題', deadline: '2025/01/15', subject: '数学', className: '1年A組' },
-  { title: '古文読解 宿題', deadline: '2025/01/14', subject: '国語', className: '1年A組' },
+  { title: '三角関数 練習問題', deadline: '2025/01/15', subject: '数学', className: '1年1組' },
+  { title: '古文読解 宿題', deadline: '2025/01/14', subject: '国語', className: '1年1組' },
   
   { title: '二次関数 問題集', deadline: '2025/01/15', subject: '数学', className: '1年B組' },
   { title: '漢文 宿題', deadline: '2025/01/14', subject: '国語', className: '1年B組' },
@@ -110,8 +110,8 @@ const dummyHomeworks = [
 
 // ダミー質問（クラスごと）
 const dummyQna = [
-  { subject: '数学', title: '三角関数の公式がわかりません', status: 'unanswered', className: '1年A組' },
-  { subject: '国語', title: '古文の助動詞について', status: 'answered', className: '1年A組' },
+  { subject: '数学', title: '三角関数の公式がわかりません', status: 'unanswered', className: '1年1組' },
+  { subject: '国語', title: '古文の助動詞について', status: 'answered', className: '1年1組' },
   
   { subject: '数学', title: '二次関数の頂点の求め方', status: 'unanswered', className: '1年B組' },
   { subject: '英語', title: '現在完了形の使い方', status: 'answered', className: '1年B組' },
