@@ -1,0 +1,514 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+/* ヘッダー */
+.header {
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.header p {
+  color: #6b7280;
+  margin: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+}
+
+/* クイズ一覧 */
+.quizList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.quizCard {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.quizCard:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+}
+
+.quizInfo h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.quizMeta {
+  display: flex;
+  gap: 12px;
+}
+
+.subject {
+  background: #e0e7ff;
+  color: #4338ca;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.startButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ステップヘッダー */
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.backLink {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.backLink:hover {
+  color: #374151;
+}
+
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #9ca3af;
+  flex-wrap: wrap;
+}
+
+.stepActive {
+  color: #667eea;
+  font-weight: 700;
+  background: #e0e7ff;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.stepDone {
+  color: #10b981;
+  font-weight: 500;
+}
+
+/* 神ノートカード */
+.noteCard {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.noteHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.noteIcon {
+  font-size: 32px;
+}
+
+.noteHeader h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.noteTitle {
+  font-size: 18px;
+  color: #374151;
+  margin: 0 0 20px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summaryContent {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.summaryText {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #374151;
+  margin: 0;
+}
+
+.keyword {
+  display: inline;
+  background: #d1d5db;
+  color: transparent;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.keyword.revealed {
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.hint {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+.keywordProgress {
+  text-align: right;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* ステップカード */
+.stepCard {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.stepCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.stepNumber {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stepCardHeader h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.stepCardHeader p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+}
+
+/* 問題ブロック */
+.questionBlock {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.questionBlock:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.questionText {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+/* 選択肢 */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 15px;
+  color: #374151;
+  text-align: left;
+}
+
+.option:hover:not(:disabled) {
+  border-color: #c7d2fe;
+  background: #f5f3ff;
+}
+
+.option.selected {
+  border-color: #667eea;
+  background: #eef2ff;
+}
+
+.option.correct {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.option.incorrect {
+  border-color: #ef4444;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.badge {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.resultBanner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+/* 穴埋め */
+.fillText {
+  font-size: 16px;
+  line-height: 2;
+  color: #374151;
+  margin: 0;
+}
+
+.blank {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 4px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin: 0 4px;
+}
+
+.blank:hover {
+  background: #5a67d8;
+}
+
+.blankRevealed {
+  background: #10b981;
+  cursor: default;
+}
+
+/* 記述式 */
+.textArea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.6;
+  resize: vertical;
+  font-family: inherit;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.textArea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.revealButton {
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.revealButton:hover {
+  background: #e5e7eb;
+}
+
+.sampleAnswer {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.sampleLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #065f46;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.sampleAnswer p {
+  font-size: 15px;
+  color: #065f46;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ボタン */
+.nextButton {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nextButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.completeButton {
+  width: 100%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.completeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+/* レスポンシブ */
+@media (max-width: 640px) {
+  .container {
+    padding: 16px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .quizCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .startButton {
+    width: 100%;
+    text-align: center;
+  }
+
+  .stepIndicator {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .noteCard,
+  .stepCard {
+    padding: 20px;
+  }
+
+  .noteHeader h2 {
+    font-size: 20px;
+  }
+
+  .stepNumber {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .option {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
