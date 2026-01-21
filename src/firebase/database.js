@@ -794,3 +794,123 @@ export const deleteNotification = async (notificationId) => {
     return { success: false, error: error.message };
   }
 };
+// ========================================
+// 📝 クイズ（まとめノート）関連
+// ========================================
+
+/**
+ * クイズ一覧を取得（クラス別）
+ */
+export const getQuizzes = async (schoolCode, classCode) => {
+  try {
+    const q = query(
+      collection(db, 'quizzes'),
+      where('schoolCode', '==', schoolCode),
+      where('classCode', '==', classCode),
+      orderBy('createdAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('クイズ取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * クイズをリアルタイムで監視
+ */
+export const onQuizzesChange = (schoolCode, classCode, callback) => {
+  const q = query(
+    collection(db, 'quizzes'),
+    where('schoolCode', '==', schoolCode),
+    where('classCode', '==', classCode),
+    orderBy('createdAt', 'desc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const quizzes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(quizzes);
+  });
+};
+
+/**
+ * 単一のクイズを取得
+ */
+export const getQuiz = async (quizId) => {
+  try {
+    const docSnap = await getDoc(doc(db, 'quizzes', quizId));
+    if (docSnap.exists()) {
+      return { success: true, data: { id: docSnap.id, ...docSnap.data() } };
+    }
+    return { success: false, error: 'クイズが見つかりません' };
+  } catch (error) {
+    console.error('クイズ取得エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * クイズの回答を送信して採点
+ */
+export const submitQuizAnswers = async (quizId, userId, studentName, schoolCode, classCode, answers) => {
+  try {
+    const response = await fetch('https://asia-northeast1-my-edu-app-116ef.cloudfunctions.net/scoreQuiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        quizId,
+        oderId: userId,  // ← userIdをoderIdとして送信
+        studentName,
+        schoolCode,
+        classCode,
+        answers
+    })
+    });
+    
+    const result = await response.json();
+    if (result.success) {
+      return { success: true, ...result };
+    } else {
+      return { success: false, error: result.error };
+    }
+  } catch (error) {
+    console.error('回答送信エラー:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * 生徒のクイズ結果を取得
+ */
+export const getStudentQuizResults = async (userId) => {
+  try {
+    const q = query(
+      collection(db, 'quizResults'),
+      where('userId', '==', userId),
+      orderBy('submittedAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('クイズ結果取得エラー:', error);
+    return [];
+  }
+};
+
+/**
+ * 特定クイズの全結果を取得（先生用）
+ */
+export const getQuizResults = async (quizId) => {
+  try {
+    const q = query(
+      collection(db, 'quizResults'),
+      where('quizId', '==', quizId),
+      orderBy('submittedAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error('クイズ結果取得エラー:', error);
+    return [];
+  }
+};
