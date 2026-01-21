@@ -301,6 +301,51 @@
 }
 
 /* ======================================
+   ハンバーガーメニューボタン
+====================================== */
+.hamburgerButton {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: #ecf0f4;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.hamburgerButton:hover {
+  background: #bed5e8;
+}
+
+.hamburgerLine {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #5a6578;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* ハンバーガー → × アニメーション */
+.hamburgerOpen .hamburgerLine:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburgerOpen .hamburgerLine:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburgerOpen .hamburgerLine:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ======================================
    レスポンシブ対応
 ====================================== */
 
@@ -325,7 +370,12 @@
     padding: 10px 14px;
     gap: 10px;
   }
-  
+
+  /* ハンバーガーボタンをスマホで表示 */
+  .hamburgerButton {
+    display: flex;
+  }
+
   .logoArea {
     display: none;
   }

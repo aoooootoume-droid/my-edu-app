@@ -9,13 +9,13 @@
 
 html, body {
   height: 100%;
-  overflow: hidden;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f5f7fa;
 }
 
 #root {
@@ -26,21 +26,19 @@ body {
 input, select, textarea {
   font-size: 16px;
 }
-/* ブラウザが元々持っている余白（margin）をリセットして、
-  画面全体にコンテンツが広がるようにします。
-*/
-body {
-  margin: 0;
-  padding: 0;
-  /* (オプション) アプリ全体で使いたいフォントを指定できます */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
 
-/*
-  これは「おまじない」のようなものですが、
-  paddingやborderが要素の幅(width)に影響しないようにする
-  非常に重要な設定です。レイアウトが格段に組みやすくなります。
-*/
-* {
-  box-sizing: border-box;
+/* スマホでスクロールを有効にする */
+@media (max-width: 768px) {
+  html, body {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #root {
+    height: auto;
+    min-height: 100%;
+  }
 }

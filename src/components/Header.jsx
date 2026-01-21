@@ -2,11 +2,12 @@ import { useState } from 'react';
 import styles from './Header.module.css';
 import NotificationDropdown from './NotificationDropdown';
 
-function Header({ 
-  onProfileClick, searchTerm, onSearchChange, 
+function Header({
+  onProfileClick, searchTerm, onSearchChange,
   onLogout, currentUser,
   suggestions, onSuggestionClick,
-  notifications, onNotificationClick, onMarkAllAsRead
+  notifications, onNotificationClick, onMarkAllAsRead,
+  isMobileMenuOpen, onMobileMenuToggle
 }) {
   
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
@@ -48,6 +49,17 @@ function Header({
   return (
     <header className={styles.headerContainer}>
       <div className={styles.headerContentWrapper}>
+        {/* ハンバーガーメニューボタン（スマホのみ表示） */}
+        <button
+          className={`${styles.hamburgerButton} ${isMobileMenuOpen ? styles.hamburgerOpen : ''}`}
+          onClick={onMobileMenuToggle}
+          aria-label="メニュー"
+        >
+          <span className={styles.hamburgerLine}></span>
+          <span className={styles.hamburgerLine}></span>
+          <span className={styles.hamburgerLine}></span>
+        </button>
+
         <div className={styles.logoArea}>
           School App
         </div>

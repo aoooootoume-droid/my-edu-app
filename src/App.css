@@ -65,20 +65,41 @@ body {
   .appLayout {
     flex-direction: column;
     margin-top: 64px;
-    min-height: calc(100vh - 64px);
+    min-height: auto;
+    padding-bottom: 20px;
   }
-  
+
+  /* サイドバーをオーバーレイメニューに変更 */
   .sidebar {
-    width: 100%;
-    height: auto;
-    max-height: none;
-    position: relative;
-    top: 0;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
-    overflow-y: visible;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    width: 280px;
+    height: calc(100vh - 64px);
+    background: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 200;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
-  
+
+  .sidebar.sidebarOpen {
+    transform: translateX(0);
+  }
+
+  /* オーバーレイ背景 */
+  .mobileMenuOverlay {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 150;
+  }
+
   .mainContent {
     padding: 16px;
     min-height: auto;

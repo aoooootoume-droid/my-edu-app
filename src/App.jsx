@@ -11,6 +11,7 @@ import CameraPage from './components/CameraPage';
 import LoginPage from './components/LoginPage';
 import CalendarPage from './components/CalendarPage';
 import SubmissionsPage from './components/SubmissionsPage';
+import QuizPage from './components/QuizPage'; 
 
 // ★ 録画機能のコンポーネントをインポート
 import RecordingPage from './components/RecordingPage';
@@ -73,15 +74,18 @@ function App() {
     },
   ]);
   
-  const [activeView, setActiveView] = useState({ 
-    type: 'home', 
+  const [activeView, setActiveView] = useState({
+    type: 'home',
     subject: null,
-    detailId: null, 
+    detailId: null,
     groupId: null,
     previousType: 'home',
     activeTab: 'notice'
   });
   const [searchTerm, setSearchTerm] = useState('');
+
+  // ★ スマホ用ハンバーガーメニューの開閉状態
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // ========================================
   // 🔥 Firebase リアルタイム監視
@@ -90,28 +94,31 @@ function App() {
   useEffect(() => {
   const unsubscribeAuth = onAuthChange(async (user) => {
     if (user) {
-      // ユーザードキュメントを確認して学校・クラスが設定済みかチェック
       try {
         const { doc, getDoc } = await import('firebase/firestore');
         const { db } = await import('./firebase/config');
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         
-        if (userDoc.exists() && userDoc.data().schoolCode && userDoc.data().classCode) {
-          // 学校・クラス設定済み → ログイン完了
-          setIsLoggedIn(true);
-          setCurrentUser({
-            ...user,
-            role: userDoc.data().role,
-            schoolCode: userDoc.data().schoolCode,
-            schoolName: userDoc.data().schoolName,
-            classCode: userDoc.data().classCode,
-            className: userDoc.data().className
-          });
-        } else {
-          // 学校・クラス未設定 → ログイン画面に戻す
-          setIsLoggedIn(false);
-          setCurrentUser(null);
+        if (userDoc.exists() && userDoc.data().schoolCode) {
+          const userData = userDoc.data();
+          // 先生はclassCodeなしでOK、生徒はclassCodeが必要
+          if (userData.role === 'teacher' || userData.classCode) {
+            setIsLoggedIn(true);
+            setCurrentUser({
+              ...user,
+              role: userData.role,
+              schoolCode: userData.schoolCode,
+              schoolName: userData.schoolName,
+              classCode: userData.classCode || null,
+              className: userData.className || null
+            });
+            setLoading(false);
+            return;
+          }
         }
+        // 条件を満たさない場合
+        setIsLoggedIn(false);
+        setCurrentUser(null);
       } catch (error) {
         console.error('ユーザー情報取得エラー:', error);
         setIsLoggedIn(false);
@@ -317,6 +324,16 @@ function App() {
   const handleSuggestionClick = (title) => {
     setSearchTerm(title);
   };
+
+  // ★ モバイルメニューの開閉
+  const handleMobileMenuToggle = () => {
+    setIsMobileMenuOpen(prev => !prev);
+  };
+
+  // ★ メニュー項目クリック時にメニューを閉じる
+  const handleMobileMenuClose = () => {
+    setIsMobileMenuOpen(false);
+  };
   
   // ★ Firebase通知をクリック
   const handleNotificationClick = async (notification) => {
@@ -414,6 +431,11 @@ function App() {
     if (activeView.type === 'recording') {
       return <RecordingPage selectedClass={selectedClass} />;
     }
+
+    if (activeView.type === 'quiz') {
+      return <QuizPage currentUser={currentUser} selectedClass={selectedClass} />;
+    }
+
     
     switch (activeView.type) {
       case 'home':
@@ -495,26 +517,39 @@ function App() {
 
   return (
     <div>
-      <Header 
-        onProfileClick={handleProfileClick} 
+      <Header
+        onProfileClick={handleProfileClick}
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
         onLogout={handleLogout}
         currentUser={currentUser}
-        suggestions={suggestions} 
+        suggestions={suggestions}
         onSuggestionClick={handleSuggestionClick}
         notifications={filteredNotifications}
         onNotificationClick={handleNotificationClick}
         onMarkAllAsRead={handleMarkAllAsRead}
         selectedClass={selectedClass}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onMobileMenuToggle={handleMobileMenuToggle}
       />
       <div className="appLayout">
-        <div className="sidebar">
-          <Sidebar 
+        {/* モバイルメニューオーバーレイ */}
+        {isMobileMenuOpen && (
+          <div className="mobileMenuOverlay" onClick={handleMobileMenuClose} />
+        )}
+
+        <div className={`sidebar ${isMobileMenuOpen ? 'sidebarOpen' : ''}`}>
+          <Sidebar
             activeViewType={sidebarActiveType}
-            activeSubject={sidebarActiveSubject} 
-            onNavClick={handleNavClick}
-            onSubjectClick={handleSubjectClick}
+            activeSubject={sidebarActiveSubject}
+            onNavClick={(viewType) => {
+              handleNavClick(viewType);
+              handleMobileMenuClose();
+            }}
+            onSubjectClick={(subject) => {
+              handleSubjectClick(subject);
+              handleMobileMenuClose();
+            }}
             onClassChange={handleClassChange}
             currentUser={currentUser}
           />

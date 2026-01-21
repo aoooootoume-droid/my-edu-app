@@ -125,12 +125,18 @@
   align-items: center;
   flex: 1;
   padding: 10px 14px;
-  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
+  background: #ffffff;
+  border: 2px solid #ecf0f4;
   border-radius: 12px;
   color: #2d3748;
   font-weight: 700;
   font-size: 14px;
-  box-shadow: 0 2px 8px rgba(190, 213, 232, 0.4);
+  transition: all 0.2s ease;
+}
+
+.selectedClassBadge:hover {
+  background: #bed5e8;
+  border-color: #bed5e8;
 }
 
 /* メインメニュー */
@@ -319,48 +325,45 @@
 }
 
 @media (max-width: 768px) {
+  /* オーバーレイメニュー用にスタイル調整 */
   .sidebarContainer {
-    flex-direction: row;
-    height: auto;
-    overflow-x: auto;
-    overflow-y: hidden;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
     border-right: none;
-    border-bottom: 1px solid #d5dce6;
     background: #ffffff;
     padding: 0;
   }
 
   .classSelectLayer {
     display: flex;
-    flex-direction: row;
-    padding: 12px 16px;
-    gap: 10px;
-    overflow-x: auto;
-    white-space: nowrap;
+    flex-direction: column;
+    padding: 20px 16px;
+    gap: 6px;
     height: auto;
   }
 
   .layerTitle {
-    display: none;
+    display: block;
+    margin-bottom: 12px;
   }
 
   .classList {
     display: flex;
-    flex-direction: row;
-    gap: 10px;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .classButton {
-    padding: 10px 18px;
-    font-size: 13px;
-    white-space: nowrap;
-    border-radius: 24px;
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 12px;
     background: #ecf0f4;
-    border: 1px solid #d5dce6;
+    border: 2px solid transparent;
   }
 
   .classButton::after {
-    display: none;
+    display: block;
   }
 
   .classButton:hover {
@@ -372,65 +375,51 @@
 
   .menuLayer {
     display: flex;
-    flex-direction: row;
-    padding: 10px 16px;
+    flex-direction: column;
+    padding: 16px;
     gap: 0;
-    overflow-x: auto;
-    height: auto;
-    align-items: center;
+    height: 100%;
   }
 
   .menuHeader {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-    flex-shrink: 0;
-    margin-right: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ecf0f4;
   }
 
   .classHeader {
-    gap: 8px;
+    gap: 10px;
   }
 
   .backButton {
-    width: 34px;
-    height: 34px;
-    font-size: 12px;
-    border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+    border-radius: 12px;
   }
 
   .selectedClassBadge {
-    padding: 8px 14px;
-    font-size: 12px;
-    white-space: nowrap;
-    border-radius: 20px;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 12px;
   }
 
   .nav {
     display: flex;
-    flex-direction: row;
-    gap: 8px;
+    flex-direction: column;
+    gap: 4px;
     margin-top: 0;
-    overflow-x: auto;
   }
 
   .nav button {
-    padding: 9px 16px;
-    font-size: 13px;
-    white-space: nowrap;
-    border-radius: 24px;
-    background: #ecf0f4;
-    flex-shrink: 0;
-  }
-
-  .nav button::before {
-    display: none;
-  }
-
-  .nav button span:first-child {
+    padding: 13px 14px;
+    font-size: 14px;
+    border-radius: 12px;
     background: transparent;
-    width: auto;
-    height: auto;
+  }
+
+  .nav button.active::before {
+    display: block;
   }
 
   .nav button:hover,
@@ -440,31 +429,46 @@
   }
 
   .subjectSection {
-    display: none;
+    display: block;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #ecf0f4;
   }
 }
 
 @media (max-width: 480px) {
+  .classSelectLayer {
+    padding: 16px 14px;
+  }
+
   .classButton {
-    padding: 8px 14px;
-    font-size: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .menuLayer {
+    padding: 14px;
   }
 
   .nav button {
-    padding: 8px 12px;
-    font-size: 12px;
-    gap: 6px;
+    padding: 11px 12px;
+    font-size: 13px;
   }
 
   .selectedClassBadge {
-    padding: 6px 12px;
-    font-size: 11px;
+    padding: 8px 12px;
+    font-size: 13px;
   }
 
   .backButton {
-    width: 30px;
-    height: 30px;
-    font-size: 11px;
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .subjectList button {
+    padding: 10px 12px;
+    font-size: 12px;
   }
 }
 /* Sidebar.module.css に以下を追加してください */
