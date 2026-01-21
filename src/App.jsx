@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import './App.css'
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -158,37 +158,42 @@ function App() {
   // ========================================
   // 🎯 クラスでフィルタリングしたデータ
   // ========================================
-  
-  const filteredFolders = selectedClass 
-    ? folders.filter(f => f.className === selectedClass || !f.className)
-    : folders;
-    
-  const filteredPrints = selectedClass
-    ? prints.filter(p => p.className === selectedClass || !p.className)
-    : prints;
-    
-  const filteredHomeworks = selectedClass
-    ? homeworks.filter(h => h.className === selectedClass || !h.className)
-    : homeworks;
-    
-  const filteredQnaItems = selectedClass
-    ? qnaItems.filter(q => q.className === selectedClass || !q.className)
-    : qnaItems;
-    
-  const filteredNotices = selectedClass
-    ? notices.filter(n => n.className === selectedClass || !n.className)
-    : notices;
 
-  const filteredNotifications = selectedClass
-    ? notifications.filter(n => n.className === selectedClass || !n.className)
-    : notifications;
-  
-  const allClickableItems = [...filteredFolders, ...filteredPrints, ...filteredQnaItems, ...filteredHomeworks, ...filteredNotices, ...tests];
-  
-  console.log('🔍 selectedClass:', selectedClass);
-  console.log('🔍 allClickableItems:', allClickableItems.map(item => ({ id: item.id, type: item.type, title: item.title, className: item.className })));
-  
-  
+  const filteredFolders = useMemo(() =>
+    selectedClass ? folders.filter(f => f.className === selectedClass || !f.className) : folders,
+    [folders, selectedClass]
+  );
+
+  const filteredPrints = useMemo(() =>
+    selectedClass ? prints.filter(p => p.className === selectedClass || !p.className) : prints,
+    [prints, selectedClass]
+  );
+
+  const filteredHomeworks = useMemo(() =>
+    selectedClass ? homeworks.filter(h => h.className === selectedClass || !h.className) : homeworks,
+    [homeworks, selectedClass]
+  );
+
+  const filteredQnaItems = useMemo(() =>
+    selectedClass ? qnaItems.filter(q => q.className === selectedClass || !q.className) : qnaItems,
+    [qnaItems, selectedClass]
+  );
+
+  const filteredNotices = useMemo(() =>
+    selectedClass ? notices.filter(n => n.className === selectedClass || !n.className) : notices,
+    [notices, selectedClass]
+  );
+
+  const filteredNotifications = useMemo(() =>
+    selectedClass ? notifications.filter(n => n.className === selectedClass || !n.className) : notifications,
+    [notifications, selectedClass]
+  );
+
+  const allClickableItems = useMemo(() =>
+    [...filteredFolders, ...filteredPrints, ...filteredQnaItems, ...filteredHomeworks, ...filteredNotices, ...tests],
+    [filteredFolders, filteredPrints, filteredQnaItems, filteredHomeworks, filteredNotices, tests]
+  );
+
   // ========================================
   // 📌 イベントハンドラ
   // ========================================
@@ -209,7 +214,6 @@ function App() {
   // ★ クラス変更ハンドラ
   const handleClassChange = (className) => {
     setSelectedClass(className);
-    console.log('クラス変更:', className);
   };
 
   const handleAddItem = async (item) => {
@@ -223,7 +227,6 @@ function App() {
       });
 
       if (result.success) {
-        console.log('プリント追加成功:', result.id);
         setActiveView(prevView => ({ 
           ...prevView, 
           type: 'subject', 
@@ -246,8 +249,8 @@ function App() {
         className: selectedClass // ★ 選択中のクラスを追加
       });
 
-      if (result.success) {
-        console.log('質問追加成功:', result.id);
+      if (!result.success) {
+        console.error('質問追加エラー:', result.error);
       }
     } catch (error) {
       console.error('質問追加エラー:', error);
@@ -375,26 +378,23 @@ function App() {
     }
   };
   
-  let suggestions = [];
-  if (searchTerm.trim().length > 1) { 
+  const suggestions = useMemo(() => {
+    if (searchTerm.trim().length <= 1) return [];
     const term = searchTerm.toLowerCase();
-    const filteredSuggestions = allClickableItems.filter(item => 
+    const filteredSuggestions = allClickableItems.filter(item =>
       item.title && item.title.toLowerCase().includes(term)
     );
     const uniqueTitles = [...new Set(filteredSuggestions.map(item => item.title))];
-    suggestions = uniqueTitles.slice(0, 5); 
-  }
-  
-  
+    return uniqueTitles.slice(0, 5);
+  }, [searchTerm, allClickableItems]);
+
   // ========================================
   // 🎨 メインコンテンツの描画
   // ========================================
   
   const renderMainContent = () => {
     if (activeView.type === 'detail') {
-      console.log('🔍 探しているID:', activeView.detailId);
       const card = allClickableItems.find(f => f.id === activeView.detailId);
-      console.log('🔍 見つかったカード:', card);
       return <DetailPage card={card} onBackClick={handleBackClick} currentUser={currentUser} />;
     }
     if (activeView.type === 'profile') {

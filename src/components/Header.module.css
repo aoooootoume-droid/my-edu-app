@@ -276,6 +276,8 @@
 }
 
 .menuItem {
+  display: block;
+  width: 100%;
   padding: 12px 14px;
   cursor: pointer;
   border-radius: 10px;
@@ -283,6 +285,9 @@
   font-size: 14px;
   color: #5a6578;
   font-weight: 500;
+  background: none;
+  border: none;
+  text-align: left;
 }
 
 .menuItem:hover {

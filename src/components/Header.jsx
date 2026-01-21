@@ -53,7 +53,9 @@ function Header({
         <button
           className={`${styles.hamburgerButton} ${isMobileMenuOpen ? styles.hamburgerOpen : ''}`}
           onClick={onMobileMenuToggle}
-          aria-label="メニュー"
+          aria-label={isMobileMenuOpen ? "メニューを閉じる" : "メニューを開く"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-menu"
         >
           <span className={styles.hamburgerLine}></span>
           <span className={styles.hamburgerLine}></span>
@@ -67,31 +69,39 @@ function Header({
         <div className={styles.searchNavContainer}>
           <div className={styles.searchBarContainer}>
             <span className={styles.searchIcon}>🔍</span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="アーカイブ、プリント、質問を検索"
               className={styles.searchInput}
               value={searchTerm}
               onChange={onSearchChange}
               onFocus={() => setIsSuggestionsVisible(true)}
               onBlur={() => setTimeout(() => setIsSuggestionsVisible(false), 200)}
+              aria-label="検索"
+              aria-autocomplete="list"
+              aria-expanded={isSuggestionsVisible && suggestions.length > 0}
+              role="combobox"
             />
             {searchTerm && (
-              <span 
-                className={styles.searchClearButton} 
+              <button
+                type="button"
+                className={styles.searchClearButton}
                 onClick={handleClearSearch}
+                aria-label="検索をクリア"
               >
                 &times;
-              </span>
+              </button>
             )}
             
             {isSuggestionsVisible && suggestions.length > 0 && (
-              <ul className={styles.suggestionsList}>
+              <ul className={styles.suggestionsList} role="listbox">
                 {suggestions.map((title, index) => (
-                  <li 
-                    key={index} 
+                  <li
+                    key={index}
                     className={styles.suggestionItem}
                     onMouseDown={() => handleSuggestionClick(title)}
+                    role="option"
+                    tabIndex={-1}
                   >
                     {title}
                   </li>
@@ -103,20 +113,23 @@ function Header({
         
         <div className={styles.userActions}>
           {/* 通知ベル */}
-          <div 
+          <div
             className={styles.notificationContainer}
             onBlur={() => setTimeout(() => setIsNotificationVisible(false), 200)}
           >
-            <div 
+            <button
+              type="button"
               className={styles.notificationBell}
               onClick={() => setIsNotificationVisible(!isNotificationVisible)}
-              tabIndex={0}
+              aria-label={`通知 ${unreadCount > 0 ? `${unreadCount}件の未読` : ''}`}
+              aria-expanded={isNotificationVisible}
+              aria-haspopup="true"
             >
               🔔
               {unreadCount > 0 && (
-                <span className={styles.notificationBadge}>{unreadCount}</span>
+                <span className={styles.notificationBadge} aria-hidden="true">{unreadCount}</span>
               )}
-            </div>
+            </button>
             
             {isNotificationVisible && (
               <NotificationDropdown 
@@ -128,40 +141,47 @@ function Header({
           </div>
           
           {/* ユーザーアイコン */}
-          <div 
+          <div
             className={styles.userIconContainer}
             onBlur={() => setTimeout(() => setIsProfileMenuVisible(false), 200)}
           >
-            <div 
+            <button
+              type="button"
               className={styles.userIcon}
               onClick={() => setIsProfileMenuVisible(!isProfileMenuVisible)}
-              tabIndex={0} 
+              aria-label="ユーザーメニュー"
+              aria-expanded={isProfileMenuVisible}
+              aria-haspopup="menu"
             >
               👤
-            </div>
-            
+            </button>
+
             {isProfileMenuVisible && (
-              <div className={styles.profileMenu}>
-                
+              <div className={styles.profileMenu} role="menu">
+
                 <div className={styles.menuHeader}>
                   ログイン中:
                   <span className={styles.userName}>
                     {currentUser?.username || currentUser?.email || 'ユーザー'}
                   </span>
                 </div>
-                
-                <div 
+
+                <button
+                  type="button"
                   className={styles.menuItem}
-                  onMouseDown={handleProfileItemClick} 
+                  onMouseDown={handleProfileItemClick}
+                  role="menuitem"
                 >
                   プロフィール
-                </div>
-                <div 
+                </button>
+                <button
+                  type="button"
                   className={`${styles.menuItem} ${styles.menuItemDanger}`}
                   onMouseDown={handleLogoutItemClick}
+                  role="menuitem"
                 >
                   ログアウト
-                </div>
+                </button>
               </div>
             )}
           </div>
