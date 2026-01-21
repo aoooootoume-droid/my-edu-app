@@ -859,12 +859,12 @@ export const submitQuizAnswers = async (quizId, userId, studentName, schoolCode,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         quizId,
-        oderId: userId,  // ← userIdをoderIdとして送信
+        userId,
         studentName,
         schoolCode,
         classCode,
         answers
-    })
+      })
     });
     
     const result = await response.json();

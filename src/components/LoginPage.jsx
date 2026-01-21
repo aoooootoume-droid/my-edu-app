@@ -350,7 +350,7 @@ function LoginPage({ onLogin }) {
   const handleBack = () => {
     if (step === 'class-code') {
       setStep('school-code');
-      setClassSuffix('');
+      setSelectedClassCode('');
       setClassError('');
     } else {
       setStep('login');
