@@ -75,22 +75,22 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
     }
   }, [isTeacher, currentUser?.className]);
   
-  // クラス選択時の処理
+  // クラス選択時の処理（メニューは閉じない）
   const handleClassSelect = (cls) => {
     setSelectedClass(cls.displayName);
     if (onClassChange) {
       onClassChange(cls.displayName);
     }
-    onNavClick('home');
+    // onNavClickは呼ばない（メニューを閉じないようにするため）
   };
   
-  // 戻るボタンの処理（教師のみ使用）
+  // 戻るボタンの処理（教師のみ使用、メニューは閉じない）
   const handleBackToClassList = () => {
     setSelectedClass(null);
     if (onClassChange) {
       onClassChange(null);
     }
-    onNavClick('home');
+    // onNavClickは呼ばない（メニューを閉じないようにするため）
   };
   
   // ローディング中
@@ -195,6 +195,13 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
               課題提出
             </button>
 
+            <button 
+              className={activeViewType === 'quiz' ? styles.active : ''}
+              onClick={() => onNavClick('quiz')}
+            >
+              まとめノート
+            </button>   
+            
             {/* 授業録画は教師のみ表示 */}
             {isTeacher && (
               <button 
