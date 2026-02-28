@@ -30,20 +30,20 @@
 }
 
 .todayButton {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 2px solid var(--color-border);
   padding: 0.75rem 1.5rem;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .todayButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-lg);
 }
 
 .monthNavigation {
@@ -53,11 +53,11 @@
 }
 
 .navButton {
-  background: white;
-  border: 2px solid #e5e7eb;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1rem;
@@ -67,8 +67,8 @@
 }
 
 .navButton:hover {
-  border-color: #667eea;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-color: var(--color-primary);
+  background: var(--color-bg-secondary);
   transform: scale(1.1);
 }
 
@@ -76,10 +76,7 @@
   font-size: 1.75rem;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-text);
   min-width: 180px;
   text-align: center;
 }
@@ -96,7 +93,7 @@
   gap: 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .legendDot {
@@ -106,31 +103,31 @@
 }
 
 .legendDot.homework {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: #6366f1;
 }
 
 .legendDot.test {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: #f59e0b;
 }
 
 .legendDot.notice {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: #10b981;
 }
 
 .legendDot.reminder {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #6b7280;
 }
 
 /* ======================================
    教師用インフォ
 ====================================== */
 .teacherInfo {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: var(--color-bg-secondary);
   padding: 0.75rem 1.25rem;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
-  color: #667eea;
+  color: var(--color-text);
   font-weight: 600;
 }
 
@@ -138,10 +135,10 @@
    カレンダー本体
 ====================================== */
 .calendar {
-  background: white;
-  border-radius: 20px;
+  background: var(--color-bg);
+  border-radius: var(--radius-xl);
   padding: 2rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 2rem;
 }
 
@@ -151,24 +148,24 @@
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f3f4f6;
+  border-bottom: 2px solid var(--color-bg-secondary);
 }
 
 .weekDay {
   text-align: center;
   font-weight: 800;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .weekDay.sunday {
-  color: #ef4444;
+  color: var(--color-text-secondary);
 }
 
 .weekDay.saturday {
-  color: #3b82f6;
+  color: var(--color-text-secondary);
 }
 
 .daysGrid {
@@ -179,7 +176,7 @@
 
 .dayCell {
   min-height: 120px;
-  background: #f9fafb;
+  background: var(--color-bg-secondary);
   border-radius: 12px;
   padding: 0.75rem;
   transition: all 0.3s ease;
@@ -187,9 +184,9 @@
 }
 
 .dayCell:not(.emptyCell):hover {
-  background: white;
-  border-color: #667eea;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  background: var(--color-bg);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
@@ -199,9 +196,9 @@
 }
 
 .dayCell.today {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .dayCell.clickable {
@@ -211,15 +208,12 @@
 .dayNumber {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--color-text);
   margin-bottom: 0.5rem;
 }
 
 .today .dayNumber {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-primary);
   font-size: 1.25rem;
 }
 
@@ -234,7 +228,7 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.35rem 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
@@ -245,28 +239,28 @@
 }
 
 .event.homework {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  color: #92400e;
+  background: #eef2ff;
+  color: #4338ca;
 }
 
 .event.test {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  color: #991b1b;
+  background: #fffbeb;
+  color: #b45309;
 }
 
 .event.notice {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  color: #1e40af;
+  background: #ecfdf5;
+  color: #065f46;
 }
 
 .event.reminder {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  color: #065f46;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .event:hover {
   transform: scale(1.02);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-xs);
 }
 
 .subjectTag {
@@ -296,7 +290,7 @@
 .deleteReminderBtn {
   background: none;
   border: none;
-  color: #ef4444;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   font-weight: bold;
   cursor: pointer;
@@ -311,7 +305,7 @@
 
 .moreEvents {
   font-size: 0.7rem;
-  color: #9ca3af;
+  color: var(--color-text-muted);
   font-weight: 600;
   padding: 0.25rem 0.5rem;
   text-align: center;
@@ -344,13 +338,13 @@
 }
 
 .modalContent {
-  background: white;
-  border-radius: 16px;
+  background: var(--color-bg);
+  border-radius: var(--radius-xl);
   width: 90%;
   max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
   animation: slideUpModal 0.3s ease-out;
 }
 
@@ -370,18 +364,18 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modalHeader h3 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--color-text);
 }
 
 .closeButton {
-  background: #f3f4f6;
+  background: var(--color-bg-secondary);
   border: none;
   width: 36px;
   height: 36px;
@@ -392,18 +386,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .closeButton:hover {
-  background: #e5e7eb;
-  color: #1f2937;
+  background: var(--color-border);
+  color: var(--color-text);
 }
 
 /* モーダルタブ */
 .modalTabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modalTab {
@@ -413,19 +407,19 @@
   border: none;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
 }
 
 .modalTab:hover {
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.05);
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
 }
 
 .modalTab.active {
-  color: #667eea;
+  color: var(--color-text);
 }
 
 .modalTab.active::after {
@@ -435,14 +429,14 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary);
   border-radius: 3px 3px 0 0;
 }
 
 /* リマインダー情報 */
 .reminderInfo {
-  background: #ecfdf5;
-  color: #065f46;
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
   padding: 0.75rem 1.5rem;
   font-size: 0.85rem;
   font-weight: 500;
@@ -460,7 +454,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -469,8 +463,8 @@
 .select {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-size: 1rem;
   transition: all 0.2s;
   box-sizing: border-box;
@@ -480,8 +474,8 @@
 .textarea:focus,
 .select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .textarea {
@@ -498,10 +492,10 @@
 .submitButton {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--color-primary);
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -511,7 +505,8 @@
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
 }
 
 .submitButton:disabled {
@@ -523,17 +518,17 @@
    今月の予定リスト
 ====================================== */
 .upcomingEvents {
-  background: white;
-  border-radius: 20px;
+  background: var(--color-bg);
+  border-radius: var(--radius-xl);
   padding: 2rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .upcomingEvents h3 {
   font-size: 1.5rem;
   font-weight: 800;
   margin: 0 0 1.5rem 0;
-  color: #1f2937;
+  color: var(--color-text);
 }
 
 .eventsList {
@@ -551,11 +546,11 @@
 .dateLabel {
   font-size: 1rem;
   font-weight: 800;
-  color: #667eea;
+  color: var(--color-text);
   min-width: 80px;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  border-radius: 10px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
   text-align: center;
 }
 
@@ -579,28 +574,28 @@
 }
 
 .upcomingEvent.homework {
-  background: linear-gradient(to right, #fef3c7 0%, white 50%);
-  border-left-color: #f59e0b;
+  background: var(--color-bg-secondary);
+  border-left-color: #6366f1;
 }
 
 .upcomingEvent.test {
-  background: linear-gradient(to right, #fee2e2 0%, white 50%);
-  border-left-color: #ef4444;
+  background: var(--color-bg-secondary);
+  border-left-color: #f59e0b;
 }
 
 .upcomingEvent.notice {
-  background: linear-gradient(to right, #dbeafe 0%, white 50%);
-  border-left-color: #3b82f6;
+  background: var(--color-bg-secondary);
+  border-left-color: #10b981;
 }
 
 .upcomingEvent.reminder {
-  background: linear-gradient(to right, #d1fae5 0%, white 50%);
-  border-left-color: #10b981;
+  background: var(--color-bg-secondary);
+  border-left-color: #6b7280;
 }
 
 .upcomingEvent:hover {
   transform: translateX(8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .eventIcon {
@@ -614,20 +609,20 @@
 .upcomingEventTitle {
   font-size: 1rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--color-text);
   margin-bottom: 0.25rem;
 }
 
 .upcomingEventSubject {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-weight: 600;
 }
 
 .subjectBadge {
   display: inline-block;
   padding: 0.2rem 0.6rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   font-weight: 700;
   margin-top: 0.25rem;
@@ -635,7 +630,7 @@
 
 .reminderMemo {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   margin-top: 0.25rem;
 }
 
@@ -655,7 +650,7 @@
 .noEvents {
   text-align: center;
   padding: 3rem;
-  color: #9ca3af;
+  color: var(--color-text-muted);
 }
 
 .noEventsIcon {
@@ -685,16 +680,16 @@
   .daysGrid {
     gap: 0.35rem;
   }
-  
+
   .dayCell {
     min-height: 100px;
     padding: 0.5rem;
   }
-  
+
   .dayNumber {
     font-size: 0.95rem;
   }
-  
+
   .event {
     font-size: 0.7rem;
     padding: 0.25rem 0.4rem;
@@ -723,7 +718,7 @@
     padding: 0.625rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .monthNavigation {
     justify-content: center;
   }
@@ -737,7 +732,7 @@
     width: 36px;
     height: 36px;
   }
-  
+
   .legend {
     justify-content: center;
     gap: 0.75rem;
@@ -756,7 +751,7 @@
     font-size: 0.8rem;
     padding: 0.625rem 1rem;
   }
-  
+
   .calendar {
     padding: 0.75rem;
     border-radius: 12px;
@@ -774,7 +769,7 @@
   .daysGrid {
     gap: 0.25rem;
   }
-  
+
   .dayCell {
     min-height: 70px;
     padding: 0.35rem;
@@ -827,7 +822,7 @@
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
-  
+
   .upcomingDate {
     flex-direction: column;
     gap: 0.5rem;
@@ -888,7 +883,7 @@
   .addForm {
     padding: 1rem;
   }
-  
+
   .formRow {
     grid-template-columns: 1fr;
   }

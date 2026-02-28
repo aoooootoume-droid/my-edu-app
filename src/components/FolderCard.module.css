@@ -4,8 +4,8 @@
 .cardContainer {
   width: 280px;
   flex-shrink: 0;
-  border-radius: 16px;
-  background: white;
+  border-radius: var(--radius-xl);
+  background: var(--color-bg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -32,14 +32,14 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary);
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
 
 .cardContainer:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
 }
 
 .cardContainer:hover::before {
@@ -49,14 +49,14 @@
 .classBadge {
   font-size: 0.7rem;
   padding: 0;
-  color: #e5e7eb !important;
+  color: var(--color-border) !important;
   font-weight: 500;
   white-space: nowrap;
   transition: all 0.3s ease;
 }
 
 .cardContainer:hover .classBadge {
-  color: #667eea !important;
+  color: var(--color-text) !important;
   font-weight: 700 !important;
 }
 
@@ -72,7 +72,7 @@
   width: 100%;
   height: 158px;
   object-fit: cover;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  background: var(--color-bg-secondary);
   transition: transform 0.4s ease;
   display: block;
 }
@@ -97,27 +97,31 @@
 }
 
 .tagMath {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-text);
 }
 
 .tagEnglish {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: var(--color-text-secondary);
 }
 
 .tagJapanese {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: var(--color-text-muted);
 }
 
 .tagScience {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: var(--color-text-secondary);
 }
 
 .tagSocial {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-text);
 }
 
 .tagDefault {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  background: var(--color-text-muted);
 }
 
 /* ======================================
@@ -125,14 +129,14 @@
 ====================================== */
 .cardInfo {
   padding: 1.25rem;
-  background: white;
+  background: var(--color-bg);
   position: relative;
 }
 
 .cardTitle {
   font-size: 1rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--color-text);
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -145,10 +149,7 @@
 }
 
 .cardContainer:hover .cardTitle {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-text-secondary);
 }
 
 .cardMeta {
@@ -160,7 +161,7 @@
 
 .cardDate {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--color-text-muted);
   margin: 0;
   display: flex;
   align-items: center;
@@ -176,7 +177,7 @@
 .classBadge {
   font-size: 0.7rem;
   padding: 0;
-  color: #9ca3af !important;
+  color: var(--color-text-muted) !important;
   font-weight: 500;
   white-space: nowrap;
   transition: all 0.3s ease;
@@ -191,7 +192,7 @@
   .cardContainer {
     width: 240px;
   }
-  
+
   .thumbnailImage,
   .noImage {
     height: 135px;
@@ -212,7 +213,7 @@
   .cardContainer {
     width: 200px;
   }
-  
+
   .thumbnailImage,
   .noImage {
     height: 112px;
@@ -253,12 +254,12 @@
   .classBadge {
     font-size: 0.6rem;
     padding: 0;
-    color: #e5e7eb !important;
+    color: var(--color-border) !important;
     transition: all 0.3s ease;
   }
 
   .cardContainer:hover .classBadge {
-    color: #667eea !important;
+    color: var(--color-text) !important;
     font-weight: 700 !important;
   }
 }
@@ -268,7 +269,7 @@
   .cardContainer {
     width: 160px;
   }
-  
+
   .thumbnailImage,
   .noImage {
     height: 90px;
@@ -312,12 +313,12 @@
   .classBadge {
     font-size: 0.55rem;
     padding: 0;
-    color: #e5e7eb !important;
+    color: var(--color-border) !important;
     transition: all 0.3s ease;
   }
 
   .cardContainer:hover .classBadge {
-    color: #667eea !important;
+    color: var(--color-text) !important;
     font-weight: 700 !important;
   }
 }
@@ -340,11 +341,13 @@
 .noImage {
   width: 100%;
   height: 158px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-bg);
+  border-bottom: 2px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 3rem;
+  color: var(--color-text);
 }
 
 /* ======================================
@@ -357,7 +360,7 @@
   padding: 0.3rem 0.6rem;
   background: rgba(0, 0, 0, 0.75);
   color: white;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.7rem;
   font-weight: 700;
 }

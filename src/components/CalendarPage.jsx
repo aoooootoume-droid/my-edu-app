@@ -183,7 +183,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
           noticeType: 'normal',
           showInCalendar: true
         });
-        alert('✅ 予定を追加しました！');
+        alert('予定を追加しました');
       } else {
         alert('予定の追加に失敗しました: ' + result.error);
       }
@@ -217,7 +217,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
       
       setShowReminderForm(false);
       setReminderData({ title: '', memo: '' });
-      alert('✅ リマインダーを追加しました！');
+      alert('リマインダーを追加しました');
     } catch (error) {
       console.error('リマインダー追加エラー:', error);
       alert('エラーが発生しました');
@@ -316,7 +316,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
       </div>
       
       <div className={styles.teacherInfo}>
-        💡 日付をクリックして{isTeacher ? '予定やリマインダー' : 'リマインダー'}を追加できます
+        日付をクリックして{isTeacher ? '予定やリマインダー' : 'リマインダー'}を追加できます
       </div>
       
       {/* カレンダー本体 */}
@@ -398,7 +398,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
         <div className={styles.modal} onClick={() => setShowAddForm(false)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3>📅 予定を追加 - {selectedDate}</h3>
+              <h3>予定を追加 - {selectedDate}</h3>
               <button 
                 className={styles.closeButton}
                 onClick={() => setShowAddForm(false)}
@@ -505,7 +505,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
         <div className={styles.modal} onClick={() => setShowReminderForm(false)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3>🔔 マイリマインダー - {selectedDate}</h3>
+              <h3>マイリマインダー - {selectedDate}</h3>
               <button 
                 className={styles.closeButton}
                 onClick={() => setShowReminderForm(false)}
@@ -578,7 +578,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
       
       {/* 今月の予定リスト */}
       <div className={styles.upcomingEvents}>
-        <h3>📅 今月の予定</h3>
+        <h3>今月の予定</h3>
         <div className={styles.eventsList}>
           {Array.from({ length: daysInMonth }, (_, i) => i + 1)
             .map(day => ({ day, events: getEventsForDate(day) }))
@@ -605,7 +605,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
                       }}
                     >
                       <span className={styles.eventIcon}>
-                        {event.type === 'homework' ? '📝' : event.type === 'test' ? '📖' : event.type === 'reminder' ? '🔔' : '📢'}
+                        {event.type === 'homework' ? 'HW' : event.type === 'test' ? 'TEST' : event.type === 'reminder' ? 'RM' : 'NT'}
                       </span>
                       <div className={styles.upcomingEventInfo}>
                         <div className={styles.upcomingEventTitle}>{event.title}</div>
@@ -630,7 +630,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
                           className={styles.deleteBtn}
                           onClick={(e) => handleDeleteReminder(event.id, e)}
                         >
-                          🗑️
+                          削除
                         </button>
                       )}
                     </div>
@@ -641,7 +641,7 @@ function CalendarPage({ homeworks, tests, notices, onCardClick, currentUser, sel
           {Array.from({ length: daysInMonth }, (_, i) => i + 1)
             .filter(day => getEventsForDate(day).length > 0).length === 0 && (
             <div className={styles.noEvents}>
-              <span className={styles.noEventsIcon}>📭</span>
+              <span className={styles.noEventsIcon}></span>
               <p>今月の予定はありません</p>
             </div>
           )}

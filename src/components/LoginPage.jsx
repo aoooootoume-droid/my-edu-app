@@ -74,12 +74,13 @@ function LoginPage({ onLogin }) {
             role: userData.role,
             schoolCode: userData.schoolCode,
             schoolName: userData.schoolName,
+            organizationType: userData.organizationType || 'school',
             classCode: userData.classCode || null,
             className: userData.className || null
           });
           return;
         }
-        
+
         // 生徒でclassCodeがある場合
         if (userData.classCode) {
           onLogin({
@@ -87,6 +88,7 @@ function LoginPage({ onLogin }) {
             role: userData.role,
             schoolCode: userData.schoolCode,
             schoolName: userData.schoolName,
+            organizationType: userData.organizationType || 'school',
             classCode: userData.classCode,
             className: userData.className
           });
@@ -94,9 +96,23 @@ function LoginPage({ onLogin }) {
         }
         
         // 生徒でclassCodeがない場合 → クラス選択へ
+        // schoolsまたはjukusコレクションからorganizationTypeを取得
+        let orgDoc = await getDoc(doc(db, 'schools', userData.schoolCode));
+        let organizationType = 'school';
+
+        if (!orgDoc.exists()) {
+          orgDoc = await getDoc(doc(db, 'jukus', userData.schoolCode));
+          organizationType = 'juku';
+        }
+
+        const schoolInfo = orgDoc.exists() ? orgDoc.data() : {};
+
         setAuthUser(user);
         setSchoolCode(userData.schoolCode);
-        setSchoolData({ name: userData.schoolName });
+        setSchoolData({
+          name: userData.schoolName,
+          organizationType: schoolInfo.organizationType || organizationType || userData.organizationType || 'school'
+        });
         setUserRole(userData.role);
         setSelectedClassCode('');
         await fetchClasses(userData.schoolCode);
@@ -222,7 +238,7 @@ function LoginPage({ onLogin }) {
     setUsername('');
   };
 
-  // 学校コード認証処理
+  // 学校コード認証処理（学校・塾両対応）
   const handleSchoolCodeSubmit = async (e) => {
     e.preventDefault();
     setSchoolError('');
@@ -230,16 +246,26 @@ function LoginPage({ onLogin }) {
 
     try {
       const codeUpper = schoolCode.toUpperCase();
-      
-      const schoolDoc = await getDoc(doc(db, 'schools', codeUpper));
-      
-      if (!schoolDoc.exists()) {
-        setSchoolError('学校コードが見つかりません');
+
+      // まずschoolsコレクションを検索
+      let orgDoc = await getDoc(doc(db, 'schools', codeUpper));
+      let organizationType = 'school';
+
+      // schoolsに見つからなければjukusコレクションを検索
+      if (!orgDoc.exists()) {
+        orgDoc = await getDoc(doc(db, 'jukus', codeUpper));
+        organizationType = 'juku';
+      }
+
+      if (!orgDoc.exists()) {
+        setSchoolError('コードが見つかりません');
         setSchoolLoading(false);
         return;
       }
 
-      const school = schoolDoc.data();
+      const school = orgDoc.data();
+      // jukusコレクションの場合はorganizationTypeを'juku'に設定
+      school.organizationType = organizationType;
 
       let role = null;
       
@@ -262,6 +288,7 @@ function LoginPage({ onLogin }) {
           role: 'teacher',
           schoolCode: codeUpper,
           schoolName: school.name,
+          organizationType: school.organizationType || 'school',
           classCode: null,
           className: null,
           updatedAt: new Date()
@@ -272,6 +299,7 @@ function LoginPage({ onLogin }) {
           role: 'teacher',
           schoolCode: codeUpper,
           schoolName: school.name,
+          organizationType: school.organizationType || 'school',
           classCode: null,
           className: null
         });
@@ -324,6 +352,7 @@ function LoginPage({ onLogin }) {
         role: userRole,
         schoolCode: schoolCode,
         schoolName: schoolData.name,
+        organizationType: schoolData.organizationType || 'school',
         classCode: selectedClassCode,
         className: selectedClass.displayName,
         grade: selectedClass.grade,
@@ -335,6 +364,7 @@ function LoginPage({ onLogin }) {
         role: userRole,
         schoolCode: schoolCode,
         schoolName: schoolData.name,
+        organizationType: schoolData.organizationType || 'school',
         classCode: selectedClassCode,
         className: selectedClass.displayName
       });
@@ -390,7 +420,7 @@ function LoginPage({ onLogin }) {
             <div className={styles.userDetails}>
               <span className={styles.userName}>{authUser?.displayName || authUser?.email}</span>
               <span className={styles.userEmail}>
-                {userRole === 'teacher' ? '👨‍🏫 先生' : '👨‍🎓 生徒'}
+                {userRole === 'teacher' ? '先生' : '生徒'}
               </span>
             </div>
           </div>
@@ -772,7 +802,7 @@ function LoginPage({ onLogin }) {
                 className={styles.togglePassword}
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPassword ? '非表示' : '表示'}
               </button>
             </div>
           </div>

@@ -42,7 +42,7 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick, 
     e.stopPropagation();
     if (window.confirm(`「${homeworkTitle}」を提出しますか?`)) {
       setSubmittedHomeworks(prev => new Set([...prev, homeworkId]));
-      alert('✅ 提出完了しました!');
+      alert('提出完了しました!');
     }
   };
 
@@ -94,7 +94,7 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick, 
 
         setFormData({ title: '', deadline: '', description: '' });
         setShowAddForm(false);
-        alert('✅ 宿題を追加しました！');
+        alert('宿題を追加しました！');
       } else {
         alert('宿題の追加に失敗しました');
       }
@@ -127,7 +127,7 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick, 
             className={styles.addButton}
             onClick={() => setShowAddForm(!showAddForm)}
           >
-            {showAddForm ? '✕ キャンセル' : '➕ 宿題を追加'}
+            {showAddForm ? 'キャンセル' : '宿題を追加'}
           </button>
         </div>
       )}
@@ -135,7 +135,7 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick, 
       {/* 宿題追加フォーム */}
       {isTeacher && showAddForm && (
         <div className={styles.addForm}>
-          <h3 className={styles.formTitle}>📝 新しい宿題を追加</h3>
+          <h3 className={styles.formTitle}>新しい宿題を追加</h3>
           
           <form onSubmit={handleAddHomework}>
             <div className={styles.formGroup}>
@@ -208,7 +208,7 @@ function HomeworkPage({ filterSubject, searchTerm = '', homeworks, onCardClick, 
               >
                 <div className={styles.itemInfo}>
                   <span className={styles.itemTitle}>
-                    {submitted && '✅ '}
+                    {submitted && '[済] '}
                     {hw.title}
                   </span>
                   <span className={styles.itemDeadline}>

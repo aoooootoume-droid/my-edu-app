@@ -98,7 +98,7 @@ function TeacherSubmissionsView({ currentUser, selectedClass }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>📤 提出物管理</h1>
+        <h1 className={styles.title}>提出物管理</h1>
         <div className={styles.stats}>
           <div className={styles.statCard}>
             <div className={styles.statNumber}>{stats.total}</div>
@@ -147,7 +147,7 @@ function TeacherSubmissionsView({ currentUser, selectedClass }) {
       <div className={styles.submissionsList}>
         {filteredSubmissions.length === 0 ? (
           <div className={styles.empty}>
-            <p>📭 提出物がありません</p>
+            <p>提出物がありません</p>
           </div>
         ) : (
           <table className={styles.table}>
@@ -252,7 +252,7 @@ function TeacherSubmissionsView({ currentUser, selectedClass }) {
                     rel="noopener noreferrer"
                     className={styles.fileLink}
                   >
-                    📎 ファイルを開く
+                    ファイルを開く
                   </a>
                 </div>
               )}
@@ -504,7 +504,7 @@ function StudentSubmissionsView({ currentUser, selectedClass }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>📝 課題一覧</h1>
+        <h1 className={styles.title}>課題一覧</h1>
         <div className={styles.stats}>
           <div className={styles.statCard}>
             <div className={styles.statNumber}>{stats.total}</div>
@@ -525,7 +525,7 @@ function StudentSubmissionsView({ currentUser, selectedClass }) {
       <div className={styles.homeworkList}>
         {homeworks.length === 0 ? (
           <div className={styles.empty}>
-            <p>📭 課題がありません</p>
+            <p>課題がありません</p>
           </div>
         ) : (
           homeworks.map(homework => {
@@ -546,7 +546,7 @@ function StudentSubmissionsView({ currentUser, selectedClass }) {
                 <h3 className={styles.homeworkTitle}>{homework.title}</h3>
                 
                 <div className={styles.homeworkMeta}>
-                  <span>📅 締切: {homework.deadline}</span>
+                  <span>締切: {homework.deadline}</span>
                 </div>
 
                 {homework.description && (
@@ -603,7 +603,7 @@ function StudentSubmissionsView({ currentUser, selectedClass }) {
                   />
                   <div className={styles.cameraButtons}>
                     <button className={styles.captureBtn} onClick={capturePhoto}>
-                      📷 撮影
+                      撮影
                     </button>
                     <button className={styles.cancelBtn} onClick={stopCamera}>
                       キャンセル
@@ -630,17 +630,17 @@ function StudentSubmissionsView({ currentUser, selectedClass }) {
               ) : selectedFile ? (
                 <div className={styles.previewSection}>
                   <div className={styles.filePreview}>
-                    <span>📎 {selectedFile.name}</span>
+                    <span>{selectedFile.name}</span>
                     <button onClick={() => setSelectedFile(null)}>✕</button>
                   </div>
                 </div>
               ) : (
                 <div className={styles.uploadOptions}>
                   <button className={styles.optionBtn} onClick={startCamera}>
-                    📷 カメラで撮影
+                    カメラで撮影
                   </button>
                   <label className={styles.optionBtn}>
-                    📁 ファイルを選択
+                    ファイルを選択
                     <input
                       type="file"
                       accept="image/*,.pdf,.doc,.docx"

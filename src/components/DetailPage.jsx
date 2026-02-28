@@ -107,7 +107,7 @@ const renderCardContent = (card, currentUser, onSubmitSuccess) => {
     return (
       <div className={styles.homeworkContent}>
         <div className={styles.homeworkInfo}>
-          <h3>📝 宿題内容</h3>
+          <h3>宿題内容</h3>
           <p className={styles.deadline}>締切: {card.deadline}</p>
           <p>{card.description || 'この宿題の詳細情報はありません。'}</p>
         </div>
@@ -115,13 +115,13 @@ const renderCardContent = (card, currentUser, onSubmitSuccess) => {
         {/* 提出成功メッセージ */}
         {submitSuccess && (
           <div className={styles.successMessage}>
-            ✅ 提出が完了しました！
+            提出が完了しました！
           </div>
         )}
 
         {/* 提出フォーム */}
         <div className={styles.submissionSection}>
-          <h3>📤 宿題を提出</h3>
+          <h3>宿題を提出</h3>
 
           {/* カメラボタン */}
           {!showCamera && !capturedImage && (
@@ -148,7 +148,7 @@ const renderCardContent = (card, currentUser, onSubmitSuccess) => {
                   className={styles.captureButton}
                   onClick={capturePhoto}
                 >
-                  📷 撮影
+                  撮影
                 </button>
                 <button 
                   className={styles.cancelButton}
@@ -192,7 +192,7 @@ const renderCardContent = (card, currentUser, onSubmitSuccess) => {
           {/* エラーメッセージ */}
           {submitError && (
             <div className={styles.errorMessage}>
-              ⚠️ {submitError}
+              {submitError}
             </div>
           )}
 
@@ -257,9 +257,9 @@ const renderCardContent = (card, currentUser, onSubmitSuccess) => {
     return (
       <div className={styles.liveContent}>
         <div className={styles.liveStatusBox}>
-          {card.status === 'live' && '🔴 配信中'}
-          {card.status === 'upcoming' && `🔵 配信予定: ${card.date}`}
-          {card.status === 'finished' && `⚫ 配信終了: ${card.date || ''}`}
+          {card.status === 'live' && '配信中'}
+          {card.status === 'upcoming' && `配信予定: ${card.date}`}
+          {card.status === 'finished' && `配信終了: ${card.date || ''}`}
         </div>
         <p>（ここにLive配信の動画やチャットが入ります）</p>
       </div>
@@ -301,7 +301,7 @@ const renderCardContent = (card, currentUser, onSubmitSuccess) => {
     return (
       <div className={styles.testContent}>
         <div className={styles.testBadge}>
-          📖 テスト
+          テスト
         </div>
         <div className={styles.testBody}>
           <p>{card.content || 'テストの詳細情報がありません。'}</p>

@@ -9,9 +9,9 @@
 
 .uploadButton {
   padding: 10px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 2px solid var(--color-primary);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -21,22 +21,22 @@
 
 .uploadButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* アップロードフォーム */
 .uploadForm {
-  background: white;
+  background: var(--color-bg);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .formTitle {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-secondary);
   margin: 0 0 16px 0;
 }
 
@@ -49,7 +49,7 @@
   margin-bottom: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 
 .fileInputWrapper {
@@ -66,26 +66,26 @@
 .fileInputLabel {
   display: block;
   padding: 12px 16px;
-  background: #f3f4f6;
-  border: 2px dashed #d1d5db;
+  background: var(--color-bg-secondary);
+  border: 2px dashed var(--color-border);
   border-radius: 8px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .fileInputLabel:hover {
-  background: #e5e7eb;
-  border-color: #667eea;
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary);
 }
 
 .input,
 .textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 14px;
   transition: border-color 0.2s;
@@ -95,7 +95,8 @@
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .textarea {
@@ -106,9 +107,9 @@
 .submitButton {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 2px solid var(--color-primary);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -118,7 +119,7 @@
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .submitButton:disabled {
@@ -138,16 +139,16 @@
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: white;
+  background: var(--color-bg);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-xs);
 }
 
 .materialCard:hover {
   transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .fileIcon {
@@ -163,7 +164,7 @@
 .materialTitle {
   font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-secondary);
   margin: 0 0 4px 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -172,12 +173,13 @@
 
 .materialDescription {
   font-size: 13px;
-  color: #666;
+  color: var(--color-text-muted);
   margin: 0 0 8px 0;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -185,7 +187,7 @@
   display: flex;
   gap: 12px;
   font-size: 12px;
-  color: #999;
+  color: var(--color-text-muted);
 }
 
 .fileName {
@@ -219,8 +221,8 @@
 .noData {
   text-align: center;
   padding: 60px 20px;
-  color: #888;
+  color: var(--color-text-muted);
   font-size: 14px;
-  background: #f9fafb;
+  background: var(--color-bg-secondary);
   border-radius: 12px;
 }

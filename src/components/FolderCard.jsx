@@ -26,7 +26,7 @@ function FolderCard({ title, date, onClick, imageUrl, subject, className, isReco
           />
         ) : (
           <div className={styles.noImage}>
-            {isRecording ? '🎬' : '📁'}
+            {isRecording ? 'REC' : ''}
           </div>
         )}
         {subject && (
@@ -35,7 +35,7 @@ function FolderCard({ title, date, onClick, imageUrl, subject, className, isReco
           </span>
         )}
         {isRecording && (
-          <span className={styles.recordingBadge}>🎥 録画</span>
+          <span className={styles.recordingBadge}>録画</span>
         )}
       </div>
       

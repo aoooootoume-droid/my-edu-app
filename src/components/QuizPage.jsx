@@ -169,7 +169,7 @@ const QuizPage = ({ currentUser, selectedClass }) => {
 
         <div className={styles.noteCard}>
           <div className={styles.noteHeader}>
-            <span className={styles.noteIcon}>📖</span>
+            <span className={styles.noteIcon}></span>
             <h2>神ノート</h2>
           </div>
           <h3 className={styles.noteTitle}>{selectedQuiz.summary?.title || selectedQuiz.title}</h3>
@@ -179,7 +179,7 @@ const QuizPage = ({ currentUser, selectedClass }) => {
           </div>
           
           <p className={styles.hint}>
-            💡 グレーの部分をタップしてキーワードを確認しよう！
+            グレーの部分をタップしてキーワードを確認しよう！
           </p>
           
           <div className={styles.keywordProgress}>
@@ -392,7 +392,7 @@ const QuizPage = ({ currentUser, selectedClass }) => {
               
               {step3Revealed[idx] && (
                 <div className={styles.sampleAnswer}>
-                  <span className={styles.sampleLabel}>📝 模範解答</span>
+                  <span className={styles.sampleLabel}>模範解答</span>
                   <p>{q.sampleAnswer}</p>
                 </div>
               )}
@@ -404,7 +404,7 @@ const QuizPage = ({ currentUser, selectedClass }) => {
           className={styles.completeButton}
           onClick={handleBackToList}
         >
-          🎉 完了！一覧に戻る
+          完了 - 一覧に戻る
         </button>
       </div>
     );
@@ -414,7 +414,7 @@ const QuizPage = ({ currentUser, selectedClass }) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>📝 まとめノート</h1>
+        <h1>まとめノート</h1>
         <p>授業の内容を確認しよう</p>
       </div>
       

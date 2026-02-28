@@ -175,7 +175,7 @@ function ArchivePage({ filterSubject, onCardClick, searchTerm, folders = [], sel
   return (
     <div className={styles.archiveContainer}> 
       <h2 className={styles.pageTitle}>
-        📁 アーカイブ
+        アーカイブ
         {selectedClass && <span className={styles.classLabel}> - {selectedClass}</span>}
       </h2>
 
@@ -210,7 +210,7 @@ function ArchivePage({ filterSubject, onCardClick, searchTerm, folders = [], sel
                 {formatDuration(recording.duration)}
               </div>
               {recording.transcription && (
-                <div className={styles.transcriptBadge}>📝</div>
+                <div className={styles.transcriptBadge}>T</div>
               )}
             </div>
             
@@ -234,7 +234,7 @@ function ArchivePage({ filterSubject, onCardClick, searchTerm, folders = [], sel
               {recording.transcriptMatches && recording.transcriptMatches.length > 0 && (
                 <div className={styles.transcriptMatchesContainer}>
                   <p className={styles.matchLabel}>
-                    🔍 文字起こしで{recording.transcriptMatches.length}件ヒット
+                    文字起こしで{recording.transcriptMatches.length}件ヒット
                   </p>
                   <div className={styles.matchList}>
                     {recording.transcriptMatches.slice(0, 3).map((match, idx) => (

@@ -1,63 +1,54 @@
 /* ======================================
-   Header.module.css
-   カラーパレット: #bed5e8, #abb0bc, #ecf0f4
-   全置き換え
-====================================== */
-
-/* ======================================
-   ヘッダーコンテナ
+   Header
 ====================================== */
 .headerContainer {
-  background: #ffffff;
-  border-bottom: 1px solid #d5dce6;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
+  box-shadow: var(--shadow-xs);
 }
 
 .headerContentWrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
+  padding: 0 24px;
+  height: 64px;
   max-width: 1920px;
   margin: 0 auto;
   gap: 24px;
 }
 
 /* ======================================
-   ロゴエリア
+   Logo
 ====================================== */
 .logoArea {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #2d3748;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text);
   white-space: nowrap;
   letter-spacing: -0.5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: opacity 0.2s ease;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.logoArea::before {
-  content: '📚';
-  font-size: 1.5rem;
-}
-
 .logoArea:hover {
-  color: #5a6578;
+  opacity: 0.7;
 }
 
 /* ======================================
-   検索バー
+   Search
 ====================================== */
 .searchNavContainer {
   flex: 1;
-  max-width: 520px;
+  max-width: 480px;
   position: relative;
 }
 
@@ -71,31 +62,31 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.1rem;
-  color: #abb0bc;
+  font-size: 1rem;
+  color: var(--color-text-muted);
   pointer-events: none;
 }
 
 .searchInput {
   width: 100%;
-  padding: 12px 44px 12px 44px;
+  padding: 10px 44px 10px 42px;
   font-size: 14px;
-  border: 2px solid #ecf0f4;
-  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   outline: none;
-  transition: all 0.25s ease;
-  background: #ecf0f4;
-  color: #2d3748;
+  transition: all 0.2s ease;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
 }
 
 .searchInput:focus {
-  border-color: #bed5e8;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(190, 213, 232, 0.3);
+  border-color: var(--color-primary);
+  background: var(--color-bg);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .searchInput::placeholder {
-  color: #abb0bc;
+  color: var(--color-text-muted);
 }
 
 .searchClearButton {
@@ -103,8 +94,8 @@
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.25rem;
-  color: #abb0bc;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
   cursor: pointer;
   background: none;
   border: none;
@@ -115,65 +106,58 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .searchClearButton:hover {
-  background: #bed5e8;
-  color: #2d3748;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
 }
 
-/* 検索サジェスト */
+/* Suggestions */
 .suggestionsList {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ecf0f4;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
   list-style: none;
-  padding: 8px;
+  padding: 6px;
   margin: 0;
   z-index: 1000;
-  animation: slideDown 0.2s ease;
+  animation: slideDown 0.15s ease;
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .suggestionItem {
-  padding: 12px 14px;
+  padding: 10px 12px;
   cursor: pointer;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  color: #5a6578;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s ease;
+  color: var(--color-text);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .suggestionItem:hover {
-  background: #bed5e8;
-  color: #2d3748;
-  transform: translateX(4px);
+  background: var(--color-primary-light);
+  color: var(--color-primary-hover);
 }
 
 /* ======================================
-   ユーザーアクション
+   User Actions
 ====================================== */
 .userActions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .notificationContainer {
@@ -182,40 +166,40 @@
 
 .notificationBell {
   position: relative;
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   cursor: pointer;
   padding: 10px;
-  border-radius: 12px;
-  transition: all 0.25s ease;
-  background: #ecf0f4;
+  border-radius: var(--radius-md);
+  transition: all 0.15s ease;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid transparent;
+  border: none;
+  color: var(--color-text-secondary);
 }
 
 .notificationBell:hover {
-  background: #bed5e8;
-  border-color: #9bc2de;
-  transform: translateY(-2px);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
 }
 
 .notificationBadge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #e57373;
-  color: white;
-  font-size: 11px;
+  top: 4px;
+  right: 4px;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 1px 5px;
   border-radius: 10px;
-  min-width: 20px;
-  height: 20px;
+  min-width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(229, 115, 115, 0.4);
+  border: 2px solid var(--color-bg);
 }
 
 .userIconContainer {
@@ -223,90 +207,88 @@
 }
 
 .userIcon {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 12px;
-  transition: all 0.25s ease;
-  background: linear-gradient(135deg, #bed5e8 0%, #9bc2de 100%);
+  padding: 0;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+  background: var(--color-primary);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border: 2px solid transparent;
+  width: 38px;
+  height: 38px;
+  border: none;
 }
 
 .userIcon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(190, 213, 232, 0.5);
-  border-color: #9bc2de;
+  background: var(--color-primary-hover);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
-/* プロフィールメニュー */
+/* Profile Menu */
 .profileMenu {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   right: 0;
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ecf0f4;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
   min-width: 220px;
-  padding: 8px;
+  padding: 6px;
   z-index: 1000;
-  animation: slideDown 0.2s ease;
+  animation: slideDown 0.15s ease;
 }
 
 .menuHeader {
-  padding: 14px 12px;
-  border-bottom: 1px solid #ecf0f4;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
   font-size: 12px;
-  color: #abb0bc;
+  color: var(--color-text-muted);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .userName {
-  font-size: 15px;
-  font-weight: 700;
-  color: #2d3748;
-  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: 2px;
 }
 
 .menuItem {
   display: block;
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 12px;
   cursor: pointer;
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s ease;
   font-size: 14px;
-  color: #5a6578;
-  font-weight: 500;
+  color: var(--color-text);
+  font-weight: 400;
   background: none;
   border: none;
   text-align: left;
 }
 
 .menuItem:hover {
-  background: #ecf0f4;
-  color: #2d3748;
-  transform: translateX(4px);
+  background: var(--color-bg-tertiary);
 }
 
 .menuItemDanger {
-  color: #e57373;
+  color: #ef4444;
 }
 
 .menuItemDanger:hover {
   background: #fef2f2;
-  color: #c53030;
+  color: #dc2626;
 }
 
 /* ======================================
-   ハンバーガーメニューボタン
+   Hamburger
 ====================================== */
 .hamburgerButton {
   display: none;
@@ -316,28 +298,27 @@
   width: 40px;
   height: 40px;
   padding: 8px;
-  background: #ecf0f4;
+  background: transparent;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   gap: 5px;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .hamburgerButton:hover {
-  background: #bed5e8;
+  background: var(--color-bg-tertiary);
 }
 
 .hamburgerLine {
   display: block;
   width: 20px;
   height: 2px;
-  background: #5a6578;
+  background: var(--color-text);
   border-radius: 2px;
   transition: all 0.3s ease;
 }
 
-/* ハンバーガー → × アニメーション */
 .hamburgerOpen .hamburgerLine:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
@@ -351,32 +332,26 @@
 }
 
 /* ======================================
-   レスポンシブ対応
+   Responsive
 ====================================== */
-
 @media (max-width: 1024px) {
   .headerContentWrapper {
-    padding: 12px 20px;
-    gap: 20px;
+    padding: 0 20px;
+    gap: 16px;
   }
-  
+
   .logoArea {
-    font-size: 1.25rem;
-  }
-  
-  .searchInput {
-    font-size: 13px;
-    padding: 10px 40px 10px 40px;
+    font-size: 1.2rem;
   }
 }
 
 @media (max-width: 768px) {
   .headerContentWrapper {
-    padding: 10px 14px;
+    padding: 0 14px;
+    height: 56px;
     gap: 10px;
   }
 
-  /* ハンバーガーボタンをスマホで表示 */
   .hamburgerButton {
     display: flex;
   }
@@ -384,51 +359,43 @@
   .logoArea {
     display: none;
   }
-  
+
   .searchNavContainer {
     max-width: 100%;
     flex: 1;
   }
-  
+
   .searchInput {
     font-size: 13px;
-    padding: 10px 36px 10px 36px;
-    border-radius: 12px;
+    padding: 9px 36px 9px 36px;
   }
 
   .searchIcon {
-    font-size: 1rem;
     left: 10px;
   }
 
   .searchClearButton {
     right: 10px;
-    font-size: 1.1rem;
   }
-  
+
   .userActions {
-    gap: 8px;
+    gap: 4px;
   }
-  
+
   .notificationBell {
-    font-size: 1.15rem;
     padding: 8px;
-    border-radius: 10px;
   }
-  
+
   .userIcon {
-    font-size: 1.1rem;
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
   }
 
   .notificationBadge {
-    font-size: 10px;
-    min-width: 18px;
-    height: 18px;
-    top: -3px;
-    right: -3px;
+    font-size: 9px;
+    min-width: 16px;
+    height: 16px;
   }
 
   .profileMenu {
@@ -439,12 +406,12 @@
 
 @media (max-width: 480px) {
   .headerContentWrapper {
-    padding: 8px 12px;
-    gap: 8px;
+    padding: 0 12px;
+    gap: 6px;
   }
 
   .searchInput {
-    font-size: 12px;
+    font-size: 13px;
     padding: 8px 32px 8px 32px;
   }
 
@@ -454,13 +421,11 @@
   }
 
   .notificationBell {
-    font-size: 1rem;
     padding: 6px;
   }
 
   .userIcon {
-    width: 34px;
-    height: 34px;
-    font-size: 1rem;
+    width: 32px;
+    height: 32px;
   }
 }

@@ -54,7 +54,7 @@ function CameraPage({ onSaveItem }) {
             <img src={imagePreview} alt="プレビュー" className={styles.imagePreview} />
           ) : (
             <div className={styles.imagePlaceholder}>
-              <span>📷</span>
+              <span>カメラ</span>
               <p>画像を選択してください</p>
             </div>
           )}

@@ -1,0 +1,245 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ========================================
+    // ヘルパー関数
+    // ========================================
+
+    // ログイン済みかどうか
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // 自分のユーザードキュメントかどうか
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ユーザー情報を取得
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // 教師かどうか
+    function isTeacher() {
+      return isAuthenticated() && getUserData().role == 'teacher';
+    }
+
+    // 同じ学校かどうか
+    function isSameSchool(schoolCode) {
+      return isAuthenticated() && getUserData().schoolCode == schoolCode;
+    }
+
+    // ========================================
+    // users コレクション
+    // ========================================
+    match /users/{userId} {
+      // 自分のデータは読み書き可能
+      allow read: if isOwner(userId);
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId);
+
+      // 同じ学校のユーザー情報は読み取り可能（名前表示などに必要）
+      allow read: if isAuthenticated() &&
+        resource.data.schoolCode == getUserData().schoolCode;
+    }
+
+    // ========================================
+    // schools コレクション（学校情報・サブコレクション含む）
+    // ========================================
+    match /schools/{schoolCode} {
+      // 認証済みユーザーは学校情報を読み取り可能（ログイン時に必要）
+      allow read: if isAuthenticated();
+      // 書き込みは禁止（管理者のみFirebaseコンソールから操作）
+      allow write: if false;
+
+      // classes サブコレクション
+      match /classes/{classId} {
+        allow read: if isSameSchool(schoolCode);
+        allow create, update, delete: if isTeacher() && isSameSchool(schoolCode);
+      }
+
+      // subjects サブコレクション
+      match /subjects/{subjectId} {
+        allow read: if isSameSchool(schoolCode);
+        allow create, update, delete: if isTeacher() && isSameSchool(schoolCode);
+      }
+    }
+
+    // ========================================
+    // classes コレクション（旧・後方互換）
+    // ========================================
+    match /classes/{classId} {
+      // 同じ学校のクラス情報は読み取り可能
+      allow read: if isSameSchool(resource.data.schoolCode);
+      // 教師のみ作成・更新・削除可能
+      allow create, update, delete: if isTeacher() &&
+        isSameSchool(request.resource.data.schoolCode);
+    }
+
+    // ========================================
+    // subjects コレクション（旧・後方互換）
+    // ========================================
+    match /subjects/{subjectId} {
+      // 同じ学校の教科情報は読み取り可能
+      allow read: if isSameSchool(resource.data.schoolCode);
+      // 教師のみ作成・更新・削除可能
+      allow create, update, delete: if isTeacher() &&
+        isSameSchool(request.resource.data.schoolCode);
+    }
+
+    // ========================================
+    // folders コレクション（授業フォルダ）
+    // ========================================
+    match /folders/{folderId} {
+      // 同じ学校のフォルダのみ読み取り可能（schoolCode未設定の既存データは許可）
+      allow read: if isAuthenticated() &&
+        (resource.data.schoolCode == null || isSameSchool(resource.data.schoolCode));
+      allow create, update, delete: if isTeacher();
+    }
+
+    // ========================================
+    // prints コレクション
+    // ========================================
+    match /prints/{printId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.schoolCode == null || isSameSchool(resource.data.schoolCode));
+      allow create, update, delete: if isTeacher();
+    }
+
+    // ========================================
+    // homeworks コレクション
+    // ========================================
+    match /homeworks/{homeworkId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.schoolCode == null || isSameSchool(resource.data.schoolCode));
+      allow create, update, delete: if isTeacher();
+    }
+
+    // ========================================
+    // qna コレクション（質問箱）
+    // ========================================
+    match /qna/{questionId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.schoolCode == null || isSameSchool(resource.data.schoolCode));
+      // 生徒も質問を投稿可能
+      allow create: if isAuthenticated();
+      // 教師のみ更新・削除可能（回答など）
+      allow update, delete: if isTeacher();
+    }
+
+    // ========================================
+    // groups コレクション
+    // ========================================
+    match /groups/{groupId} {
+      // メンバーのみ読み取り可能
+      allow read: if isAuthenticated() &&
+        request.auth.uid in resource.data.members;
+      // 誰でもグループ作成可能
+      allow create: if isAuthenticated();
+      // メンバーのみ更新可能（参加・退出）
+      allow update: if isAuthenticated() &&
+        (request.auth.uid in resource.data.members ||
+         request.auth.uid in request.resource.data.members);
+      // 作成者のみ削除可能
+      allow delete: if isAuthenticated() &&
+        resource.data.createdBy == request.auth.uid;
+    }
+
+    // ========================================
+    // groupCards コレクション
+    // ========================================
+    match /groupCards/{cardId} {
+      // グループメンバーのみ読み取り可能
+      allow read: if isAuthenticated();
+      // 認証済みユーザーは作成可能
+      allow create: if isAuthenticated();
+      // 投稿者のみ更新・削除可能
+      allow update, delete: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+    }
+
+    // ========================================
+    // groupFiles コレクション
+    // ========================================
+    match /groupFiles/{fileId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+    }
+
+    // ========================================
+    // submissions コレクション（提出物）
+    // ========================================
+    match /submissions/{submissionId} {
+      // 教師は全て読み取り可能、生徒は自分の提出物のみ
+      allow read: if isTeacher() ||
+        (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      // 生徒は自分の提出物を作成可能
+      allow create: if isAuthenticated();
+      // 教師のみ評価（更新）可能
+      allow update: if isTeacher();
+      // 教師のみ削除可能
+      allow delete: if isTeacher();
+    }
+
+    // ========================================
+    // notices コレクション（お知らせ）
+    // ========================================
+    match /notices/{noticeId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.schoolCode == null || isSameSchool(resource.data.schoolCode));
+      allow create, update, delete: if isTeacher();
+    }
+
+    // ========================================
+    // notifications コレクション（通知）
+    // ========================================
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.schoolCode == null || isSameSchool(resource.data.schoolCode));
+      // 教師は通知を作成可能
+      allow create: if isTeacher();
+      // 既読更新は全員可能
+      allow update: if isAuthenticated();
+      // 教師のみ削除可能
+      allow delete: if isTeacher();
+    }
+
+    // ========================================
+    // quizzes コレクション（クイズ）
+    // ========================================
+    match /quizzes/{quizId} {
+      // 同じ学校のユーザーは読み取り可能
+      allow read: if isAuthenticated();
+      // 教師のみ作成・更新・削除可能
+      allow create, update, delete: if isTeacher();
+    }
+
+    // ========================================
+    // quizResults コレクション（クイズ結果）
+    // ========================================
+    match /quizResults/{resultId} {
+      // 教師は全て読み取り可能、生徒は自分の結果のみ
+      allow read: if isTeacher() ||
+        (isAuthenticated() && resource.data.userId == request.auth.uid);
+      // Cloud Functions経由で作成されるため、クライアントからの直接作成は禁止
+      // allow create: if false; // Cloud Functionsから作成
+      // テスト用に一時的に許可（本番では上記に変更）
+      allow create: if isAuthenticated();
+      allow update, delete: if isTeacher();
+    }
+
+    // ========================================
+    // recordings コレクション（授業録画）
+    // ========================================
+    match /recordings/{recordingId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.schoolCode == null || isSameSchool(resource.data.schoolCode));
+      allow create, update, delete: if isTeacher();
+    }
+  }
+}

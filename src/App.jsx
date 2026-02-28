@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from './firebase/config';
 import './App.css'
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -13,7 +15,7 @@ import CalendarPage from './components/CalendarPage';
 import SubmissionsPage from './components/SubmissionsPage';
 import QuizPage from './components/QuizPage'; 
 
-// ★ 録画機能のコンポーネントをインポート
+// 録画機能のコンポーネントをインポート
 import RecordingPage from './components/RecordingPage';
 
 // グループ関連
@@ -21,7 +23,7 @@ import GroupPage from './components/GroupPage';
 import GroupDetailPage from './components/GroupDetailPage';
 
 // Firebase関数をインポート
-import { 
+import {
   onAuthChange,
   logoutUser,
   onFoldersChange,
@@ -30,14 +32,13 @@ import {
   onQuestionsChange,
   onNoticesChange,
   onNotificationsChange,
+  onRecordingsChange,
   markNotificationAsRead,
   markAllNotificationsAsRead,
   addPrint,
   addQuestion
 } from './firebase';
 
-// ダミーデータ投入スクリプト
-import { seedDatabase, clearDatabase } from './seedData';
 
 function App() {
   
@@ -49,9 +50,11 @@ function App() {
   const [qnaItems, setQnaItems] = useState([]);
   const [notices, setNotices] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [recordings, setRecordings] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // ★ 選択中のクラスを管理
+  // 選択中のクラスを管理
   const [selectedClass, setSelectedClass] = useState(null);
   
   // テストのダミーデータ
@@ -84,11 +87,11 @@ function App() {
   });
   const [searchTerm, setSearchTerm] = useState('');
 
-  // ★ スマホ用ハンバーガーメニューの開閉状態
+  // スマホ用ハンバーガーメニューの開閉状態
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // ========================================
-  // 🔥 Firebase リアルタイム監視
+  // Firebase リアルタイム監視
   // ========================================
   
   useEffect(() => {
@@ -103,14 +106,34 @@ function App() {
           const userData = userDoc.data();
           // 先生はclassCodeなしでOK、生徒はclassCodeが必要
           if (userData.role === 'teacher' || userData.classCode) {
+            // organizationTypeがusersに保存されていない場合、schoolsまたはjukusから取得
+            let organizationType = userData.organizationType;
+            if (!organizationType) {
+              // まずschoolsを検索
+              let orgDoc = await getDoc(doc(db, 'schools', userData.schoolCode));
+              if (orgDoc.exists()) {
+                organizationType = orgDoc.data().organizationType || 'school';
+              } else {
+                // schoolsになければjukusを検索
+                orgDoc = await getDoc(doc(db, 'jukus', userData.schoolCode));
+                if (orgDoc.exists()) {
+                  organizationType = 'juku';
+                } else {
+                  organizationType = 'school';
+                }
+              }
+            }
+
             setIsLoggedIn(true);
             setCurrentUser({
               ...user,
               role: userData.role,
               schoolCode: userData.schoolCode,
               schoolName: userData.schoolName,
+              organizationType: organizationType,
               classCode: userData.classCode || null,
-              className: userData.className || null
+              className: userData.className || null,
+              grade: userData.grade ?? null
             });
             setLoading(false);
             return;
@@ -136,14 +159,16 @@ function App() {
 }, []);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || !currentUser?.schoolCode) return;
+    const schoolCode = currentUser.schoolCode;
 
-    const unsubscribeFolders = onFoldersChange((data) => setFolders(data));
-    const unsubscribePrints = onPrintsChange((data) => setPrints(data));
-    const unsubscribeHomeworks = onHomeworksChange((data) => setHomeworks(data));
-    const unsubscribeQna = onQuestionsChange((data) => setQnaItems(data));
-    const unsubscribeNotices = onNoticesChange((data) => setNotices(data));
-    const unsubscribeNotifications = onNotificationsChange((data) => setNotifications(data));
+    const unsubscribeFolders = onFoldersChange(schoolCode, (data) => setFolders(data));
+    const unsubscribePrints = onPrintsChange(schoolCode, (data) => setPrints(data));
+    const unsubscribeHomeworks = onHomeworksChange(schoolCode, (data) => setHomeworks(data));
+    const unsubscribeQna = onQuestionsChange(schoolCode, (data) => setQnaItems(data));
+    const unsubscribeNotices = onNoticesChange(schoolCode, (data) => setNotices(data));
+    const unsubscribeNotifications = onNotificationsChange(schoolCode, (data) => setNotifications(data));
+    const unsubscribeRecordings = onRecordingsChange(schoolCode, (data) => setRecordings(data));
 
     return () => {
       unsubscribeFolders();
@@ -152,11 +177,30 @@ function App() {
       unsubscribeQna();
       unsubscribeNotices();
       unsubscribeNotifications();
+      unsubscribeRecordings();
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, currentUser?.schoolCode]);
+
+  // 教科一覧を取得（schoolCode 確定後）
+  useEffect(() => {
+    if (!isLoggedIn || !currentUser?.schoolCode) return;
+    const fetchSubjects = async () => {
+      try {
+        const snap = await getDocs(
+          collection(db, 'schools', currentUser.schoolCode, 'subjects')
+        );
+        const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        list.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
+        setSubjects(list);
+      } catch (err) {
+        console.error('教科取得エラー:', err);
+      }
+    };
+    fetchSubjects();
+  }, [isLoggedIn, currentUser?.schoolCode]);
   
   // ========================================
-  // 🎯 クラスでフィルタリングしたデータ
+  // クラスでフィルタリングしたデータ
   // ========================================
 
   // 「全学年」選択時はフィルターなし
@@ -198,7 +242,7 @@ function App() {
   );
 
   // ========================================
-  // 📌 イベントハンドラ
+  // イベントハンドラ
   // ========================================
   
   const handleLogin = (user) => {
@@ -214,7 +258,7 @@ function App() {
     setCurrentUser(null); 
   };
   
-  // ★ クラス変更ハンドラ
+  // クラス変更ハンドラ
   const handleClassChange = (className) => {
     setSelectedClass(className);
   };
@@ -226,7 +270,7 @@ function App() {
         subject: item.subject,
         date: item.date || new Date().toISOString().split('T')[0],
         imageUrl: item.imageUrl || 'https://picsum.photos/240/135?random=' + Date.now(),
-        className: selectedClass // ★ 選択中のクラスを追加
+        className: selectedClass // 選択中のクラスを追加
       });
 
       if (result.success) {
@@ -249,7 +293,7 @@ function App() {
       const result = await addQuestion({
         subject: subject,
         title: title,
-        className: selectedClass // ★ 選択中のクラスを追加
+        className: selectedClass // 選択中のクラスを追加
       });
 
       if (!result.success) {
@@ -331,7 +375,7 @@ function App() {
     setSearchTerm(title);
   };
 
-  // ★ モバイルメニューの開閉
+  // モバイルメニューの開閉
   const handleMobileMenuToggle = () => {
     setIsMobileMenuOpen(prev => {
       const newState = !prev;
@@ -345,13 +389,13 @@ function App() {
     });
   };
 
-  // ★ メニュー項目クリック時にメニューを閉じる
+  // メニュー項目クリック時にメニューを閉じる
   const handleMobileMenuClose = () => {
     setIsMobileMenuOpen(false);
     document.body.style.overflow = '';
   };
   
-  // ★ Firebase通知をクリック
+  // Firebase通知をクリック
   const handleNotificationClick = async (notification) => {
     // Firebaseで既読にする
     await markNotificationAsRead(notification.id);
@@ -361,34 +405,9 @@ function App() {
     }
   };
   
-  // ★ 全通知を既読に（Firebase）
+  // 全通知を既読に（Firebase）
   const handleMarkAllAsRead = async () => {
     await markAllNotificationsAsRead();
-  };
-  
-  const handleSeedData = async () => {
-    if (window.confirm('ダミーデータをFirestoreに投入しますか?')) {
-      const result = await seedDatabase();
-      if (result.success) {
-        alert('✅ ダミーデータの投入が完了しました!');
-      } else {
-        alert('❌ エラー: ' + result.error);
-      }
-    }
-  };
-  
-  // ★ データ削除ハンドラ
-  const handleClearData = async () => {
-    if (window.confirm('⚠️ 本当に全データを削除しますか？\nこの操作は取り消せません。')) {
-      const result = await clearDatabase();
-      if (result.success) {
-        alert('✅ 全データの削除が完了しました!');
-        // ページをリロードして状態をリセット
-        window.location.reload();
-      } else {
-        alert('❌ エラー: ' + result.error);
-      }
-    }
   };
   
   const suggestions = useMemo(() => {
@@ -402,9 +421,12 @@ function App() {
   }, [searchTerm, allClickableItems]);
 
   // ========================================
-  // 🎨 メインコンテンツの描画
+  // メインコンテンツの描画
   // ========================================
   
+  // 塾かどうか判定
+  const isJuku = currentUser?.organizationType === 'juku';
+
   const renderMainContent = () => {
     if (activeView.type === 'detail') {
       const card = allClickableItems.find(f => f.id === activeView.detailId);
@@ -413,25 +435,63 @@ function App() {
     if (activeView.type === 'profile') {
       return <ProfilePage onBackClick={handleBackClick} currentUser={currentUser} />;
     }
+    // カメラは塾では使用不可
     if (activeView.type === 'camera') {
+      if (isJuku) {
+        return <HomePage
+          onCardClick={handleCardClick}
+          searchTerm={searchTerm}
+          folders={filteredFolders}
+          prints={filteredPrints}
+          qnaItems={filteredQnaItems}
+          selectedClass={selectedClass}
+          recordings={recordings}
+          subjects={subjects}
+        />;
+      }
       return <CameraPage onSaveItem={handleAddItem} />;
     }
     if (activeView.type === 'calendar') {
-      return <CalendarPage 
-        homeworks={filteredHomeworks} 
-        tests={tests} 
-        notices={filteredNotices} 
-        onCardClick={handleCardClick} 
+      return <CalendarPage
+        homeworks={filteredHomeworks}
+        tests={tests}
+        notices={filteredNotices}
+        onCardClick={handleCardClick}
         currentUser={currentUser}
         selectedClass={selectedClass}
       />;
     }
+    // グループは塾では使用不可
     if (activeView.type === 'groups') {
+      if (isJuku) {
+        return <HomePage
+          onCardClick={handleCardClick}
+          searchTerm={searchTerm}
+          folders={filteredFolders}
+          prints={filteredPrints}
+          qnaItems={filteredQnaItems}
+          selectedClass={selectedClass}
+          recordings={recordings}
+          subjects={subjects}
+        />;
+      }
       return <GroupPage currentUser={currentUser} onGroupClick={handleGroupClick} />;
     }
     if (activeView.type === 'groupDetail') {
-      return <GroupDetailPage 
-        currentUser={currentUser} 
+      if (isJuku) {
+        return <HomePage
+          onCardClick={handleCardClick}
+          searchTerm={searchTerm}
+          folders={filteredFolders}
+          prints={filteredPrints}
+          qnaItems={filteredQnaItems}
+          selectedClass={selectedClass}
+          recordings={recordings}
+          subjects={subjects}
+        />;
+      }
+      return <GroupDetailPage
+        currentUser={currentUser}
         groupId={activeView.groupId}
         onBackClick={handleBackClick}
       />;
@@ -440,7 +500,7 @@ function App() {
       return <SubmissionsPage currentUser={currentUser} selectedClass={selectedClass} />;
     }
     
-    // ★ 録画ページ
+    // 録画ページ
     if (activeView.type === 'recording') {
       return <RecordingPage selectedClass={selectedClass} />;
     }
@@ -452,14 +512,15 @@ function App() {
     
     switch (activeView.type) {
       case 'home':
-        return <HomePage 
-                  onCardClick={handleCardClick} 
-                  searchTerm={searchTerm} 
-                  folders={filteredFolders} 
-                  prints={filteredPrints} 
+        return <HomePage
+                  onCardClick={handleCardClick}
+                  searchTerm={searchTerm}
+                  folders={filteredFolders}
+                  prints={filteredPrints}
                   qnaItems={filteredQnaItems}
-                  notices={filteredNotices}
                   selectedClass={selectedClass}
+                  recordings={recordings}
+                  subjects={subjects}
                 />;
       case 'archive':
         return <ArchivePage 
@@ -492,7 +553,7 @@ function App() {
   
   
   // ========================================
-  // 🔄 ローディング表示
+  // ローディング表示
   // ========================================
   
   if (loading) {
@@ -510,7 +571,7 @@ function App() {
   
   
   // ========================================
-  // 🔐 ログイン画面
+  // ログイン画面
   // ========================================
   
   if (!isLoggedIn) {
@@ -519,7 +580,7 @@ function App() {
 
   
   // ========================================
-  // 🏠 メイン画面
+  // メイン画面
   // ========================================
   
   let sidebarActiveType = activeView.type;
@@ -565,6 +626,7 @@ function App() {
             }}
             onClassChange={handleClassChange}
             currentUser={currentUser}
+            subjects={subjects}
           />
         </div>
         

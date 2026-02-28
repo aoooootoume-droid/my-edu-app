@@ -144,7 +144,7 @@ function HomeworkDetailPage({ homeworkId, currentUser, onBack }) {
       });
 
       if (result.success) {
-        alert('✅ 提出が完了しました！');
+        alert('提出が完了しました！');
         onBack();
       } else {
         alert('提出に失敗しました');
@@ -198,7 +198,7 @@ function HomeworkDetailPage({ homeworkId, currentUser, onBack }) {
 
       {/* 提出セクション */}
       <div className={styles.submitSection}>
-        <h3 className={styles.sectionTitle}>📤 提出する</h3>
+        <h3 className={styles.sectionTitle}>提出する</h3>
 
         {/* カメラプレビュー */}
         {showCamera && (
@@ -211,7 +211,7 @@ function HomeworkDetailPage({ homeworkId, currentUser, onBack }) {
             />
             <div className={styles.cameraControls}>
               <button className={styles.captureButton} onClick={capturePhoto}>
-                📸 撮影
+                撮影
               </button>
               <button className={styles.cancelButton} onClick={stopCamera}>
                 キャンセル
@@ -225,7 +225,7 @@ function HomeworkDetailPage({ homeworkId, currentUser, onBack }) {
           <div className={styles.previewContainer}>
             <img src={capturedImage.preview} alt="撮影画像" className={styles.previewImage} />
             <button className={styles.retakeButton} onClick={retakePhoto}>
-              📷 撮り直す
+              撮り直す
             </button>
           </div>
         )}
@@ -233,7 +233,7 @@ function HomeworkDetailPage({ homeworkId, currentUser, onBack }) {
         {/* 選択したファイルプレビュー */}
         {selectedFile && (
           <div className={styles.filePreview}>
-            <div className={styles.fileIcon}>📎</div>
+            <div className={styles.fileIcon}>FILE</div>
             <div className={styles.fileInfo}>
               <span className={styles.fileName}>{selectedFile.name}</span>
               <span className={styles.fileSize}>
@@ -253,10 +253,10 @@ function HomeworkDetailPage({ homeworkId, currentUser, onBack }) {
         {!showCamera && !capturedImage && (
           <div className={styles.uploadOptions}>
             <button className={styles.cameraButton} onClick={startCamera}>
-              📷 カメラで撮影
+              カメラで撮影
             </button>
             <button className={styles.fileButton} onClick={openFileDialog}>
-              📁 ファイルを選択
+              ファイルを選択
             </button>
             <input
               type="file"
@@ -286,7 +286,7 @@ function HomeworkDetailPage({ homeworkId, currentUser, onBack }) {
           onClick={handleSubmit}
           disabled={isSubmitting || (!capturedImage && !selectedFile)}
         >
-          {isSubmitting ? '提出中...' : '✅ 提出する'}
+          {isSubmitting ? '提出中...' : '提出する'}
         </button>
       </div>
 

@@ -1,6 +1,6 @@
 import styles from './UserDropdown.module.css';
 
-// ★ 1. Props に onLogoutClick があるか
+// 1. Props に onLogoutClick があるか
 function UserDropdown({ onProfileClick, onLogoutClick, currentUser }) {
   return (
     <div className={styles.dropdownContainer}>
@@ -22,7 +22,7 @@ function UserDropdown({ onProfileClick, onLogoutClick, currentUser }) {
         </li>
         <li className={styles.menuItemSeparator}></li>
         
-        {/* ★ 2. ここの onClick が正しく設定されているか */}
+        {/* 2. ここの onClick が正しく設定されているか */}
         <li 
           className={`${styles.menuItem} ${styles.logout}`}
           onClick={onLogoutClick} 

@@ -354,7 +354,7 @@ function RecordingPage({ selectedClass }) {
       });
       
       setUploadStatus('完了！');
-      alert('✅ アップロードが完了しました！');
+      alert('アップロードが完了しました');
       
       setRecordedBlob(null);
       setRecordingTime(0);
@@ -366,7 +366,7 @@ function RecordingPage({ selectedClass }) {
       
     } catch (error) {
       console.error('アップロードエラー:', error);
-      alert('❌ アップロードに失敗しました: ' + error.message);
+      alert('アップロードに失敗しました: ' + error.message);
     } finally {
       setIsUploading(false);
       setUploadStatus('');
@@ -388,14 +388,14 @@ function RecordingPage({ selectedClass }) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2 className={styles.pageTitle}>🎥 授業を録画</h2>
+          <h2 className={styles.pageTitle}>授業を録画</h2>
           {selectedClass && <span className={styles.classLabel}>{selectedClass}</span>}
         </div>
 
         {ASSEMBLYAI_API_KEY ? (
-          <div className={styles.apiReady}>✅ 文字起こし対応（全ブラウザOK）</div>
+          <div className={styles.apiReady}>文字起こし対応（全ブラウザOK）</div>
         ) : (
-          <div className={styles.apiNotReady}>⚠️ 文字起こし未設定</div>
+          <div className={styles.apiNotReady}>文字起こし未設定</div>
         )}
         
         <div className={styles.cameraSection}>
@@ -429,10 +429,10 @@ function RecordingPage({ selectedClass }) {
             ) : (
               <>
                 <button onClick={togglePause} className={styles.pauseBtn}>
-                  {isPaused ? '▶️ 再開' : '⏸️ 一時停止'}
+                  {isPaused ? '再開' : '一時停止'}
                 </button>
                 <button onClick={stopRecording} className={styles.stopBtn}>
-                  ⏹️ 録画終了
+                  録画終了
                 </button>
               </>
             )}
@@ -446,7 +446,7 @@ function RecordingPage({ selectedClass }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.pageTitle}>📤 録画をアップロード</h2>
+        <h2 className={styles.pageTitle}>録画をアップロード</h2>
       </div>
 
       <div className={styles.uploadLayout}>
@@ -472,7 +472,7 @@ function RecordingPage({ selectedClass }) {
           </div>
           
           <button onClick={cancelRecording} className={styles.retakeBtn}>
-            🔄 撮り直す
+            撮り直す
           </button>
         </div>
 
@@ -519,7 +519,7 @@ function RecordingPage({ selectedClass }) {
 
             {ASSEMBLYAI_API_KEY && (
               <div className={styles.transcriptNote}>
-                💡 アップロード後、自動で文字起こしされます（約1〜3分）
+                アップロード後、自動で文字起こしされます（約1〜3分）
               </div>
             )}
             
@@ -528,7 +528,7 @@ function RecordingPage({ selectedClass }) {
               className={styles.uploadBtn}
               disabled={!title.trim()}
             >
-              📤 アップロードする
+              アップロードする
             </button>
           </div>
         </div>
@@ -556,7 +556,7 @@ function RecordingPage({ selectedClass }) {
             )}
             
             {isTranscribing && (
-              <p className={styles.transcribingText}>🎤 {transcriptionProgress}</p>
+              <p className={styles.transcribingText}>{transcriptionProgress}</p>
             )}
           </div>
         </div>

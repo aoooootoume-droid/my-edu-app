@@ -1,0 +1,108 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ========================================
+    // ヘルパー関数
+    // ========================================
+
+    // ログイン済みかどうか
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ファイルサイズ制限（10MB）
+    function isValidSize() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // 画像ファイルかどうか
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // PDFファイルかどうか
+    function isPdf() {
+      return request.resource.contentType == 'application/pdf';
+    }
+
+    // 許可されたファイル形式かどうか
+    function isAllowedType() {
+      return isImage() || isPdf() ||
+        request.resource.contentType == 'application/msword' ||
+        request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+        request.resource.contentType == 'application/vnd.ms-excel' ||
+        request.resource.contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        request.resource.contentType == 'application/vnd.ms-powerpoint' ||
+        request.resource.contentType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+        request.resource.contentType == 'text/plain' ||
+        request.resource.contentType == 'video/mp4' ||
+        request.resource.contentType == 'video/quicktime' ||
+        request.resource.contentType == 'audio/mpeg' ||
+        request.resource.contentType == 'audio/mp4';
+    }
+
+    // ========================================
+    // フォルダ・プリント用ファイル
+    // ========================================
+    match /folders/{allPaths=**} {
+      // 認証済みユーザーは読み取り可能
+      allow read: if isAuthenticated();
+      // 認証済みユーザーはアップロード可能（サイズ・形式制限あり）
+      allow write: if isAuthenticated() && isValidSize() && isAllowedType();
+    }
+
+    match /prints/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isValidSize() && isAllowedType();
+    }
+
+    // ========================================
+    // 宿題提出用ファイル
+    // ========================================
+    match /submissions/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isValidSize() && isAllowedType();
+    }
+
+    // ========================================
+    // グループ共有ファイル
+    // ========================================
+    match /groups/{groupId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isValidSize() && isAllowedType();
+    }
+
+    // ========================================
+    // ユーザープロフィール画像
+    // ========================================
+    match /users/{userId}/profile/{fileName} {
+      // 自分のプロフィール画像のみ書き込み可能
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() &&
+        request.auth.uid == userId &&
+        isImage() &&
+        request.resource.size < 5 * 1024 * 1024; // 5MB制限
+    }
+
+    // ========================================
+    // 授業録画用ファイル
+    // ========================================
+    match /recordings/{allPaths=**} {
+      allow read: if isAuthenticated();
+      // 動画は大きいので50MB制限
+      allow write: if isAuthenticated() &&
+        request.resource.size < 50 * 1024 * 1024 &&
+        (request.resource.contentType.matches('video/.*') ||
+         request.resource.contentType.matches('audio/.*'));
+    }
+
+    // ========================================
+    // その他のファイル（デフォルト拒否）
+    // ========================================
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

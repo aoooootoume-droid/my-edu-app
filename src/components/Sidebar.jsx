@@ -1,36 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './Sidebar.module.css';
 import { db } from '../firebase/config';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
-function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, onClassChange, currentUser }) {
+function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, onClassChange, currentUser, subjects = [] }) {
   
   // 教師かどうか判定
   const isTeacher = currentUser?.role === 'teacher';
+
+  // 塾かどうか判定
+  const isJuku = currentUser?.organizationType === 'juku';
   
   // Firebaseから取得するデータ
   const [classes, setClasses] = useState([]);
-  const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // クラス選択の状態管理
   const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedGrade, setSelectedGrade] = useState(null); // null = 全学年
   
-  // Firebaseからクラスと教科を取得
+  // Firebaseからクラスを取得
   useEffect(() => {
     const fetchData = async () => {
       if (!currentUser?.schoolCode) {
         setLoading(false);
         return;
       }
-      
+
       try {
-        // クラス取得
-        const classesQuery = query(
-          collection(db, 'classes'), 
-          where('schoolCode', '==', currentUser.schoolCode)
+        // クラス取得（schools/{schoolCode}/classes サブコレクション）
+        const classesSnap = await getDocs(
+          collection(db, 'schools', currentUser.schoolCode, 'classes')
         );
-        const classesSnap = await getDocs(classesQuery);
         const classesList = classesSnap.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
@@ -41,27 +42,14 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
           return a.className.localeCompare(b.className);
         });
         setClasses(classesList);
-        
-        // 教科取得
-        const subjectsQuery = query(
-          collection(db, 'subjects'), 
-          where('schoolCode', '==', currentUser.schoolCode)
-        );
-        const subjectsSnap = await getDocs(subjectsQuery);
-        const subjectsList = subjectsSnap.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        subjectsList.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
-        setSubjects(subjectsList);
-        
+
       } catch (err) {
         console.error('サイドバーデータ取得エラー:', err);
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [currentUser?.schoolCode]);
   
@@ -69,30 +57,45 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
   useEffect(() => {
     if (!isTeacher && currentUser?.className) {
       setSelectedClass(currentUser.className);
+      setSelectedGrade(currentUser.grade ?? null);
       if (onClassChange) {
         onClassChange(currentUser.className);
       }
     }
-  }, [isTeacher, currentUser?.className]);
+  }, [isTeacher, currentUser?.className, currentUser?.grade]);
   
   // クラス選択時の処理（メニューは閉じない）
   const handleClassSelect = (cls) => {
     setSelectedClass(cls.displayName);
+    // 全学年の場合はgradeをnull、それ以外はclsのgradeをセット
+    setSelectedGrade(cls.id === 'all' ? null : (cls.grade ?? null));
     if (onClassChange) {
       onClassChange(cls.displayName);
     }
     // onNavClickは呼ばない（メニューを閉じないようにするため）
   };
-  
+
   // 戻るボタンの処理（教師のみ使用、メニューは閉じない）
   const handleBackToClassList = () => {
     setSelectedClass(null);
+    setSelectedGrade(null);
     if (onClassChange) {
       onClassChange(null);
     }
     // onNavClickは呼ばない（メニューを閉じないようにするため）
   };
   
+  // 学年でフィルタリングした教科一覧
+  // selectedGrade が null（全学年）の場合は全教科
+  // grades が空配列または未設定の場合は全学年で表示
+  const filteredSubjects = selectedGrade != null
+    ? subjects.filter(s => {
+        const grades = s.grades;
+        if (!grades || grades.length === 0) return true;
+        return grades.includes(selectedGrade);
+      })
+    : subjects;
+
   // ローディング中
   if (loading) {
     return (
@@ -104,7 +107,17 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
   
   return (
     <div className={styles.sidebarContainer}>
-      
+
+      {/* ===== 組織名ヘッダー ===== */}
+      {currentUser?.schoolName && (
+        <div className={styles.orgHeader}>
+          <span className={styles.orgType}>
+            {isJuku ? '塾' : '学校'}
+          </span>
+          <span className={styles.orgName}>{currentUser.schoolName}</span>
+        </div>
+      )}
+
       {/* ===== レイヤー1: クラス選択画面（教師のみ） ===== */}
       {isTeacher && !selectedClass && (
         <div className={styles.classSelectLayer}>
@@ -115,7 +128,7 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
             className={`${styles.classButton} ${styles.homeButton}`}
             onClick={() => handleClassSelect({ displayName: '全学年', id: 'all' })}
           >
-            🏠 ホーム（全学年）
+            ホーム（全学年）
           </button>
 
           <div className={styles.classDivider}></div>
@@ -184,19 +197,15 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
               カレンダー
             </button>
             
-            <button 
-              className={activeViewType === 'camera' ? styles.active : ''}
-              onClick={() => onNavClick('camera')}
-            >
-              カメラ
-            </button>
-
-            <button 
-              className={activeViewType === 'groups' ? styles.active : ''}
-              onClick={() => onNavClick('groups')}
-            >
-              グループ
-            </button>
+            {/* グループは塾以外で表示 */}
+            {!isJuku && (
+              <button
+                className={activeViewType === 'groups' ? styles.active : ''}
+                onClick={() => onNavClick('groups')}
+              >
+                グループ
+              </button>
+            )}
 
             <button 
               className={activeViewType === 'submissions' ? styles.active : ''}
@@ -227,13 +236,13 @@ function Sidebar({ activeViewType, activeSubject, onNavClick, onSubjectClick, on
           <div className={styles.subjectSection}>
             <h3 className={styles.subjectTitle}>教科一覧</h3>
             
-            {subjects.length === 0 ? (
+            {filteredSubjects.length === 0 ? (
               <div className={styles.emptyMessage}>
                 教科が登録されていません
               </div>
             ) : (
               <div className={styles.subjectList}>
-                {subjects.map(subject => (
+                {filteredSubjects.map(subject => (
                   <button
                     key={subject.id}
                     className={activeSubject === subject.name ? styles.activeSubject : ''}

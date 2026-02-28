@@ -7,7 +7,7 @@
   font-weight: 600;
   margin-bottom: 20px;
   padding-left: 5px;
-  color: #333;
+  color: var(--color-text-secondary);
 }
 
 /* カードを横並びにするグリッドレイアウト */
@@ -20,7 +20,7 @@
 
 .noDataMessage {
   font-size: 16px;
-  color: #555;
+  color: var(--color-text-muted);
   text-align: center;
   margin-top: 20px;
 }

@@ -1,9 +1,9 @@
 /* 基本のカードスタイル */
 .cardBase {
-  background-color: #ffffff;
+  background-color: var(--color-bg);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
   overflow: hidden;
   text-align: left;
   cursor: pointer;
@@ -28,7 +28,7 @@
 
 .thumbnail {
   width: 100%;
-  background-color: #f3f4f6;
+  background-color: var(--color-bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +52,7 @@
 .title {
   font-size: 14px;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text);
   margin: 0 0 4px 0;
   /* 2行まで表示して、...で省略 */
   display: -webkit-box;
@@ -66,7 +66,7 @@
 .subject,
 .date {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--color-text-muted);
   display: block;
 }
 
@@ -94,13 +94,13 @@
   align-items: center;
   justify-content: center;
   margin-right: 12px;
-  background-color: #f3f4f6;
-  color: #4b5563;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
 }
-/* 色分け (仮) */
-.infoCard[data-type="homework"] .infoIcon { background-color: #fee2e2; color: #b91c1c; }
-.infoCard[data-type="qna"] .infoIcon { background-color: #dbeafe; color: #1d4ed8; }
-.infoCard[data-type="live"] .infoIcon { background-color: #fef3c7; color: #b45309; }
+/* 色分け (モノクロ化) */
+.infoCard[data-type="homework"] .infoIcon { background-color: var(--color-border); color: var(--color-text-secondary); }
+.infoCard[data-type="qna"] .infoIcon { background-color: var(--color-border); color: var(--color-text-secondary); }
+.infoCard[data-type="live"] .infoIcon { background-color: var(--color-border); color: var(--color-text-secondary); }
 
 
 .infoContent {
@@ -133,12 +133,12 @@
 
 .statusPending,
 .statusUnanswered {
-  background-color: #fef2f2;
-  color: #dc2626;
+  background-color: var(--color-border);
+  color: var(--color-text-secondary);
 }
 
 .statusSubmitted,
 .statusAnswered {
-  background-color: #f0fdf4;
-  color: #16a34a;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
 }

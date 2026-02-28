@@ -9,10 +9,10 @@
 
 .createButton {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -23,15 +23,15 @@
 
 .createButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* 作成フォーム */
 .createForm {
-  background: white;
+  background: var(--color-bg);
   padding: 2rem;
   border-radius: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   margin-bottom: 2rem;
   animation: slideDown 0.3s ease;
 }
@@ -49,7 +49,7 @@
 
 .formTitle {
   margin: 0 0 1.5rem 0;
-  color: #2d3748;
+  color: var(--color-text);
   font-size: 1.25rem;
 }
 
@@ -61,7 +61,7 @@
 .formGroup label {
   display: block;
   font-weight: 600;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
@@ -71,7 +71,7 @@
 .select {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s;
@@ -82,7 +82,8 @@
 .textarea:focus,
 .select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .textarea {
@@ -99,7 +100,7 @@
 .checkboxGroup {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: #f7fafc;
+  background: var(--color-bg-secondary);
   border-radius: 8px;
 }
 
@@ -109,7 +110,7 @@
   gap: 0.75rem;
   cursor: pointer;
   font-weight: 500;
-  color: #2d3748;
+  color: var(--color-text);
 }
 
 .checkbox {
@@ -120,8 +121,8 @@
 
 .errorMessage {
   padding: 1rem;
-  background: #fed7d7;
-  color: #c53030;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
   border-radius: 8px;
   font-weight: 600;
   text-align: center;
@@ -131,10 +132,10 @@
 .submitButton {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -143,7 +144,7 @@
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .submitButton:disabled {
@@ -160,17 +161,17 @@
 }
 
 .noticeCard {
-  background: white;
+  background: var(--color-bg);
   padding: 1.5rem;
   border-radius: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .noticeCard:hover {
-  border-color: #667eea;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
@@ -184,51 +185,51 @@
 .noticeBadge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 700;
 }
 
 .noticeImportant {
-  background: #fed7d7;
-  color: #c53030;
+  background: var(--color-text-secondary);
+  color: #ffffff;
 }
 
 .noticeNormal {
-  background: #e6fffa;
-  color: #234e52;
+  background: var(--color-border);
+  color: var(--color-text);
 }
 
 .noticeInfo {
-  background: #bee3f8;
-  color: #2c5282;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
 }
 
 .noticeDate {
-  color: #718096;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
 .noticeTitle {
   margin: 0 0 0.5rem 0;
-  color: #2d3748;
+  color: var(--color-text);
   font-size: 1.1rem;
   font-weight: 700;
 }
 
 .noticeContent {
   margin: 0;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
 .calendarBadge {
   margin-top: 0.75rem;
   padding: 0.5rem 0.75rem;
-  background: #faf089;
-  color: #744210;
-  border-radius: 6px;
+  background: var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
   display: inline-block;
@@ -237,7 +238,7 @@
 .noData {
   text-align: center;
   padding: 4rem 2rem;
-  color: #a0aec0;
+  color: var(--color-text-muted);
   font-size: 1.1rem;
 }
 

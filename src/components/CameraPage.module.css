@@ -28,9 +28,9 @@
   position: relative;
   width: 100%;
   padding-top: 75%; /* アスペクト比 4:3 */
-  border: 2px dashed #ccc;
+  border: 2px dashed var(--color-border);
   border-radius: 12px;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-secondary);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -52,7 +52,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  color: #777;
+  color: var(--color-text-muted);
 }
 .imagePlaceholder span {
   font-size: 50px;
@@ -75,11 +75,11 @@
 
 /* --- 情報入力欄 --- */
 .infoForm {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 25px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .inputGroup {
@@ -90,16 +90,16 @@
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 .inputGroup input,
 .inputGroup select {
   width: 100%;
   padding: 12px 15px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   font-family: inherit;
 }
 
@@ -108,18 +108,18 @@
   padding: 12px 15px;
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
-  background-color: #2563eb;
-  border: none;
+  color: var(--color-primary);
+  background-color: var(--color-bg);
+  border: 2px solid var(--color-primary);
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-top: 10px;
 }
 .saveButton:hover {
-  background-color: #1d4ed8;
+  background-color: var(--color-primary-light);
 }
 .saveButton:disabled {
-  background-color: #ccc;
+  background-color: var(--color-border);
   cursor: not-allowed;
 }

@@ -71,7 +71,7 @@ function NoticePage({ filterSubject, notices, onCardClick, currentUser, selected
           showInCalendar: false
         });
         setShowCreateForm(false);
-        alert('✅ お知らせを作成しました！');
+        alert('お知らせを作成しました！');
       } else {
         setSubmitError(result.error || 'お知らせの作成に失敗しました');
       }
@@ -111,7 +111,7 @@ function NoticePage({ filterSubject, notices, onCardClick, currentUser, selected
             className={styles.createButton}
             onClick={() => setShowCreateForm(!showCreateForm)}
           >
-            {showCreateForm ? '✕ キャンセル' : '➕ 新規お知らせを作成'}
+            {showCreateForm ? 'キャンセル' : '新規お知らせを作成'}
           </button>
         </div>
       )}
@@ -119,7 +119,7 @@ function NoticePage({ filterSubject, notices, onCardClick, currentUser, selected
       {/* 作成フォーム */}
       {isTeacher && showCreateForm && (
         <div className={styles.createForm}>
-          <h3 className={styles.formTitle}>📢 新しいお知らせを作成</h3>
+          <h3 className={styles.formTitle}>新しいお知らせを作成</h3>
           
           <form onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
@@ -194,7 +194,7 @@ function NoticePage({ filterSubject, notices, onCardClick, currentUser, selected
 
             {submitError && (
               <div className={styles.errorMessage}>
-                ⚠️ {submitError}
+                {submitError}
               </div>
             )}
 
@@ -232,14 +232,14 @@ function NoticePage({ filterSubject, notices, onCardClick, currentUser, selected
               </p>
               {notice.showInCalendar && (
                 <div className={styles.calendarBadge}>
-                  📅 カレンダー表示
+                  カレンダー表示
                 </div>
               )}
             </div>
           ))
         ) : (
           <div className={styles.noData}>
-            <p>📭 お知らせはまだありません</p>
+            <p>お知らせはまだありません</p>
           </div>
         )}
       </div>

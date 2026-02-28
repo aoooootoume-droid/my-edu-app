@@ -52,12 +52,12 @@ function NotificationDropdown({ notifications, onNotificationClick, onMarkAllAsR
   
   const getNotificationIcon = (type) => {
     switch(type) {
-      case 'archive': return '📁';
-      case 'live': return '🔴';
-      case 'qna': return '💬';
-      case 'homework': return '📝';
-      case 'notice': return '📢';
-      default: return '📌';
+      case 'archive': return 'A';
+      case 'live': return 'L';
+      case 'qna': return 'Q';
+      case 'homework': return 'H';
+      case 'notice': return 'N';
+      default: return '-';
     }
   };
   
@@ -116,7 +116,7 @@ function NotificationDropdown({ notifications, onNotificationClick, onMarkAllAsR
           ))
         ) : (
           <div className={styles.emptyState}>
-            <span className={styles.emptyIcon}>🔔</span>
+            <span className={styles.emptyIcon}>-</span>
             <p>通知はありません</p>
           </div>
         )}

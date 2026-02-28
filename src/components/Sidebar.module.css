@@ -1,458 +1,420 @@
 /* ======================================
-   Sidebar.module.css
-   モダン & ミニマルデザイン
+   Sidebar
 ====================================== */
-
 .sidebarContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(180deg, #fafbfc 0%, #f5f7fa 100%);
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
-  overflow-y: auto;
+  background: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+  overflow: hidden;
 }
 
 /* ===================================
-   レイヤー1: クラス選択画面
-   =================================== */
+   Org Header
+=================================== */
+.orgHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  flex-shrink: 0;
+}
+
+.orgType {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-primary-medium);
+  padding: 2px 7px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.orgName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===================================
+   Layer 1: Class Select
+=================================== */
 .classSelectLayer {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 28px 20px;
+  flex: 1;
+  min-height: 0;
+  padding: 24px 16px;
+  overflow-y: auto;
 }
 
 .layerTitle {
   font-size: 11px;
   font-weight: 600;
-  color: #94a3b8;
-  margin: 0 0 20px 4px;
+  color: var(--color-text-muted);
+  margin: 0 0 16px 8px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
 }
 
 .classList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .classButton {
-  padding: 16px 18px;
+  padding: 12px 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: transparent;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #475569;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  color: var(--color-text-secondary);
   position: relative;
-  overflow: hidden;
-}
-
-.classButton::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 3px;
 }
 
 .classButton:hover {
-  color: #1e293b;
-  background: rgba(99, 102, 241, 0.04);
-}
-
-.classButton:hover::before {
-  width: 100%;
+  color: var(--color-text);
+  background: var(--color-bg-tertiary);
 }
 
 .classButton::after {
-  content: '→';
+  content: '';
   position: absolute;
-  right: 18px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
-  font-weight: 400;
-  color: #cbd5e1;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--color-text-muted);
+  transition: opacity 0.15s ease;
   opacity: 0;
 }
 
 .classButton:hover::after {
-  color: #6366f1;
-  transform: translateY(-50%) translateX(4px);
+  color: var(--color-text);
   opacity: 1;
 }
 
-/* ホームボタン（全学年） */
+/* Home (All grades) */
 .homeButton {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  border: none;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 600;
 }
 
 .homeButton:hover {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
-  border-color: rgba(99, 102, 241, 0.3);
+  background: var(--color-primary-hover);
+  color: #ffffff;
 }
 
-.homeButton::after {
-  content: none;
-}
-
-/* クラス一覧との区切り線 */
 .classDivider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.08), transparent);
-  margin: 16px 0;
+  background: var(--color-border);
+  margin: 12px 0;
 }
 
 /* ===================================
-   レイヤー2: メインメニュー
-   =================================== */
+   Layer 2: Main Menu
+=================================== */
 .menuLayer {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 24px 16px;
+  flex: 1;
+  min-height: 0;
+  padding: 20px 12px;
+  overflow-y: auto;
 }
 
 .menuHeader {
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .classHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .backButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 12px;
-  background: #f1f5f9;
-  color: #64748b;
-  font-size: 14px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s ease;
   flex-shrink: 0;
 }
 
 .backButton:hover {
-  background: #e2e8f0;
-  color: #1e293b;
-  transform: translateX(-2px);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
 }
 
 .selectedClassBadge {
   display: flex;
   align-items: center;
   flex: 1;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  border-radius: 12px;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
-  transition: all 0.2s ease;
+  padding: 10px 14px;
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-primary-medium);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-hover);
+  font-weight: 600;
+  font-size: 13px;
 }
 
-.selectedClassBadge:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
-}
-
-/* メインメニュー */
+/* Nav */
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .nav button {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: 10px;
+  padding: 10px 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: transparent;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #64748b;
-  position: relative;
-  overflow: hidden;
-}
-
-.nav button::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 3px;
+  font-weight: 400;
+  transition: all 0.15s ease;
+  color: var(--color-text-secondary);
 }
 
 .nav button:hover {
-  color: #1e293b;
-  background: rgba(99, 102, 241, 0.04);
-}
-
-.nav button:hover::before {
-  width: 100%;
+  color: var(--color-text);
+  background: var(--color-bg-tertiary);
 }
 
 .nav button.active {
-  color: #1e293b;
+  color: var(--color-primary);
   font-weight: 600;
-  background: rgba(99, 102, 241, 0.08);
-}
-
-.nav button.active::before {
-  width: 100%;
+  background: var(--color-primary-light);
 }
 
 /* ===================================
-   教科一覧セクション
-   =================================== */
+   Subject Section
+=================================== */
 .subjectSection {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
 }
 
 .subjectTitle {
   font-size: 11px;
   font-weight: 600;
-  color: #94a3b8;
-  margin: 0 0 14px 4px;
+  color: var(--color-text-muted);
+  margin: 0 0 10px 8px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
 }
 
 .subjectList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .subjectList button {
-  padding: 12px 14px;
+  padding: 10px 12px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: transparent;
   text-align: left;
   cursor: pointer;
   font-size: 13px;
-  font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #64748b;
+  font-weight: 400;
+  transition: all 0.15s ease;
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
-  gap: 12px;
-  position: relative;
-}
-
-.subjectList button::before {
-  content: '';
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: currentColor;
-  flex-shrink: 0;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.4;
+  gap: 10px;
 }
 
 .subjectList button:hover {
-  background: rgba(99, 102, 241, 0.04);
-  color: #1e293b;
-}
-
-.subjectList button:hover::before {
-  opacity: 0.8;
-  transform: scale(1.15);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
 }
 
 .subjectList button.activeSubject {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-  color: #4f46e5;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
-.subjectList button.activeSubject::before {
-  opacity: 1;
-  transform: scale(1.2);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
 /* ===================================
-   スクロールバー
-   =================================== */
-.sidebarContainer::-webkit-scrollbar {
-  width: 5px;
+   Scrollbar
+=================================== */
+.sidebarContainer::-webkit-scrollbar,
+.classSelectLayer::-webkit-scrollbar,
+.menuLayer::-webkit-scrollbar {
+  width: 4px;
 }
 
-.sidebarContainer::-webkit-scrollbar-track {
+.sidebarContainer::-webkit-scrollbar-track,
+.classSelectLayer::-webkit-scrollbar-track,
+.menuLayer::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.sidebarContainer::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
+.sidebarContainer::-webkit-scrollbar-thumb,
+.classSelectLayer::-webkit-scrollbar-thumb,
+.menuLayer::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
 }
 
-.sidebarContainer::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+.sidebarContainer::-webkit-scrollbar-thumb:hover,
+.classSelectLayer::-webkit-scrollbar-thumb:hover,
+.menuLayer::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }
 
 /* ===================================
-   レスポンシブ対応
-   =================================== */
-
+   Responsive
+=================================== */
 @media (max-width: 1024px) {
   .classSelectLayer,
   .menuLayer {
-    padding: 20px 14px;
+    padding: 16px 12px;
   }
 
   .classButton {
-    padding: 14px 16px;
+    padding: 10px 12px;
     font-size: 13px;
   }
 
   .nav button {
-    padding: 12px 14px;
+    padding: 9px 12px;
     font-size: 13px;
   }
 
   .subjectList button {
-    padding: 10px 12px;
+    padding: 8px 10px;
     font-size: 12px;
   }
 }
 
 @media (max-width: 768px) {
-  /* オーバーレイメニュー用にスタイル調整 */
   .sidebarContainer {
     flex-direction: column;
     height: auto;
     min-height: 100%;
     overflow-y: visible;
     border-right: none;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    background: var(--color-bg);
     padding: 0;
     padding-bottom: 80px;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
   }
 
   .classSelectLayer {
     display: flex;
     flex-direction: column;
-    padding: 24px 20px;
-    gap: 4px;
+    padding: 20px 16px;
+    gap: 2px;
     height: auto;
   }
 
   .layerTitle {
     display: block;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .classList {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
   }
 
   .classButton {
-    padding: 16px 18px;
+    padding: 14px 16px;
     font-size: 15px;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     background: transparent;
   }
 
   .classButton:active {
-    background: rgba(99, 102, 241, 0.08);
-  }
-
-  .classButton:active::before {
-    width: 100%;
+    background: var(--color-bg-tertiary);
   }
 
   .classButton:hover {
     background: transparent;
   }
 
-  .classButton:hover::before {
-    width: 0;
-  }
-
   .menuLayer {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 16px;
     gap: 0;
     height: auto;
     min-height: 100%;
   }
 
   .menuHeader {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .classHeader {
-    gap: 12px;
+    gap: 10px;
   }
 
   .backButton {
-    width: 44px;
-    height: 44px;
-    font-size: 16px;
-    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
   }
 
   .selectedClassBadge {
-    padding: 14px 18px;
-    font-size: 15px;
-    border-radius: 14px;
+    padding: 12px 16px;
+    font-size: 14px;
   }
 
   .nav {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     margin-top: 0;
   }
 
   .nav button {
-    padding: 16px 18px;
+    padding: 14px 16px;
     font-size: 15px;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     background: transparent;
   }
 
@@ -460,92 +422,80 @@
     background: transparent;
   }
 
-  .nav button:hover::before {
-    width: 0;
-  }
-
   .nav button:active {
-    background: rgba(99, 102, 241, 0.08);
-  }
-
-  .nav button:active::before {
-    width: 100%;
+    background: var(--color-bg-tertiary);
   }
 
   .nav button.active {
-    color: #1e293b;
-    background: rgba(99, 102, 241, 0.08);
-  }
-
-  .nav button.active::before {
-    width: 100%;
+    color: var(--color-primary);
+    background: var(--color-primary-light);
   }
 
   .subjectSection {
     display: block;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
   }
 
   .subjectList button {
-    padding: 14px 16px;
+    padding: 12px 14px;
     font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .classSelectLayer {
-    padding: 20px 16px;
+    padding: 16px 14px;
   }
 
   .classButton {
-    padding: 14px 16px;
+    padding: 12px 14px;
     font-size: 14px;
   }
 
   .menuLayer {
-    padding: 16px;
+    padding: 14px;
   }
 
   .nav button {
-    padding: 14px 16px;
+    padding: 12px 14px;
     font-size: 14px;
   }
 
   .selectedClassBadge {
-    padding: 12px 14px;
-    font-size: 14px;
+    padding: 10px 12px;
+    font-size: 13px;
   }
 
   .backButton {
-    width: 40px;
-    height: 40px;
-    font-size: 14px;
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
   }
 
   .subjectList button {
-    padding: 12px 14px;
+    padding: 10px 12px;
     font-size: 13px;
   }
 }
 
 /* ===================================
-   ユーティリティ
-   =================================== */
+   Utility
+=================================== */
 .loading {
   padding: 3rem 2rem;
   text-align: center;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 14px;
 }
 
 .emptyMessage {
   padding: 1.5rem;
   text-align: center;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 13px;
-  background: rgba(148, 163, 184, 0.05);
-  border-radius: 10px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
   margin-top: 8px;
 }

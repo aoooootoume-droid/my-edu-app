@@ -8,7 +8,7 @@
 .error {
   text-align: center;
   padding: 60px 20px;
-  color: #888;
+  color: var(--color-text-muted);
   font-size: 16px;
 }
 
@@ -22,39 +22,39 @@
 
 .backButton {
   padding: 8px 16px;
-  background: #f3f4f6;
+  background: var(--color-bg-secondary);
   border: none;
   border-radius: 8px;
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-muted);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .backButton:hover {
-  background: #e5e7eb;
+  background: var(--color-border);
 }
 
 .title {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
 /* 宿題情報 */
 .homeworkInfo {
-  background: white;
+  background: var(--color-bg);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .homeworkTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-secondary);
   margin: 0 0 12px 0;
 }
 
@@ -66,43 +66,44 @@
 
 .subject {
   padding: 4px 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 6px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 600;
 }
 
 .deadline {
   padding: 4px 12px;
-  background: #fef2f2;
-  color: #ef4444;
-  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 600;
 }
 
 .description {
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-muted);
   line-height: 1.6;
   margin: 0;
   padding-top: 12px;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid var(--color-bg-secondary);
 }
 
 /* 提出セクション */
 .submitSection {
-  background: white;
+  background: var(--color-bg);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .sectionTitle {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-secondary);
   margin: 0 0 16px 0;
 }
 
@@ -126,10 +127,10 @@
 .captureButton {
   flex: 1;
   padding: 14px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -138,15 +139,15 @@
 
 .captureButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .cancelButton {
   padding: 14px 24px;
-  background: #f3f4f6;
-  color: #666;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -160,15 +161,15 @@
 .previewImage {
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .retakeButton {
   width: 100%;
   padding: 12px;
   margin-top: 12px;
-  background: #f3f4f6;
-  color: #666;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -178,7 +179,7 @@
 }
 
 .retakeButton:hover {
-  background: #e5e7eb;
+  background: var(--color-border);
 }
 
 /* ファイルプレビュー */
@@ -187,8 +188,8 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: #f9fafb;
-  border-radius: 10px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
   margin-bottom: 16px;
 }
 
@@ -206,7 +207,7 @@
 .fileName {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -214,7 +215,7 @@
 
 .fileSize {
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-muted);
 }
 
 .removeFile {
@@ -222,12 +223,12 @@
   background: none;
   border: none;
   font-size: 16px;
-  color: #999;
+  color: var(--color-text-muted);
   cursor: pointer;
 }
 
 .removeFile:hover {
-  color: #ef4444;
+  color: var(--color-text-secondary);
 }
 
 /* アップロードオプション */
@@ -241,21 +242,21 @@
 .fileButton {
   flex: 1;
   padding: 16px;
-  border: 2px dashed #d1d5db;
+  border: 2px dashed var(--color-border);
   border-radius: 12px;
-  background: #f9fafb;
+  background: var(--color-bg-secondary);
   font-size: 14px;
   font-weight: 600;
-  color: #555;
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .cameraButton:hover,
 .fileButton:hover {
-  border-color: #667eea;
-  background: #f3f4ff;
-  color: #667eea;
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 /* コメント */
@@ -267,15 +268,15 @@
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: #555;
+  color: var(--color-text-secondary);
   margin-bottom: 8px;
 }
 
 .commentInput {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-size: 14px;
   font-family: inherit;
   resize: none;
@@ -285,16 +286,17 @@
 
 .commentInput:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 /* 提出ボタン */
 .submitButton {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 2px solid var(--color-primary);
   border-radius: 12px;
   font-size: 16px;
   font-weight: 700;
@@ -304,7 +306,7 @@
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .submitButton:disabled {

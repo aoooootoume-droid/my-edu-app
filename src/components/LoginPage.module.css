@@ -3,17 +3,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f7fa;
+  background: var(--color-bg-secondary);
   padding: 20px;
 }
 
 .loginCard {
-  background: white;
-  border-radius: 24px;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
   padding: 40px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
 }
 
 .logoSection {
@@ -25,40 +26,42 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
   margin-bottom: 16px;
+  color: #ffffff;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 8px 0;
+  color: var(--color-text);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
 }
 
 .subtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
-/* ユーザー情報表示 */
+/* User Info */
 .userInfo {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
-  background: #f9fafb;
-  border-radius: 12px;
+  padding: 14px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
   margin-bottom: 24px;
 }
 
 .userAvatar {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -66,21 +69,21 @@
 .userDetails {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .userName {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text);
 }
 
 .userEmail {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
-/* フォーム */
+/* Form */
 .formContainer {
   display: flex;
   flex-direction: column;
@@ -90,13 +93,13 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .inputGroup label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-text);
 }
 
 .inputWrapper {
@@ -109,35 +112,38 @@
   position: absolute;
   left: 14px;
   pointer-events: none;
+  color: var(--color-text-muted);
 }
 
 .inputWrapper input {
   width: 100%;
-  padding: 14px 14px 14px 44px;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  padding: 12px 14px 12px 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-size: 15px;
   transition: all 0.2s;
   outline: none;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .inputWrapper input:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .inputWrapper input::placeholder {
-  color: #9ca3af;
+  color: var(--color-text-muted);
 }
 
 .inputError {
   border-color: #ef4444 !important;
 }
 
-/* 役割選択 */
+/* Role Selector */
 .roleSelector {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 .roleButton {
@@ -146,41 +152,43 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  background: white;
-  color: #6b7280;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .roleButton:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: var(--color-primary-medium);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
 }
 
 .roleActive {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .roleActive:hover {
-  color: white;
+  color: var(--color-primary);
 }
 
-/* エラー表示 */
+/* Error */
 .errorAlert {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px;
+  padding: 12px 14px;
   background: #fef2f2;
   border: 1px solid #fecaca;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: #dc2626;
   font-size: 14px;
 }
@@ -189,62 +197,62 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #dc2626;
+  color: #ef4444;
   font-size: 13px;
   margin-top: 4px;
 }
 
-/* ボタン */
+/* Button */
 .submitButton {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.submitButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-}
-
-.submitButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.backButton {
-  width: 100%;
   padding: 14px;
-  background: transparent;
-  color: #6b7280;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 14px;
+  background: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.backButton:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+.submitButton:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Googleボタン */
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.backButton {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.backButton:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-text-muted);
+}
+
+/* Google Button */
 .socialLogin {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   margin-top: 8px;
 }
 
@@ -254,24 +262,24 @@
   justify-content: center;
   gap: 12px;
   width: 100%;
-  padding: 14px;
-  background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #374151;
+  padding: 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .socialButton:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-text-muted);
 }
 
 .socialButton:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -281,28 +289,28 @@
   justify-content: center;
   gap: 12px;
   width: 100%;
-  padding: 16px;
-  background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #374151;
+  padding: 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .googleButton:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-text-muted);
 }
 
 .googleButton:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* 区切り線 */
+/* Divider */
 .divider {
   display: flex;
   align-items: center;
@@ -314,16 +322,17 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #e5e7eb;
+  background: var(--color-border);
 }
 
 .divider span {
   padding: 0 16px;
-  font-size: 13px;
-  color: #9ca3af;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
-/* モード切り替え */
+/* Mode Toggle */
 .toggleMode {
   text-align: center;
   margin-top: 16px;
@@ -332,9 +341,9 @@
 .toggleButton {
   background: none;
   border: none;
-  color: #667eea;
+  color: var(--color-primary);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   padding: 8px;
 }
@@ -343,21 +352,17 @@
   text-decoration: underline;
 }
 
-/* スピナー */
+/* Spinner */
 .spinner {
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* フッター */
+/* Footer */
 .footer {
   display: flex;
   align-items: center;
@@ -365,23 +370,23 @@
   gap: 8px;
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-  color: #9ca3af;
-  font-size: 13px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 12px;
 }
 
 .footer p {
   margin: 0;
 }
 
-/* パスワード強度 */
+/* Password Strength */
 .passwordStrength {
   margin-top: 8px;
 }
 
 .strengthBar {
-  height: 4px;
-  background: #e5e7eb;
+  height: 3px;
+  background: var(--color-bg-tertiary);
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 8px;
@@ -394,7 +399,7 @@
 
 .strengthLabel {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .strengthSuggestions {
@@ -403,11 +408,11 @@
 
 .suggestion {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
-/* パスワード表示切り替え */
+/* Password Toggle */
 .togglePassword {
   position: absolute;
   right: 14px;
@@ -418,11 +423,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-text-muted);
 }
 
-/* レスポンシブ */
-
-/* タブレット */
+/* Responsive */
 @media (max-width: 768px) {
   .loginContainer {
     padding: 16px;
@@ -430,20 +434,19 @@
 
   .loginCard {
     padding: 32px;
-    border-radius: 20px;
+    border-radius: var(--radius-md);
   }
 
   .logoIcon {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 
   .title {
-    font-size: 22px;
+    font-size: 20px;
   }
 }
 
-/* スマートフォン */
 @media (max-width: 480px) {
   .loginContainer {
     min-height: auto;
@@ -454,7 +457,6 @@
 
   .loginCard {
     padding: 24px;
-    border-radius: 16px;
   }
 
   .logoSection {
@@ -462,15 +464,15 @@
   }
 
   .logoIcon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
     margin-bottom: 12px;
   }
 
   .title {
-    font-size: 20px;
-    margin-bottom: 6px;
+    font-size: 18px;
+    margin-bottom: 4px;
   }
 
   .subtitle {
@@ -488,7 +490,7 @@
   }
 
   .userName {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .userEmail {
@@ -500,33 +502,33 @@
   }
 
   .inputGroup label {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .inputWrapper input {
-    padding: 12px 12px 12px 40px;
+    padding: 11px 12px 11px 40px;
     font-size: 14px;
   }
 
   .roleSelector {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .roleButton {
-    padding: 12px;
+    padding: 11px;
     font-size: 13px;
   }
 
   .submitButton {
-    padding: 14px;
-    font-size: 15px;
+    padding: 13px;
+    font-size: 14px;
   }
 
   .socialButton,
   .googleButton {
-    padding: 12px;
-    font-size: 14px;
+    padding: 11px;
+    font-size: 13px;
   }
 
   .divider {
@@ -534,34 +536,33 @@
   }
 
   .divider span {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .errorAlert {
-    padding: 12px;
+    padding: 10px 12px;
     font-size: 13px;
   }
 
   .footer {
     margin-top: 20px;
     padding-top: 20px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .backButton {
-    padding: 12px;
+    padding: 11px;
     font-size: 13px;
   }
 }
 
-/* 小さいスマートフォン */
 @media (max-width: 360px) {
   .loginCard {
     padding: 20px;
   }
 
   .title {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .inputWrapper input {

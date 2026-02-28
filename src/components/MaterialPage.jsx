@@ -101,7 +101,7 @@ function MaterialPage({ filterSubject, searchTerm = '', onCardClick, currentUser
       setFormData({ title: '', description: '' });
       setSelectedFile(null);
       setShowUploadForm(false);
-      alert('✅ 資料をアップロードしました！');
+      alert('資料をアップロードしました！');
     } catch (error) {
       console.error('アップロードエラー:', error);
       alert('アップロードに失敗しました');
@@ -151,14 +151,14 @@ function MaterialPage({ filterSubject, searchTerm = '', onCardClick, currentUser
 
   // ファイルタイプからアイコンを取得
   const getFileIcon = (fileType) => {
-    if (fileType?.includes('pdf')) return '📄';
-    if (fileType?.includes('image')) return '🖼️';
-    if (fileType?.includes('video')) return '🎬';
-    if (fileType?.includes('audio')) return '🎵';
-    if (fileType?.includes('word') || fileType?.includes('document')) return '📝';
-    if (fileType?.includes('sheet') || fileType?.includes('excel')) return '📊';
-    if (fileType?.includes('presentation') || fileType?.includes('powerpoint')) return '📽️';
-    return '📁';
+    if (fileType?.includes('pdf')) return 'PDF';
+    if (fileType?.includes('image')) return 'IMG';
+    if (fileType?.includes('video')) return 'VID';
+    if (fileType?.includes('audio')) return 'AUD';
+    if (fileType?.includes('word') || fileType?.includes('document')) return 'DOC';
+    if (fileType?.includes('sheet') || fileType?.includes('excel')) return 'XLS';
+    if (fileType?.includes('presentation') || fileType?.includes('powerpoint')) return 'PPT';
+    return 'FILE';
   };
 
   return (
@@ -171,7 +171,7 @@ function MaterialPage({ filterSubject, searchTerm = '', onCardClick, currentUser
             className={styles.uploadButton}
             onClick={() => setShowUploadForm(!showUploadForm)}
           >
-            {showUploadForm ? '✕ キャンセル' : '📤 資料をアップロード'}
+            {showUploadForm ? 'キャンセル' : '資料をアップロード'}
           </button>
         </div>
       )}
@@ -179,7 +179,7 @@ function MaterialPage({ filterSubject, searchTerm = '', onCardClick, currentUser
       {/* アップロードフォーム */}
       {isTeacher && showUploadForm && (
         <div className={styles.uploadForm}>
-          <h3 className={styles.formTitle}>📁 資料をアップロード</h3>
+          <h3 className={styles.formTitle}>資料をアップロード</h3>
           
           <form onSubmit={handleUpload}>
             <div className={styles.formGroup}>
@@ -262,14 +262,14 @@ function MaterialPage({ filterSubject, searchTerm = '', onCardClick, currentUser
                   className={styles.deleteButton}
                   onClick={(e) => handleDelete(e, material)}
                 >
-                  🗑️
+                  削除
                 </button>
               )}
             </div>
           ))
         ) : (
           <div className={styles.noData}>
-            <p>📭 資料はまだありません</p>
+            <p>資料はまだありません</p>
           </div>
         )}
       </div>

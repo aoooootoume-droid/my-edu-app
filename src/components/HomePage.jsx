@@ -1,46 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import FolderCard from './FolderCard';
 import VideoDetailModal from './VideoDetailModal';
 import styles from './HomePage.module.css';
-import { mainSubjects } from '../data.js';
-import { seedDatabase, clearDatabase } from '../seedData';
-import { db } from '../firebase/config';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, selectedClass, recordings = [], subjects = [] }) {
 
-function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices, selectedClass }) {
-  
-  const [recordings, setRecordings] = useState([]);
   const [selectedRecording, setSelectedRecording] = useState(null);
   const [initialJumpTime, setInitialJumpTime] = useState(null);
-  
-  // 録画アーカイブをリアルタイムで取得
-  useEffect(() => {
-    const q = query(
-      collection(db, 'recordings'),
-      orderBy('createdAt', 'desc')
-    );
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => {
-        const docData = doc.data();
-        return {
-          id: doc.id,
-          ...docData,
-          type: 'recording',
-          title: docData.title,
-          date: docData.createdAt?.toDate?.()?.toISOString().split('T')[0] || '',
-          imageUrl: docData.thumbnailUrl || null,
-          subject: docData.subject,
-          className: docData.className
-        };
-      });
-      setRecordings(data);
-    });
-    
-    return () => unsubscribe();
-  }, []);
-  
-  const subjects = mainSubjects;
+
+  const subjectNames = subjects.map(s => s.name);
   const term = (searchTerm || '').toLowerCase();
 
   // 文字起こしから検索にマッチする行を抽出
@@ -160,32 +127,6 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
     setInitialJumpTime(null);
   };
 
-  // ダミーデータ投入
-  const handleSeedData = async () => {
-    if (window.confirm('ダミーデータをFirestoreに投入しますか？')) {
-      const result = await seedDatabase();
-      if (result.success) {
-        alert('✅ ダミーデータの投入が完了しました！\nページをリロードします。');
-        window.location.reload();
-      } else {
-        alert('❌ エラー: ' + result.error);
-      }
-    }
-  };
-
-  // データ削除
-  const handleClearData = async () => {
-    if (window.confirm('⚠️ 本当に全データを削除しますか？\nこの操作は取り消せません。')) {
-      const result = await clearDatabase();
-      if (result.success) {
-        alert('✅ 全データの削除が完了しました！\nページをリロードします。');
-        window.location.reload();
-      } else {
-        alert('❌ エラー: ' + result.error);
-      }
-    }
-  };
-
   // 録画カードのレンダリング（文字起こし検索結果付き）
   const renderRecordingCard = (folder) => {
     const hasMatches = folder.transcriptMatches && folder.transcriptMatches.length > 0;
@@ -207,7 +148,7 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
         {hasMatches && (
           <div className={styles.matchesContainer}>
             <p className={styles.matchesLabel}>
-              🔍 文字起こしで{folder.transcriptMatches.length}件ヒット
+              文字起こしで{folder.transcriptMatches.length}件ヒット
             </p>
             <div className={styles.matchesList}>
               {folder.transcriptMatches.slice(0, 2).map((match, idx) => (
@@ -249,22 +190,12 @@ function HomePage({ onCardClick, searchTerm, folders, prints, qnaItems, notices,
         {selectedClass && <span className={styles.classLabel}> - {selectedClass}</span>}
       </h2>
       
-      {/* データ管理ボタン（開発用） */}
-      <div className={styles.devButtons}>
-        <button onClick={handleClearData} className={styles.clearButton}>
-          🗑️ データ削除
-        </button>
-        <button onClick={handleSeedData} className={styles.seedButton}>
-          📥 ダミーデータ投入
-        </button>
-      </div>
-      
       {!searchTerm && (
         <h3 className={styles.archiveTitle}>最近のアーカイブ</h3>
       )}
       
       <>
-        {subjects.map(subject => {
+        {subjectNames.map(subject => {
           const foundFolders = getFoldersBySubject(subject);
           const foundPrints = getPrintsBySubject(subject); 
           const foundQna = getQnaBySubject(subject); 

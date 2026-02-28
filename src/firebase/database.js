@@ -55,10 +55,12 @@ export const getFolders = async () => {
 /**
  * フォルダをリアルタイムで監視
  */
-export const onFoldersChange = (callback) => {
+export const onFoldersChange = (schoolCode, callback) => {
   const q = query(collection(db, 'folders'), orderBy('date', 'desc'));
   return onSnapshot(q, (snapshot) => {
-    const folders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const folders = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(f => !f.schoolCode || f.schoolCode === schoolCode);
     callback(folders);
   });
 };
@@ -93,10 +95,12 @@ export const getPrints = async () => {
   }
 };
 
-export const onPrintsChange = (callback) => {
+export const onPrintsChange = (schoolCode, callback) => {
   const q = query(collection(db, 'prints'), orderBy('date', 'desc'));
   return onSnapshot(q, (snapshot) => {
-    const prints = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const prints = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(p => !p.schoolCode || p.schoolCode === schoolCode);
     callback(prints);
   });
 };
@@ -130,10 +134,12 @@ export const getHomeworks = async () => {
   }
 };
 
-export const onHomeworksChange = (callback) => {
+export const onHomeworksChange = (schoolCode, callback) => {
   const q = query(collection(db, 'homeworks'), orderBy('deadline', 'asc'));
   return onSnapshot(q, (snapshot) => {
-    const homeworks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const homeworks = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(h => !h.schoolCode || h.schoolCode === schoolCode);
     callback(homeworks);
   });
 };
@@ -177,9 +183,11 @@ export const getQuestions = async () => {
   }
 };
 
-export const onQuestionsChange = (callback) => {
+export const onQuestionsChange = (schoolCode, callback) => {
   return onSnapshot(collection(db, 'qna'), (snapshot) => {
-    const questions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const questions = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(q => !q.schoolCode || q.schoolCode === schoolCode);
     callback(questions);
   });
 };
@@ -645,10 +653,12 @@ export const getNotices = async () => {
 /**
  * お知らせをリアルタイムで監視
  */
-export const onNoticesChange = (callback) => {
+export const onNoticesChange = (schoolCode, callback) => {
   const q = query(collection(db, 'notices'), orderBy('date', 'desc'));
   return onSnapshot(q, (snapshot) => {
-    const notices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const notices = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(n => !n.schoolCode || n.schoolCode === schoolCode);
     callback(notices);
   });
 };
@@ -710,9 +720,9 @@ export const addNotification = async (notificationData) => {
 /**
  * 通知をリアルタイムで監視
  */
-export const onNotificationsChange = (callback) => {
+export const onNotificationsChange = (schoolCode, callback) => {
   const q = query(
-    collection(db, 'notifications'), 
+    collection(db, 'notifications'),
     orderBy('createdAt', 'desc')
   );
   return onSnapshot(q, (snapshot) => {
@@ -734,12 +744,12 @@ export const onNotificationsChange = (callback) => {
         else time = `${diffDays}日前`;
       }
       
-      return { 
-        id: doc.id, 
+      return {
+        id: doc.id,
         ...data,
         time
       };
-    });
+    }).filter(n => !n.schoolCode || n.schoolCode === schoolCode);
     callback(notifications);
   });
 };
@@ -913,4 +923,30 @@ export const getQuizResults = async (quizId) => {
     console.error('クイズ結果取得エラー:', error);
     return [];
   }
+};
+
+// ========================================
+// 🎥 録画関連
+// ========================================
+
+/**
+ * 録画をリアルタイムで監視
+ */
+export const onRecordingsChange = (schoolCode, callback) => {
+  const q = query(collection(db, 'recordings'), orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const recordings = snapshot.docs
+      .map(doc => {
+        const docData = doc.data();
+        return {
+          id: doc.id,
+          ...docData,
+          type: 'recording',
+          date: docData.createdAt?.toDate?.()?.toISOString().split('T')[0] || '',
+          imageUrl: docData.thumbnailUrl || null,
+        };
+      })
+      .filter(r => !r.schoolCode || r.schoolCode === schoolCode);
+    callback(recordings);
+  });
 };
